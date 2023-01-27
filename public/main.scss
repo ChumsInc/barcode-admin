@@ -1,0 +1,20 @@
+.bca--customer-item-list {
+  @media screen and (max-width: 900px) {
+    tr {
+      th,
+      td {
+        &:nth-child(1),
+        &:nth-child(2),
+        &:nth-child(3) {
+          display: table-cell;
+        }
+        display: none;
+      }
+    }
+  }
+
+}
+.autocomplete.list-group {
+  --bs-list-group-item-padding-y: 0.25rem;
+  font-size: 0.85rem;
+}
