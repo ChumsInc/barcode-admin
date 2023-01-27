@@ -8,7 +8,7 @@ import {customerKey} from "../../utils/customer";
 import CustomerAutocomplete from "../../components/CustomerAutocomplete";
 import {BarcodeCustomerList, SearchCustomer} from "../../types";
 import {TextareaAutosize} from "@mui/material";
-import {Alert, Badge, FormCheck, noop} from "chums-components";
+import {Alert, FormCheck, noop} from "chums-components";
 import CustomOptionSetting from "../../components/CustomOptionSetting";
 import {saveCustomer} from "./actions";
 import {selectCustomerList, selectCustomersLoaded, selectCustomersLoading} from "../customers/selectors";
@@ -88,7 +88,7 @@ const CustomerSettings = () => {
         }
     }
 
-    const saveHandler = (ev:FormEvent) => {
+    const saveHandler = (ev: FormEvent) => {
         ev.preventDefault();
         if (!canEdit) {
             return;
@@ -115,7 +115,7 @@ const CustomerSettings = () => {
                     <div className="col-auto">
                         <div className="form-check form-check-inline">
                             <input type="checkbox" className="form-check-input" id={activeId}
-                                   checked={customer.active} onChange={toggleCustomer('active')} />
+                                   checked={customer.active} onChange={toggleCustomer('active')}/>
                             <label className="form-check-label" htmlFor={activeId}>Active Customer</label>
                         </div>
 
@@ -127,15 +127,16 @@ const CustomerSettings = () => {
                         </button>
                     </div>
                     <div className="col-auto">
-                        <ReloadCustomerButton />
+                        <ReloadCustomerButton/>
                     </div>
                     {!duplicate && customer.changed && (
                         <div className="col">
-                            <Alert color="warning"><strong className="me-3">Changed!</strong>Don't forget to save.</Alert>
+                            <Alert color="warning"><strong className="me-3">Changed!</strong>Don't forget to
+                                save.</Alert>
                         </div>
                     )}
                 </div>
-                <InactiveCustomerAlert />
+                <InactiveCustomerAlert/>
                 {duplicate && (
                     <Alert color="danger">
                         <strong className="me-3">Heads Up!</strong>
@@ -146,7 +147,7 @@ const CustomerSettings = () => {
                 <div className="row g-3 mt-1">
                     <div className="col-lg-6">
                         <label className="form-label">
-                            <button className="btn btn-sm btn-info"><span className="bi-card-text" /> Notes</button>
+                            <button className="btn btn-sm btn-info"><span className="bi-card-text"/> Notes</button>
                         </label>
                         <TextareaAutosize minRows={2} value={customer.Notes ?? ''}
                                           readOnly={!canEdit}
@@ -157,7 +158,7 @@ const CustomerSettings = () => {
                     <div className="col-lg-6">
                         <label className="form-label">
                             <button className="btn btn-sm btn-warning">
-                                <span className="bi-card-text" /> Special Instructions
+                                <span className="bi-card-text"/> Special Instructions
                             </button>
                         </label>
                         <TextareaAutosize minRows={2} value={customer.SpecialInstructions ?? ''}

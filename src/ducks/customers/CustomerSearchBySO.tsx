@@ -1,6 +1,5 @@
-import React, {ChangeEvent, FormEvent, useRef, useState} from "react";
-import {useAppDispatch, useAppSelector} from "../../app/configureStore";
-import {useSelector} from "react-redux";
+import React, {FormEvent, useState} from "react";
+import {useAppSelector} from "../../app/configureStore";
 import {useNavigate} from "react-router-dom";
 import {fetchSOSearch} from "../../api/order-stickers";
 import {selectCustomerList} from "./selectors";
@@ -47,7 +46,8 @@ const CustomerSearchBySO = () => {
             <input type="search" className="form-control form-control-sm" value={salesOrderNo}
                    required maxLength={7}
                    onChange={(ev) => setSalesOrderNo(ev.target.value)} placeholder="Search by SO#"/>
-            <button type="submit" className="btn btn-sm btn-outline-primary" disabled={soLoading || loading || submitted}>Load
+            <button type="submit" className="btn btn-sm btn-outline-primary"
+                    disabled={soLoading || loading || submitted}>Load
             </button>
         </form>
     )

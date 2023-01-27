@@ -6,14 +6,14 @@ export interface NavTabItemProps {
     id: string;
     to: string;
     title: string;
-    className?: string|classNames.ArgumentArray,
+    className?: string | classNames.ArgumentArray,
     icon?: string;
     canClose?: boolean;
     disabled?: boolean;
-    onClose?: (id?:string) => void;
+    onClose?: (id?: string) => void;
 }
 
-const NavTabItem = ({id, to, title, icon, className, canClose, disabled, onClose}:NavTabItemProps) => {
+const NavTabItem = ({id, to, title, icon, className, canClose, disabled, onClose}: NavTabItemProps) => {
     const closeHandler = () => {
         if (onClose) {
             onClose(id);
@@ -23,7 +23,7 @@ const NavTabItem = ({id, to, title, icon, className, canClose, disabled, onClose
     return (
         <li className="nav-item">
             <NavLink className={classNames('nav-link', className, {disabled})}
-                    tabIndex={disabled ? -1 : 0} to={to}>
+                     tabIndex={disabled ? -1 : 0} to={to}>
                 {!!icon && <span className={classNames('nav-item-icon me-1', icon)}/>}
                 <span className="nav-item-text">{title}</span>
                 {canClose && (

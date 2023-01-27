@@ -1,13 +1,8 @@
-import {BarcodeCustomerSettings, BarcodeItem, SalesOrderDetailLine} from "chums-types";
 import Decimal from "decimal.js";
 import {SortProps} from "chums-components";
 import {BarcodeSODetailLine, SODetailTableField} from "../../types";
-import {SortableTableField} from "chums-components/dist/types";
-import CustomerItemBadges from "../../components/CustomerItemBadges";
-import React from "react";
-import StickerQuantityInput from "./StickerQuantityInput";
 
-export const itemStickerQty = (row:Pick<BarcodeSODetailLine, 'ItemType'|'Quantity'|'UnitOfMeasureConvFactor'>, extra: number):number|null => {
+export const itemStickerQty = (row: Pick<BarcodeSODetailLine, 'ItemType' | 'Quantity' | 'UnitOfMeasureConvFactor'>, extra: number): number | null => {
     if (row.ItemType !== '1') {
         return null;
     }
@@ -17,7 +12,7 @@ export const itemStickerQty = (row:Pick<BarcodeSODetailLine, 'ItemType'|'Quantit
 }
 
 
-export const detailSorter = (sort:SortProps<SODetailTableField>) => (a:BarcodeSODetailLine, b:BarcodeSODetailLine) => {
+export const detailSorter = (sort: SortProps<SODetailTableField>) => (a: BarcodeSODetailLine, b: BarcodeSODetailLine) => {
     const {field, ascending} = sort;
     const sortMod = ascending ? 1 : -1;
     switch (field) {

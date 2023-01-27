@@ -1,5 +1,5 @@
 import React, {Component, ReactNode} from "react";
-import Alert from "@mui/material/Alert";
+import {Alert} from "chums-components";
 
 export interface ErrorBoundaryProps {
     children: ReactNode;
@@ -38,7 +38,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
             return (
                 <>
                     <h1>Sorry! something went wrong!</h1>
-                    <Alert severity="error">{message}</Alert>
+                    <Alert color="warning">{message}</Alert>
                     <code className="pre">
                         <pre style={{whiteSpace: 'pre-wrap'}}>
                             {componentStack}

@@ -34,7 +34,7 @@ const ItemAutocomplete = ({itemCode, onChange, onSelectItem, children, ...props}
         }
     }, [])
 
-    const loadItemSearch = (value:string) => {
+    const loadItemSearch = (value: string) => {
         if (loading) {
             return;
         }
@@ -73,9 +73,9 @@ const ItemAutocomplete = ({itemCode, onChange, onSelectItem, children, ...props}
         onSelectItem(item);
     }
 
-    const itemFilter = (value:string) => (row:SageItem) => row.ItemCode.startsWith(value) || row.ItemCodeDesc.toLowerCase().includes(value.toLowerCase());
+    const itemFilter = (value: string) => (row: SageItem) => row.ItemCode.startsWith(value) || row.ItemCodeDesc.toLowerCase().includes(value.toLowerCase());
 
-    const renderItem = (row:SageItem) => <div><strong className="me-3">{row.ItemCode}</strong> {row.ItemCodeDesc}</div>
+    const renderItem = (row: SageItem) => <div><strong className="me-3">{row.ItemCode}</strong> {row.ItemCodeDesc}</div>
 
     return (
         <div className="input-group input-group-sm" ref={containerRef}>

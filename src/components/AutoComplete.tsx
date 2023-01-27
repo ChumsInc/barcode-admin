@@ -137,7 +137,8 @@ export default function AutoComplete<T = any>({
             <input type="search"
                    autoComplete="off" readOnly={readOnly} disabled={disabled}
                    className="form-control form-control-sm" value={value} onChange={onChange}
-                   onKeyDown={inputHandler} ref={setInputElement} onFocus={focusHandler} onBlur={() => setOpen(false)} {...props}/>
+                   onKeyDown={inputHandler} ref={setInputElement} onFocus={focusHandler}
+                   onBlur={() => setOpen(false)} {...props}/>
             <small className="text-muted overflow-hidden">{helpText ?? null}</small>
             {open && (
                 <div ref={setPopperElement} style={{

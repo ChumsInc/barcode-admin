@@ -3,11 +3,12 @@ import {
     BarcodeCustomerSettings,
     BarcodeItem,
     Item,
-    PublicUserProps, SalesOrder,
+    PublicUserProps,
+    SalesOrder,
     SalesOrderDetailLine,
     WarehouseItem
 } from "chums-types";
-import {BootstrapBGColor, BootstrapColor} from "chums-components";
+import {BootstrapColor} from "chums-components";
 
 export interface BarcodeCustomerList {
     [key: string]: BarcodeCustomer;
@@ -55,8 +56,8 @@ export type BarcodeItemSettingsMap = {
 };
 
 export interface SalesOrderStickerQty {
-    [key:string]: {
-        quantity: number|null
+    [key: string]: {
+        quantity: number | null
         selected: boolean;
     };
 }
@@ -82,18 +83,18 @@ export interface GenerateStickerProps {
 }
 
 export type SalesOrderDetailBarcodeItem = Pick<SalesOrderDetailLine,
-    'LineKey'|'ItemCode'|'CommentText'|'ItemType'|'BinLocation'|'UnitOfMeasure'|'UnitOfMeasureConvFactor'
-    |'SequenceNo'|'WarehouseCode'|'QuantityOrdered'|'QuantityShipped'>
+    'LineKey' | 'ItemCode' | 'CommentText' | 'ItemType' | 'BinLocation' | 'UnitOfMeasure' | 'UnitOfMeasureConvFactor'
+    | 'SequenceNo' | 'WarehouseCode' | 'QuantityOrdered' | 'QuantityShipped'>
 
 export interface BarcodeSODetailLine extends SalesOrderDetailBarcodeItem {
     BinLocation: string;
-    Quantity: string|number;
-    item?:BarcodeItem;
+    Quantity: string | number;
+    item?: BarcodeItem;
     selected: boolean;
-    stickerQty: number|null;
+    stickerQty: number | null;
 }
 
-export type BarcodeSalesOrderHeader = Pick<SalesOrder, 'SalesOrderNo'|'ARDivisionNo'|'CustomerNo'|'BillToName'|'ShipExpireDate'|'OrderStatus'|'CustomerPONo'>;
+export type BarcodeSalesOrderHeader = Pick<SalesOrder, 'SalesOrderNo' | 'ARDivisionNo' | 'CustomerNo' | 'BillToName' | 'ShipExpireDate' | 'OrderStatus' | 'CustomerPONo'>;
 
 export interface BarcodeSalesOrder {
     header: BarcodeSalesOrderHeader;
@@ -103,7 +104,7 @@ export interface BarcodeSalesOrder {
 export type SODetailTableField = BarcodeSODetailLine & Omit<BarcodeItem, 'ItemCode'>;
 
 
-export type BarcodeType = 'GTIN-8'|'GTIN-12'|'GTIN-13'|'GTIN-14'|'GSIN'|'SSCC';
+export type BarcodeType = 'GTIN-8' | 'GTIN-12' | 'GTIN-13' | 'GTIN-14' | 'GSIN' | 'SSCC';
 
 export type BarcodeTypeDigits = {
     [key in BarcodeType]: number;

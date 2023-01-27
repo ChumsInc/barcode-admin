@@ -3,10 +3,6 @@ import CustomerItemList from "./CustomerItemList";
 import ItemEditor from "./ItemEditor";
 import CustomerItemFilter from "./CustomerItemFilter";
 import CustomerItemFilterInactive from "./CustomerItemFilterInactive";
-import CustomerName from "./CustomerName";
-import CustomerNotes from "./CustomerNotes";
-import CustomerInstructions from "./CustomerInstructions";
-import InactiveCustomerAlert from "./InactiveCustomerAlert";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "./selectors";
 import ReloadCustomerButton from "./ReloadCustomerButton";
@@ -17,7 +13,7 @@ const CustomerItems = () => {
 
     return (
         <div>
-            <CustomerInfo />
+            <CustomerInfo/>
             <div className="row g-3">
                 <div className="col-auto">
                     <CustomerItemFilter/>

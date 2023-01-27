@@ -1,5 +1,5 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {BarcodeCustomer, BarcodeCustomerSettings, BarcodeItem} from "chums-types";
+import {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
 import {deleteCustomerItem, fetchCustomer, postCustomerItem, postCustomerSettings} from "../../api/customer";
 import {BarcodeCustomerResponse, BarcodeItemList, SortProps} from "../../types";
 import {selectCustomerLoading, selectCustomerSaving, selectItemAction} from "./selectors";
@@ -7,15 +7,15 @@ import {RootState} from "../../app/configureStore";
 import {selectCustomersLoading} from "../customers/selectors";
 
 
-export const setCurrentItem = createAction<BarcodeItem|null>('customer/item/select');
+export const setCurrentItem = createAction<BarcodeItem | null>('customer/item/select');
 export const setRowsPerPage = createAction<number>('customer/item/rowsPerPage');
 export const setPage = createAction<number>('customer/item/page');
 export const setItemSort = createAction<SortProps<BarcodeItem>>('customer/item/sort');
 
 export const setItemFilter = createAction<string>('customer/item/filter');
-export const setItemShowInactive = createAction<boolean|undefined>('customer/item/showInactive');
+export const setItemShowInactive = createAction<boolean | undefined>('customer/item/showInactive');
 
-export const loadCustomer = createAsyncThunk<BarcodeCustomerResponse|null, number|string|null>(
+export const loadCustomer = createAsyncThunk<BarcodeCustomerResponse | null, number | string | null>(
     'customer/load',
     async (customerId, {getState, dispatch}) => {
         const state = getState();
@@ -29,7 +29,7 @@ export const loadCustomer = createAsyncThunk<BarcodeCustomerResponse|null, numbe
     }
 )
 
-export const saveCustomer = createAsyncThunk<BarcodeCustomerSettings|null, BarcodeCustomerSettings>(
+export const saveCustomer = createAsyncThunk<BarcodeCustomerSettings | null, BarcodeCustomerSettings>(
     'customer/save',
     async (arg) => {
         return await postCustomerSettings({

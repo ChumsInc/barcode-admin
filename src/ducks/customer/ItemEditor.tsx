@@ -4,7 +4,7 @@ import {useSelector} from "react-redux";
 import {selectCurrentCustomer, selectCustomerItem, selectCustomerLoading, selectItemAction} from "./selectors";
 import {BarcodeItem} from "chums-types";
 import {newItem} from "./utils";
-import {FormColumn, SpinnerButton} from "chums-components";
+import {Alert, FormColumn, SpinnerButton} from "chums-components";
 import {SageItem} from "../../types";
 import ItemAutocomplete from "../../components/ItemAutocomplete";
 import {selectCanEdit} from "../user";
@@ -12,11 +12,8 @@ import classNames from "classnames";
 import numeral from "numeral";
 import {removeCustomerItem, saveCustomerItem} from "./actions";
 import ExistingItemAlert from "./ExistingItemAlert";
-import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
 import ItemInput from "./ItemInput";
 import RemoveItemDialog from "./RemoveItemDialog";
-import item from "../item";
 import {TextareaAutosize} from "@mui/material";
 
 export interface EditableItem extends BarcodeItem {
@@ -217,7 +214,9 @@ const ItemEditor = () => {
                     </div>
                     <div className="col-auto">
                         <button type="button" className="btn btn-outline-danger"
-                                onClick={() => {setConfirmDelete(true)}}
+                                onClick={() => {
+                                    setConfirmDelete(true)
+                                }}
                                 disabled={!canEdit || itemAction !== 'idle'}>
                             Delete Item
                         </button>
@@ -226,7 +225,12 @@ const ItemEditor = () => {
                     </div>
                 </div>
             </form>
-            {barcodeItem.changed && <Alert severity="warning">Don't forget to save!</Alert>}
+            {barcodeItem.changed && (
+                <Alert color="warning">
+                    <span className="bi-exclamation-triangle-fill me-1"/>
+                    Don't forget to save!
+                </Alert>
+            )}
         </div>
     )
 }

@@ -6,13 +6,13 @@ import StickerQuantityInput from "./StickerQuantityInput";
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
 import {
-    selectDetailSort, selectSalesOrder,
-    selectSalesOrderDetail,
+    selectDetailSort,
+    selectSalesOrder,
     selectSalesOrderDetailComments,
     selectSalesOrderDetailItems
 } from "./selectors";
 import {selectCurrentCustomer} from "../customer/selectors";
-import {Alert, SortableTable, TablePagination} from "chums-components";
+import {SortableTable, TablePagination} from "chums-components";
 import {setLineSort} from "./actions";
 import StickerSelectToggle from "./StickerSelectToggle";
 import StickerSelectToggleAll from "./StickerSelectToggleAll";
@@ -23,11 +23,18 @@ import SalesOrderCustomerAlert from "./SalesOrderCustomerAlert";
 
 const getColumns = (customer: BarcodeCustomerSettings | null) => {
     const fields: SortableTableField<SODetailTableField>[] = [
-        {field: 'SequenceNo', title: <StickerSelectToggleAll />, sortable: false, render: (row) => <StickerSelectToggle lineKey={row.LineKey}/>},
-        {field: 'ItemCode', title: 'Item', sortable: true, render: (row) => (
-            <StickerItemComment lineKey={row.LineKey} itemCode={row.ItemCode} commentText={row.CommentText}
-                                notes={row.item?.Notes} specialInstructions={row.item?.SpecialInstructions}/>
-            )},
+        {
+            field: 'SequenceNo',
+            title: <StickerSelectToggleAll/>,
+            sortable: false,
+            render: (row) => <StickerSelectToggle lineKey={row.LineKey}/>
+        },
+        {
+            field: 'ItemCode', title: 'Item', sortable: true, render: (row) => (
+                <StickerItemComment lineKey={row.LineKey} itemCode={row.ItemCode} commentText={row.CommentText}
+                                    notes={row.item?.Notes} specialInstructions={row.item?.SpecialInstructions}/>
+            )
+        },
         {field: 'WarehouseCode', title: 'Whse', sortable: true},
         {field: 'BinLocation', title: 'Bin', sortable: true},
         {field: 'Quantity', title: 'Quantity', sortable: true, className: 'text-end'},
@@ -35,7 +42,8 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
         {
             field: 'stickerQty', title: 'Sticker Qty', sortable: true,
             render: (row) => (
-                <StickerQuantityInput lineKey={row.LineKey} stickerQty={row.stickerQty} disabled={!row.item || row.ItemType !== '1'}/>
+                <StickerQuantityInput lineKey={row.LineKey} stickerQty={row.stickerQty}
+                                      disabled={!row.item || row.ItemType !== '1'}/>
             )
         }
     ];
@@ -143,9 +151,9 @@ const SalesOrderDetailTable = () => {
 
     return (
         <div>
-            <MissingItemAlert />
-            <SalesOrderComments />
-            <SalesOrderCustomerAlert />
+            <MissingItemAlert/>
+            <SalesOrderComments/>
+            <SalesOrderCustomerAlert/>
             <TablePagination page={page} onChangePage={pageChangeHandler} rowsPerPage={rowsPerPage}
                              onChangeRowsPerPage={rowsPerPageChangeHandler} count={detail.length}/>
             <SortableTable fields={fields} data={detail.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}

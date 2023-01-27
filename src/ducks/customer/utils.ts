@@ -1,7 +1,7 @@
 import {SortProps} from "../../types";
 import {BarcodeItem} from "chums-types";
 
-const statusValue = (item:BarcodeItem) => `${!item.ProductType ? 'A' : '_'}`
+const statusValue = (item: BarcodeItem) => `${!item.ProductType ? 'A' : '_'}`
     + `${item.ProductType === 'D' ? 'D' : '_'}`
     + `${item.InactiveItem === 'Y' ? 'Y' : '_'}`
     + `${!item.ProductStatus ? '_' : item.ProductStatus}`;
@@ -38,12 +38,13 @@ export const itemSorter = ({field, ascending}: SortProps<BarcodeItem>) =>
         }
     }
 
-export const itemFilter = (filter:string) => (item:BarcodeItem) => {
+export const itemFilter = (filter: string) => (item: BarcodeItem) => {
     return item.ItemCode.toLowerCase().includes(filter)
-    || item.ItemDescription.toLowerCase().includes(filter);
+        || item.ItemDescription.toLowerCase().includes(filter.toLowerCase())
+        || item.UPC.toLowerCase().includes(filter.toLowerCase());
 }
 
-export const newItem:BarcodeItem = {
+export const newItem: BarcodeItem = {
     ID: 0,
     CustomerID: 0,
     Company: 'chums',

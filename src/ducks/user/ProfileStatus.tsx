@@ -2,9 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
 import {loadUserValidation, selectProfileError, selectProfileLoading, selectProfileValid} from "./index";
-import Alert from "@mui/material/Alert";
-import LinearProgress from "@mui/material/LinearProgress";
-import AlertTitle from "@mui/material/AlertTitle";
+import {Alert} from "chums-components";
 
 const ProfileStatus = () => {
     const dispatch = useAppDispatch();
@@ -29,10 +27,9 @@ const ProfileStatus = () => {
 
     return (
         <div className="mt-1">
-            {!valid && !loading && <Alert severity="warning">Login is required</Alert>}
-            {loading && <LinearProgress variant="indeterminate" />}
-            {!!error && <Alert severity="error">
-                <AlertTitle>User Validation Error</AlertTitle>
+            {!valid && !loading && <Alert color="warning">Login is required</Alert>}
+            {!!error && <Alert color="danger">
+                <div><strong>User Validation Error</strong></div>
                 {error}
             </Alert> }
         </div>

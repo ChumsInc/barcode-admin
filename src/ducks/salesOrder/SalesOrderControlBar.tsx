@@ -1,11 +1,16 @@
 import React, {FormEvent, useEffect, useState} from 'react';
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
-import {selectDetailSort, selectExtraQuantity, selectSalesOrderLoading, selectSalesOrderNo, selectStickerQty} from "./selectors";
+import {
+    selectDetailSort,
+    selectExtraQuantity,
+    selectSalesOrderLoading,
+    selectSalesOrderNo,
+    selectStickerQty
+} from "./selectors";
 import {generateStickers, loadSalesOrder, setExtraStickers} from "./actions";
 import {FormCheck, SpinnerButton} from "chums-components";
-import {selectItemsSort} from "../customer/selectors";
-import {useLocation, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import StickerQuantityGeneratedAlert from "./StickerQuantityGeneratedAlert";
 
 const SalesOrderControlBar = () => {
@@ -32,7 +37,7 @@ const SalesOrderControlBar = () => {
         setSearchParams({salesOrderNo});
     }, [salesOrderNo]);
 
-    const submitHandler = (ev:FormEvent) => {
+    const submitHandler = (ev: FormEvent) => {
         ev.preventDefault();
         dispatch(loadSalesOrder(so.padStart(7, '0')));
     }
@@ -48,7 +53,7 @@ const SalesOrderControlBar = () => {
                     <div className="input-group input-group-sm">
                         <div className="input-group-text">SO#</div>
                         <input type="search" value={so} className="form-control"
-                               onChange={(ev) => setSO(ev.target.value)} />
+                               onChange={(ev) => setSO(ev.target.value)}/>
                         <SpinnerButton type="submit" color="primary" spinning={loading} size="sm">Load</SpinnerButton>
                     </div>
                 </form>
@@ -57,7 +62,7 @@ const SalesOrderControlBar = () => {
                 <div className="input-group input-group-sm">
                     <div className="input-group-text">Extra</div>
                     <input type="number" value={extra} className="form-control" min={0} max={100}
-                           onChange={(ev) => dispatch(setExtraStickers(ev.target.valueAsNumber))} />
+                           onChange={(ev) => dispatch(setExtraStickers(ev.target.valueAsNumber))}/>
                     <div className="input-group-text">%</div>
                 </div>
             </div>
@@ -70,7 +75,7 @@ const SalesOrderControlBar = () => {
             <div className="col-auto">
                 <FormCheck type={"checkbox"} label={"Print Reversed"}
                            checked={reversed}
-                           onChange={(ev) => setReversed(ev.target.checked)} />
+                           onChange={(ev) => setReversed(ev.target.checked)}/>
             </div>
             <div className="col-auto">
                 <button type="button" className="btn btn-sm btn-success" disabled={count === 0}
@@ -79,7 +84,7 @@ const SalesOrderControlBar = () => {
                 </button>
             </div>
             <div className="col">
-                <StickerQuantityGeneratedAlert />
+                <StickerQuantityGeneratedAlert/>
             </div>
         </div>
     )

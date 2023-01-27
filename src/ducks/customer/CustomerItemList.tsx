@@ -20,7 +20,6 @@ import classNames from "classnames";
 import CustomerItemBadges from "../../components/CustomerItemBadges";
 import Decimal from "decimal.js";
 import is_number from "is-number";
-import InactiveCustomerAlert from "./InactiveCustomerAlert";
 import NotesBadge from "../../components/NotesBadge";
 import {formatUPC} from "../../utils/gtin";
 
@@ -92,11 +91,11 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
     });
     fields.push({
         field: 'SpecialInstructions',
-        title: <span className="bi-card-text" />,
+        title: <span className="bi-card-text"/>,
         render: (item) => (
             <>
-                <NotesBadge note={item.SpecialInstructions} color="warning" />
-                <NotesBadge note={item.Notes} color="info" />
+                <NotesBadge note={item.SpecialInstructions} color="warning"/>
+                <NotesBadge note={item.Notes} color="info"/>
             </>
         )
     })

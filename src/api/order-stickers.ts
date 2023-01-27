@@ -1,6 +1,6 @@
 import {SalesOrder} from 'chums-types';
 import {fetchJSON} from "chums-components/dist/fetch";
-import {BarcodeSOLineItem, GenerateStickerBody, GenerateStickerProps} from "../types";
+import {GenerateStickerBody, GenerateStickerProps} from "../types";
 
 export async function fetchSalesOrder(salesOrderNo: string): Promise<SalesOrder | null> {
     try {
@@ -46,12 +46,12 @@ export async function postOrderStickers({
     }
 }
 
-export async function fetchSOSearch(salesOrderNo:string):Promise<SalesOrder|null> {
+export async function fetchSOSearch(salesOrderNo: string): Promise<SalesOrder | null> {
     try {
         const url = `/api/sales/orders/chums/${encodeURIComponent(salesOrderNo)}`;
-        const {salesOrder} = await fetchJSON<{salesOrder: SalesOrder}>(url, {cache: 'no-cache'});
+        const {salesOrder} = await fetchJSON<{ salesOrder: SalesOrder }>(url, {cache: 'no-cache'});
         return salesOrder ?? null;
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("fetchSOSearch()", err.message);
             return Promise.reject(err);
