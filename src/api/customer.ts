@@ -1,4 +1,4 @@
-import {BarcodeCustomerList, BarcodeCustomerResponse, BarcodeItemList, SearchCustomer} from "../types";
+import {BarcodeCustomerList, BarcodeCustomerResponse, BarcodeItemList, ColorUPCRecord, SearchCustomer} from "../types";
 import {fetchJSON} from "chums-components/dist/fetch";
 import {BarcodeCustomer, BarcodeCustomerSettings, BarcodeItem} from "chums-types";
 import {customerKey, itemKey} from "../utils/customer";
@@ -169,5 +169,23 @@ export async function fetchCustomerLookup(search:string):Promise<SearchCustomer[
         }
         console.debug("getCustomerLookup()", err);
         return Promise.reject(new Error('Error in getCustomerLookup()'));
+    }
+}
+
+export async function postGenNextUPC(item:BarcodeItem, notes: string):Promise<ColorUPCRecord|null> {
+    try {
+        const {nextUPC} = await fetchJSON<{nextUPC:string}>('/api/operations/sku/by-color/next', {cache: 'no-cache'});
+        const {colorUPC} = await fetchJSON<{colorUPC: ColorUPCRecord}>('/api/operations/sku/by-color', {
+            method: 'POST',
+            body: JSON.stringify({company: 'chums', ItemCode: item.ItemCode, upc: nextUPC, notes})
+        });
+        return colorUPC ?? null;
+    } catch(err:unknown) {
+        if (err instanceof Error) {
+            console.debug("postGenNextUPC()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("postGenNextUPC()", err);
+        return Promise.reject(new Error('Error in postGenNextUPC()'));
     }
 }

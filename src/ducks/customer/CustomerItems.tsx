@@ -14,7 +14,7 @@ const CustomerItems = () => {
     return (
         <div>
             <CustomerInfo/>
-            <div className="row g-3">
+            <div className="row g-3 mt-1">
                 <div className="col-auto">
                     <CustomerItemFilter/>
                 </div>

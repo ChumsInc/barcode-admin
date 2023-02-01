@@ -2,6 +2,7 @@ import {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
 import {BarcodeItemList, SortProps} from "../../types";
 import {createReducer} from "@reduxjs/toolkit";
 import {
+    assignNextUPC,
     loadCustomer,
     removeCustomerItem,
     saveCustomer,
@@ -27,6 +28,7 @@ export interface CustomerState {
     showInactive: boolean;
     page: number;
     rowsPerPage: number;
+    customUPCAction: 'idle'|'pending';
 }
 
 export const initialCustomerState: CustomerState = {
@@ -42,6 +44,7 @@ export const initialCustomerState: CustomerState = {
     showInactive: getPreference(localStorageKeys.showInactive, true),
     page: 0,
     rowsPerPage: getPreference(localStorageKeys.itemRowsPerPage, 25),
+    customUPCAction: 'idle',
 }
 
 const customerReducer = createReducer(initialCustomerState, (builder) => {
@@ -131,6 +134,15 @@ const customerReducer = createReducer(initialCustomerState, (builder) => {
             state.showInactive = action.payload ?? !state.showInactive;
             state.page = 0;
             setPreference(localStorageKeys.showInactive, state.showInactive);
+        })
+        .addCase(assignNextUPC.pending, (state) => {
+            state.customUPCAction = 'pending';
+        })
+        .addCase(assignNextUPC.fulfilled, (state, action) => {
+            state.customUPCAction = 'idle'
+        })
+        .addCase(assignNextUPC.rejected, (state, action) => {
+            state.customUPCAction = 'idle';
         })
 })
 

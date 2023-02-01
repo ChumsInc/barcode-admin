@@ -15,6 +15,7 @@ import ExistingItemAlert from "./ExistingItemAlert";
 import ItemInput from "./ItemInput";
 import RemoveItemDialog from "./RemoveItemDialog";
 import {TextareaAutosize} from "@mui/material";
+import AssignNextUPCButton from "./AssignNextUPCButton";
 
 export interface EditableItem extends BarcodeItem {
     changed?: boolean;
@@ -28,6 +29,7 @@ const ItemEditor = () => {
     const itemAction = useSelector(selectItemAction);
 
     const canEdit = useSelector(selectCanEdit);
+
 
     const [barcodeItem, setBarcodeItem] = useState<EditableItem>({...newItem, CustomerID: settings?.id});
     const [sageItem, setSageItem] = useState<SageItem | null>(null);
@@ -105,7 +107,7 @@ const ItemEditor = () => {
     return (
         <div>
             <h3>Item Settings</h3>
-            <form>
+            <form onSubmit={saveHandler}>
                 <FormColumn label="Item">
                     <ItemAutocomplete value={barcodeItem.ItemCode ?? ''}
                                       itemCode={barcodeItem.ItemCode} onChange={changeHandler('ItemCode')}
@@ -155,7 +157,8 @@ const ItemEditor = () => {
                         <span className="bi-chevron-left"/>
                     </button>
                 </ItemInput>
-                <ItemInput field="UPC" label="UPC" value={barcodeItem.UPC} onChange={changeHandler('UPC')}>
+                <ItemInput field="UPC" label="UPC" value={barcodeItem.UPC} onChange={changeHandler('UPC')}
+                           helpText="Automatically calculates check digits for numeric codes length 11-14, 16-18">
                     <button type="button"
                             className={classNames("btn btn-sm btn-outline-secondary", {
                                 'btn-secondary': barcodeItem.UPC === sageItem?.UDF_UPC,
@@ -175,6 +178,7 @@ const ItemEditor = () => {
                             disabled={!sageItem || !canEdit} onClick={setSageValue('UPC', 'UDF_UPC_BY_COLOR')}>
                         <span className="bi-chevron-left"/>
                     </button>
+                    <AssignNextUPCButton/>
                 </ItemInput>
                 <ItemInput field="Custom1" label={settings.custom1Name} value={barcodeItem.Custom1}
                            onChange={changeHandler('Custom1')}/>
@@ -200,8 +204,6 @@ const ItemEditor = () => {
                     <div className="col-auto">
                         <SpinnerButton type="submit" color="primary"
                                        spinning={itemAction === 'loading' || itemAction === 'saving'}
-
-                                       onClick={saveHandler}
                                        disabled={!canEdit || !barcodeItem.ItemCode || itemAction !== 'idle'}>
                             Save Item
                         </SpinnerButton>

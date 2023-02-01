@@ -21,7 +21,7 @@ import CustomerItemBadges from "../../components/CustomerItemBadges";
 import Decimal from "decimal.js";
 import is_number from "is-number";
 import NotesBadge from "../../components/NotesBadge";
-import {formatUPC} from "../../utils/gtin";
+import {formatGTIN} from "@chumsinc/gtin-tools";
 
 const CustomerItemMSRP = ({
                               msrp,
@@ -63,7 +63,7 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
         fields.push({field: 'CustomerPart', title: 'Customer Part', sortable: true});
     }
     if (customer.reqUPC) {
-        fields.push({field: 'UPC', title: 'UPC', sortable: true, render: (row) => formatUPC(row.UPC ?? '')});
+        fields.push({field: 'UPC', title: 'UPC', sortable: true, render: (row) => formatGTIN(row.UPC ?? '')});
     }
     if (customer.reqMSRP) {
         fields.push({

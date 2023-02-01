@@ -10,10 +10,11 @@ import {selectCanEdit} from "../user";
 export interface ItemInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'children'> {
     field: keyof BarcodeItem;
     label: string;
+    helpText?: string;
     children?: React.ReactNode;
 }
 
-const ItemInput = ({field, value, label, onChange, children, ...inputProps}: ItemInputProps) => {
+const ItemInput = ({field, value, label, onChange, helpText, children, ...inputProps}: ItemInputProps) => {
     const settings = useSelector(selectCurrentCustomer);
     const canEdit = useSelector(selectCanEdit);
     const settingsKey = itemSettingsMap[field];
@@ -29,6 +30,7 @@ const ItemInput = ({field, value, label, onChange, children, ...inputProps}: Ite
                        readOnly={!canEdit}/>
                 {children}
             </div>
+            {!!helpText && <small className="text-muted">{helpText}</small>}
         </FormColumn>
     )
 }

@@ -25,6 +25,7 @@ export const customerFilter = (filter:string) => (row:BarcodeCustomer) => {
         reFilter = new RegExp(filter, 'i');
     } catch(err:unknown) {}
     return !filter
+        || (/^\d+$/.test(filter) && row.id === Number(filter))
         || row.CustomerName.toLowerCase().includes(filter.toLowerCase())
         || customerKey(row).includes(filter.toUpperCase())
         || !reFilter

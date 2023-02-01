@@ -27,6 +27,7 @@ export const selectProfileLoading = (state:RootState) => state.user.loading;
 export const selectProfileError = (state:RootState) => state.user.error;
 export const selectRoles = (state:RootState) => state.user.roles;
 export const selectCanEdit = (state:RootState) => state.user.roles.includes('barcode_edit') || state.user.roles.includes('root');
+export const selectCanAssignNewUPC = (state:RootState) => state.user.roles.includes('product-admin') || state.user.roles.includes('root');
 
 export const loadUserValidation = createAsyncThunk<UserValidationResponse>(
     'user/validate',

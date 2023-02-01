@@ -17,6 +17,8 @@ export const selectItemsShowInactive = (state: RootState) => state.customer.show
 export const selectItemsPage = (state: RootState) => state.customer.page;
 export const selectItemsRowsPerPage = (state: RootState) => state.customer.rowsPerPage;
 
+export const selectCustomUPCLoading = (state:RootState) => state.customer.customUPCAction !== 'idle';
+
 export const selectFilteredItems = createSelector(
     [selectCustomerItems, selectItemsFilter, selectItemsShowInactive, selectItemsSort],
     (items, filter, showInactive, sort) => {

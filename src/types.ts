@@ -104,7 +104,7 @@ export interface BarcodeSalesOrder {
 export type SODetailTableField = BarcodeSODetailLine & Omit<BarcodeItem, 'ItemCode'>;
 
 
-export type BarcodeType = 'GTIN-8' | 'GTIN-12' | 'GTIN-13' | 'GTIN-14' | 'GSIN' | 'SSCC';
+export type BarcodeType = 'GTIN-12' | 'GTIN-13' | 'GTIN-14' | 'GSIN' | 'SSCC';
 
 export type BarcodeTypeDigits = {
     [key in BarcodeType]: number;
@@ -112,4 +112,20 @@ export type BarcodeTypeDigits = {
 
 export type BarcodeTypeSplits = {
     [key in BarcodeType]?: RegExp;
+}
+
+
+export interface ColorUPCRecord {
+    company: string;
+    id: number;
+    ItemCode: string;
+    ItemCodeDesc: string|null;
+    upc: string;
+    notes: string|null;
+    tags: unknown;
+    active: boolean;
+    ProductType: string|null;
+    InactiveItem: string|null;
+    UDF_UPC: string|null;
+    UDF_UPC_BY_COLOR: string|null;
 }
