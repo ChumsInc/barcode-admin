@@ -1,4 +1,4 @@
-import React, {ChangeEvent, MouseEvent} from 'react';
+import React, {ChangeEvent} from 'react';
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectItemsFilter} from "./selectors";
@@ -10,16 +10,12 @@ const CustomerItemFilter = () => {
     const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => {
         dispatch(setItemFilter(ev.target.value));
     }
-    const focusHandler = (ev:MouseEvent<HTMLInputElement>) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-    }
 
     return (
         <div className="input-group input-group-sm">
             <div className="input-group-text">Filter Item</div>
             <input type="search" className="form-control form-control-sm"
-                   onChange={changeHandler} value={filter} onClick={focusHandler}/>
+                   onChange={changeHandler} value={filter}/>
         </div>
     )
 }
