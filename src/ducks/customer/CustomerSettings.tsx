@@ -58,7 +58,6 @@ const CustomerSettings = () => {
         if (!canEdit) {
             return;
         }
-        console.log('onChangeCustomer', field, ev);
         setCustomer({...customer, [field]: ev.target.value, changed: true});
     }
 
@@ -67,14 +66,12 @@ const CustomerSettings = () => {
             return;
         }
 
-        console.log('toggleCustomer', field);
         setCustomer({...customer, [field]: !customer[field], changed: true});
     }
     const onSelectHandler = (searchCustomer?: SearchCustomer) => {
         if (!canEdit) {
             return;
         }
-        console.log('onSelectHandler', searchCustomer);
         if (searchCustomer && customerKey(searchCustomer) !== customerKey(customer)) {
             setCustomer({...customer, ...searchCustomer, changed: true});
         }

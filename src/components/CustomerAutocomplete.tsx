@@ -4,7 +4,7 @@ import {fetchCustomerLookup} from "../api/customer";
 import {customerKey} from "../utils/customer";
 import AutoComplete from "./AutoComplete";
 
-const BarcdodeCustomerAutocomplete = AutoComplete<SearchCustomer>;
+const BarcodeCustomerAutocomplete = AutoComplete<SearchCustomer>;
 
 export interface CustomerAutocompleteProps extends HTMLAttributes<HTMLInputElement> {
     customer: SearchCustomer;
@@ -30,7 +30,7 @@ const CustomerAutocomplete = ({
     useEffect(() => {
         setValue(customerKey(customer));
         loadCustomerSearch(customerKey(customer));
-    }, [customer]);
+    }, [customer.ARDivisionNo, customer.CustomerNo, customer.CustomerName, customer.Company]);
 
     useEffect(() => {
         return () => {
@@ -97,7 +97,7 @@ const CustomerAutocomplete = ({
             <span className="input-group-text">
                 <span className="bi-search"/>
             </span>
-            <BarcdodeCustomerAutocomplete containerRef={containerRef} {...props}
+            <BarcodeCustomerAutocomplete containerRef={containerRef} {...props}
                                           value={value} data={results} onChange={changeHandler}
                                           onChangeRecord={recordChangeHandler}
                                           renderItem={renderItem}
