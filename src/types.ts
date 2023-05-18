@@ -3,9 +3,8 @@ import {
     BarcodeCustomerSettings,
     BarcodeItem,
     Item,
-    PublicUserProps,
     SalesOrder,
-    SalesOrderDetailLine,
+    SalesOrderDetailLine, UserRecord,
     WarehouseItem
 } from "chums-types";
 import {BootstrapColor} from "chums-components";
@@ -26,7 +25,7 @@ export interface BarcodeCustomerResponse {
 export interface UserValidationResponse {
     valid?: boolean;
     profile?: {
-        user: PublicUserProps;
+        user: UserRecord;
         roles: string[];
     };
     loaded: string;

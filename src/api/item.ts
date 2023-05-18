@@ -1,5 +1,5 @@
 import {SageItem} from "../types";
-import {fetchJSON} from "chums-components/dist/fetch";
+import {fetchJSON} from "chums-components";
 
 export async function fetchItemInfo(itemCode: string):Promise<SageItem|null> {
     try {

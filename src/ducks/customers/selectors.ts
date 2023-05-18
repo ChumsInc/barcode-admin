@@ -7,3 +7,4 @@ export const selectCustomerListSort = (state: RootState) => state.customers.sort
 export const selectCustomerListFilter = (state: RootState) => state.customers.filter;
 export const selectCustomerRowsPerPage = (state: RootState) => state.customers.rowsPerPage;
 export const selectCustomersPage = (state: RootState) => state.customers.page;
+export const selectShowInactiveCustomers = (state:RootState) => state.customers.showInactive;

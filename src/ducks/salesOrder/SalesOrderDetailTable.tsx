@@ -20,6 +20,7 @@ import SalesOrderComments from "./SalesOrderComments";
 import StickerItemComment from "./StickerItemComment";
 import MissingItemAlert from "./MissingItemAlert";
 import SalesOrderCustomerAlert from "./SalesOrderCustomerAlert";
+import classNames from "classnames";
 
 const getColumns = (customer: BarcodeCustomerSettings | null) => {
     const fields: SortableTableField<SODetailTableField>[] = [
@@ -157,7 +158,7 @@ const SalesOrderDetailTable = () => {
             <TablePagination page={page} onChangePage={pageChangeHandler} rowsPerPage={rowsPerPage}
                              onChangeRowsPerPage={rowsPerPageChangeHandler} count={detail.length}/>
             <SortableTable fields={fields} data={detail.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                           rowClassName={(row) => ({'text-danger': !row.item})}
+                           rowClassName={(row) => classNames({'text-danger': !row.item})}
                            currentSort={sort} keyField="LineKey" onChangeSort={(sort) => dispatch(setLineSort(sort))}
             />
         </div>

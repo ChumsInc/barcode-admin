@@ -93,10 +93,6 @@ const CustomerList = () => {
         dispatch(setCustomersSort(sort.field as keyof BarcodeCustomer));
     }
 
-    const selectRowHandler = (row?: BarcodeCustomer) => {
-        nav(`/${row?.id ?? 0}/settings`);
-    }
-
     return (
         <div className="container-md">
             <div className="row g-3 mb-3">

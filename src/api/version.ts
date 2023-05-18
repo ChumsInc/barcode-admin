@@ -1,4 +1,4 @@
-import {fetchJSON} from "chums-components/dist/fetch";
+import {fetchJSON} from "chums-components";
 
 export async function fetchVersion():Promise<string> {
     try {

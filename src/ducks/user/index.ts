@@ -1,4 +1,4 @@
-import {PublicUserProps} from "chums-types";
+import {UserRecord} from "chums-types";
 import {createAsyncThunk, createReducer} from "@reduxjs/toolkit";
 import {UserValidationResponse} from "../../types";
 import {fetchUserValidation} from "../../api/user";
@@ -6,7 +6,7 @@ import {RootState} from "../../app/configureStore";
 
 export interface UserState {
     valid: boolean;
-    user: PublicUserProps | null;
+    user: UserRecord | null;
     roles: string[];
     loading: boolean;
     loaded: string | null;

@@ -1,5 +1,5 @@
 import {BarcodeCustomerList, BarcodeCustomerResponse, BarcodeItemList, ColorUPCRecord, SearchCustomer} from "../types";
-import {fetchJSON} from "chums-components/dist/fetch";
+import {fetchJSON} from "chums-components";
 import {BarcodeCustomer, BarcodeCustomerSettings, BarcodeItem} from "chums-types";
 import {customerKey, itemKey} from "../utils/customer";
 

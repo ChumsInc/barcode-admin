@@ -1,7 +1,14 @@
 import {BarcodeCustomerList, SortProps} from "../../types";
 import {BarcodeCustomer} from "chums-types";
 import {createReducer} from "@reduxjs/toolkit";
-import {loadCustomers, setCustomersFilter, setCustomersSort, setPage, setRowsPerPage} from "./actions";
+import {
+    loadCustomers,
+    setCustomersFilter,
+    setCustomersSort,
+    setPage,
+    setRowsPerPage,
+    toggleShowInactive
+} from "./actions";
 import {loadCustomer, saveCustomer} from "../customer/actions";
 import {customerKey} from "../../utils/customer";
 import {getPreference, localStorageKeys, setPreference} from "../../api/preferences";
@@ -12,6 +19,7 @@ export interface CustomersState {
     loaded: boolean;
     sort: SortProps<BarcodeCustomer>;
     filter: string;
+    showInactive: boolean;
     rowsPerPage: number;
     page: number;
 }
@@ -22,6 +30,7 @@ const initialCustomerState:CustomersState = {
     loaded: false,
     sort: {field: "CustomerNo", ascending: true},
     filter: '',
+    showInactive: false,
     rowsPerPage: getPreference(localStorageKeys.customerRowsPerPage, 25),
     page: 0,
 }
@@ -76,7 +85,11 @@ const customersReducer = createReducer(
             .addCase(setCustomersFilter, (state, action) => {
                 state.filter = action.payload;
                 state.page = 0;
-            });
+            })
+            .addCase(toggleShowInactive, (state, action) => {
+                state.showInactive = action.payload ?? !state.showInactive;
+            })
+        ;
     }
 )
 

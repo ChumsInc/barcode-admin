@@ -1,5 +1,5 @@
 import {SalesOrder} from 'chums-types';
-import {fetchJSON} from "chums-components/dist/fetch";
+import {fetchJSON} from "chums-components";
 import {GenerateStickerBody, GenerateStickerProps} from "../types";
 
 export async function fetchSalesOrder(salesOrderNo: string): Promise<SalesOrder | null> {
