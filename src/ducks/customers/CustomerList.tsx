@@ -8,7 +8,7 @@ import {
     selectCustomerRowsPerPage,
     selectCustomersLoaded,
     selectCustomersLoading,
-    selectCustomersPage
+    selectCustomersPage, selectShowInactiveCustomers
 } from "./selectors";
 import {loadCustomers, setCustomersSort, setPage, setRowsPerPage} from "./actions";
 import {BarcodeCustomer} from "chums-types";
@@ -21,6 +21,7 @@ import {Link, useNavigate} from "react-router-dom";
 import NotesBadge from "../../components/NotesBadge";
 import {SortableTableField} from "chums-components/dist/types";
 import CustomerSearchBySO from "./CustomerSearchBySO";
+import classNames from "classnames";
 
 
 const tableFields: SortableTableField<BarcodeCustomer>[] = [
@@ -61,10 +62,12 @@ const CustomerList = () => {
     const filter = useSelector(selectCustomerListFilter);
     const page = useSelector(selectCustomersPage);
     const rowsPerPage = useSelector(selectCustomerRowsPerPage);
+    const showInactive = useSelector(selectShowInactiveCustomers);
 
 
     const [sortedList, setSortedList] = useState<BarcodeCustomer[]>(
         Object.values(list)
+            .filter(row => showInactive || row.active )
             .filter(row => !filter || row.CustomerName.includes(filter) || customerKey(row).includes(filter))
             .sort(customerSort(sort))
     )
@@ -79,11 +82,12 @@ const CustomerList = () => {
 
     useEffect(() => {
         const sortedList = Object.values(list)
+            .filter(row => showInactive || row.active )
             .filter(customerFilter(filter))
             .sort(customerSort(sort));
         setSortedList(sortedList);
         setPagedList(sortedList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage))
-    }, [list, sort, filter, page, rowsPerPage])
+    }, [list, sort, filter, page, rowsPerPage, showInactive])
 
     const sortChangedHandler = (sort: SortProps) => {
         dispatch(setCustomersSort(sort.field as keyof BarcodeCustomer));
@@ -115,6 +119,7 @@ const CustomerList = () => {
                 </div>
             </div>
             <SortableTable fields={tableFields} data={pagedList}
+                           rowClassName={(row) => classNames({'table-warning': !row.active})}
                            currentSort={sort} keyField="id" onChangeSort={sortChangedHandler}/>
             <TablePagination bsSize="sm" page={page} rowsPerPage={rowsPerPage} count={sortedList.length}
                              showFirst showLast

@@ -29,3 +29,4 @@ export const setCustomersFilter = createAction<string>('customers/filter');
 export const setRowsPerPage = createAction<number>('customers/customerRowsPerPage');
 export const setPage = createAction<number>('customers/setPage');
 
+export const toggleShowInactive = createAction<boolean|undefined>('customers/showInactive');
