@@ -19,13 +19,13 @@ export function parseSalesOrderLines(items: BarcodeItemList, detail: SalesOrderD
     return detail.map(row => {
         const {
             LineKey,
+            LineSeqNo,
             ItemCode,
             CommentText,
             ItemType,
             BinLocation,
             UnitOfMeasure,
             UnitOfMeasureConvFactor,
-            SequenceNo,
             WarehouseCode,
             QuantityOrdered,
             QuantityShipped,
@@ -36,7 +36,7 @@ export function parseSalesOrderLines(items: BarcodeItemList, detail: SalesOrderD
             : null;
         return {
             LineKey,
-            SequenceNo,
+            LineSeqNo,
             ItemCode,
             WarehouseCode,
             CommentText,

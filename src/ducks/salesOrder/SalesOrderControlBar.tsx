@@ -39,7 +39,7 @@ const SalesOrderControlBar = () => {
 
     const submitHandler = (ev: FormEvent) => {
         ev.preventDefault();
-        dispatch(loadSalesOrder(so.padStart(7, '0')));
+        dispatch(loadSalesOrder(so.trim().padStart(7, '0')));
     }
 
     const handleGenerateStickers = () => {
@@ -53,6 +53,7 @@ const SalesOrderControlBar = () => {
                     <div className="input-group input-group-sm">
                         <div className="input-group-text">SO#</div>
                         <input type="search" value={so} className="form-control"
+                               maxLength={7} minLength={6}
                                onChange={(ev) => setSO(ev.target.value)}/>
                         <SpinnerButton type="submit" color="primary" spinning={loading} size="sm">Load</SpinnerButton>
                     </div>

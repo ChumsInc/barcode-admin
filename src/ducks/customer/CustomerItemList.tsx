@@ -22,6 +22,7 @@ import Decimal from "decimal.js";
 import is_number from "is-number";
 import NotesBadge from "../../components/NotesBadge";
 import {formatGTIN} from "@chumsinc/gtin-tools";
+import ItemStickerIcons from "./ItemStickerIcons";
 
 const CustomerItemMSRP = ({
                               msrp,
@@ -83,6 +84,9 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
     if (customer.reqCustom4) {
         fields.push({field: 'Custom4', title: customer.custom4Name, sortable: true});
     }
+    fields.push({
+        field: 'itemSticker', title: 'Stickers', render: (row) => <ItemStickerIcons item={row} />
+    })
     fields.push({
         field: 'ProductStatus', title: 'Status', sortable: true,
         render: (item) => <CustomerItemBadges inactiveItem={item.InactiveItem}

@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import {selectCurrentCustomer, selectCustomerItem} from "./selectors";
 import {assignNextUPC} from "./actions";
 import {customerKey} from "../../utils/customer";
+import classNames from "classnames";
 
 const AssignNextUPCButton = () => {
     const dispatch = useAppDispatch();
@@ -16,7 +17,7 @@ const AssignNextUPCButton = () => {
     const id = useId();
     const [open, setOpen] = useState(false);
 
-    if (!currentCustomer || !item || !canAssignUPC) {
+    if (!currentCustomer || !item || !canAssignUPC || item.InactiveItem === 'Y' || item.ProductType === 'D') {
         return null;
     }
 
@@ -25,13 +26,14 @@ const AssignNextUPCButton = () => {
         dispatch(assignNextUPC(item));
     }
 
+    const disabled = !item.ItemCode || !item.ID || !!item.UPC;
     return (
         <>
             <button type="button"
-                    className="btn btn-sm btn-warning"
+                    className={classNames("btn btn-sm btn-warning", {'btn-warning': !disabled, 'btn-outline-warning': disabled})}
                     title="Assign new custom UPC"
                     onClick={() => setOpen(true)}
-                    disabled={!item.ItemCode || !item.ID || !!item.UPC}>
+                    disabled={disabled}>
                 <span className="bi-house-gear-fill"/>
             </button>
             <Dialog open={open} onClose={() => setOpen(false)}

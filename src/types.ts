@@ -82,7 +82,7 @@ export interface GenerateStickerProps {
 }
 
 export type SalesOrderDetailBarcodeItem = Pick<SalesOrderDetailLine,
-    'LineKey' | 'ItemCode' | 'CommentText' | 'ItemType' | 'BinLocation' | 'UnitOfMeasure' | 'UnitOfMeasureConvFactor'
+    'LineKey' | 'LineSeqNo' | 'ItemCode' | 'CommentText' | 'ItemType' | 'BinLocation' | 'UnitOfMeasure' | 'UnitOfMeasureConvFactor'
     | 'SequenceNo' | 'WarehouseCode' | 'QuantityOrdered' | 'QuantityShipped'>
 
 export interface BarcodeSODetailLine extends SalesOrderDetailBarcodeItem {

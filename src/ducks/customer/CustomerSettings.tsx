@@ -1,6 +1,6 @@
 import React, {ChangeEvent, FormEvent, useEffect, useId, useState} from 'react';
 import {useAppDispatch} from "../../app/configureStore";
-import {BarcodeCustomerSettings} from "chums-types";
+import {BarcodeCustomerSettings, Editable} from "chums-types";
 import {newCustomer} from "../customers/utils";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer, selectCustomerItemsCount} from "./selectors";
@@ -16,10 +16,8 @@ import {loadCustomers} from "../customers/actions";
 import InactiveCustomerAlert from "./InactiveCustomerAlert";
 import {selectCanEdit} from "../user";
 import ReloadCustomerButton from "./ReloadCustomerButton";
+import StickerToggleButton from "./StickerToggleButton";
 
-interface EditableCustomerSettings extends BarcodeCustomerSettings {
-    changed?: boolean;
-}
 
 const CustomerSettings = () => {
     function isDuplicate(customer: BarcodeCustomerSettings, customerList: BarcodeCustomerList): boolean {
@@ -27,7 +25,7 @@ const CustomerSettings = () => {
     }
 
     const dispatch = useAppDispatch();
-    const [customer, setCustomer] = useState<EditableCustomerSettings>({...newCustomer});
+    const [customer, setCustomer] = useState<BarcodeCustomerSettings & Editable>({...newCustomer});
     const canEdit = useSelector(selectCanEdit);
     const itemsCount = useSelector(selectCustomerItemsCount);
     const [customerSearch, setCustomerSearch] = useState(customerKey(customer));
@@ -174,54 +172,56 @@ const CustomerSettings = () => {
                             <FormCheck type="checkbox" label="Item Code" checked={true} onChange={noop} readOnly/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="Alt Item No" checked={!!customer.reqAltItemNumber}
+                            <FormCheck type="checkbox" label="Alt Item No" checked={customer.reqAltItemNumber}
                                        onChange={toggleCustomer('reqAltItemNumber')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="Description" checked={!!customer.reqItemDescription}
+                            <FormCheck type="checkbox" label="Description" checked={customer.reqItemDescription}
                                        onChange={toggleCustomer('reqItemDescription')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="Color" checked={!!customer.reqColor}
+                            <FormCheck type="checkbox" label="Color" checked={customer.reqColor}
                                        onChange={toggleCustomer('reqColor')} readOnly={!canEdit}/>
+                        </div>
+                        <div className="my-1">
                         </div>
                     </div>
                     <div className="col-lg-4">
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="SKU" checked={!!customer.reqSKU}
+                            <FormCheck type="checkbox" label="SKU" checked={customer.reqSKU}
                                        onChange={toggleCustomer('reqSKU')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="Customer Part No" checked={!!customer.reqCustomerPart}
+                            <FormCheck type="checkbox" label="Customer Part No" checked={customer.reqCustomerPart}
                                        onChange={toggleCustomer('reqCustomerPart')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="UPC" checked={!!customer.reqUPC}
+                            <FormCheck type="checkbox" label="UPC" checked={customer.reqUPC}
                                        onChange={toggleCustomer('reqUPC')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="MSRP" checked={!!customer.reqMSRP}
+                            <FormCheck type="checkbox" label="MSRP" checked={customer.reqMSRP}
                                        onChange={toggleCustomer('reqMSRP')} readOnly={!canEdit}/>
                         </div>
                     </div>
                     <div className="col-lg-4">
                         <div className="my-1">
                             <CustomOptionSetting name="Custom 1"
-                                                 required={!!customer.reqCustom1}
+                                                 required={customer.reqCustom1}
                                                  onChangeRequired={toggleCustomer('reqCustom1')}
                                                  value={customer.custom1Name}
                                                  onChangeValue={onChangeCustomer('custom1Name')}/>
                         </div>
                         <div className="my-1">
                             <CustomOptionSetting name="Custom 2"
-                                                 required={!!customer.reqCustom2}
+                                                 required={customer.reqCustom2}
                                                  onChangeRequired={toggleCustomer('reqCustom2')}
                                                  value={customer.custom2Name}
                                                  onChangeValue={onChangeCustomer('custom2Name')}/>
                         </div>
                         <div className="my-1">
                             <CustomOptionSetting name="Custom 3"
-                                                 required={!!customer.reqCustom3}
+                                                 required={customer.reqCustom3}
                                                  onChangeRequired={toggleCustomer('reqCustom3')}
                                                  value={customer.custom3Name}
                                                  onChangeValue={onChangeCustomer('custom3Name')}/>
@@ -229,15 +229,28 @@ const CustomerSettings = () => {
                         </div>
                         <div className="my-1">
                             <CustomOptionSetting name="Custom 4"
-                                                 required={!!customer.reqCustom4}
+                                                 required={customer.reqCustom4}
                                                  onChangeRequired={toggleCustomer('reqCustom4')}
                                                  value={customer.custom4Name}
                                                  onChangeValue={onChangeCustomer('custom4Name')}/>
                         </div>
                     </div>
                 </div>
+                <div className="mt-3">
+                    <hr/>
+                    <h4>Customer Sticker Settings</h4>
+                    <div>
+                        <div className="btn-group btn-group-sm me-5">
+                            <StickerToggleButton checked={customer.itemStickerAll ?? false} onChange={toggleCustomer('itemStickerAll')} icon="bi-1-square" disabled={!canEdit} />
+                            <StickerToggleButton checked={customer.bagStickerAll ?? false} onChange={toggleCustomer('bagStickerAll')} icon="bi-bag" disabled={!canEdit} />
+                            <StickerToggleButton checked={customer.caseStickerAll ?? false} onChange={toggleCustomer('caseStickerAll')} icon="bi-box" disabled={!canEdit} />
+                        </div>
+                        <small>Require stickers for all items if checked</small>
+                    </div>
+                </div>
             </form>
             <div>
+                <hr />
                 <Alert color="info">
                     <strong>Configured items</strong>: {itemsCount}
                 </Alert>

@@ -21,6 +21,7 @@ import StickerItemComment from "./StickerItemComment";
 import MissingItemAlert from "./MissingItemAlert";
 import SalesOrderCustomerAlert from "./SalesOrderCustomerAlert";
 import classNames from "classnames";
+import ItemStickerIcons from "../customer/ItemStickerIcons";
 
 const getColumns = (customer: BarcodeCustomerSettings | null) => {
     const fields: SortableTableField<SODetailTableField>[] = [
@@ -46,7 +47,8 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
                 <StickerQuantityInput lineKey={row.LineKey} stickerQty={row.stickerQty}
                                       disabled={!row.item || row.ItemType !== '1'}/>
             )
-        }
+        },
+        {field: 'itemSticker', title: 'Stickers', render: (row) => <ItemStickerIcons item={row.item} />}
     ];
     if (!customer) {
         return fields;

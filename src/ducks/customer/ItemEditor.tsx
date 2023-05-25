@@ -2,7 +2,7 @@ import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react'
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer, selectCustomerItem, selectCustomerLoading, selectItemAction} from "./selectors";
-import {BarcodeItem} from "chums-types";
+import {BarcodeItem, Editable} from "chums-types";
 import {newItem} from "./utils";
 import {Alert, FormColumn, SpinnerButton} from "chums-components";
 import {SageItem} from "../../types";
@@ -16,6 +16,7 @@ import ItemInput from "./ItemInput";
 import RemoveItemDialog from "./RemoveItemDialog";
 import {TextareaAutosize} from "@mui/material";
 import AssignNextUPCButton from "./AssignNextUPCButton";
+import StickerToggleButton from "./StickerToggleButton";
 
 export interface EditableItem extends BarcodeItem {
     changed?: boolean;
@@ -31,7 +32,7 @@ const ItemEditor = () => {
     const canEdit = useSelector(selectCanEdit);
 
 
-    const [barcodeItem, setBarcodeItem] = useState<EditableItem>({...newItem, CustomerID: settings?.id});
+    const [barcodeItem, setBarcodeItem] = useState<BarcodeItem & Editable>({...newItem, CustomerID: settings?.id});
     const [sageItem, setSageItem] = useState<SageItem | null>(null);
     const [locked, setLocked] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -59,6 +60,10 @@ const ItemEditor = () => {
 
     const changeHandler = (field: keyof BarcodeItem) => (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setBarcodeItem({...barcodeItem, [field]: ev.target.value, changed: true});
+    }
+
+    const toggleHandler = (field: keyof Pick<BarcodeItem, 'itemSticker' | 'bagSticker' | 'caseSticker'>) => (ev: ChangeEvent<HTMLInputElement>) => {
+        setBarcodeItem({...barcodeItem, [field]: ev.target.checked, changed: true});
     }
 
     const lockHandler = () => setLocked(!locked);
@@ -180,6 +185,19 @@ const ItemEditor = () => {
                     </button>
                     <AssignNextUPCButton/>
                 </ItemInput>
+                <FormColumn label="Stickers">
+                    <div className="btn-group btn-group-sm" role="group" aria-label="Toggle Required Stickers">
+                        <StickerToggleButton checked={barcodeItem.itemSticker || settings.itemStickerAll || false}
+                                             onChange={toggleHandler('itemSticker')} icon="bi-1-square"
+                                             disabled={settings.itemStickerAll}/>
+                        <StickerToggleButton checked={barcodeItem.bagSticker || settings.bagStickerAll || false}
+                                             onChange={toggleHandler('bagSticker')} icon="bi-bag"
+                                             disabled={settings.bagStickerAll}/>
+                        <StickerToggleButton checked={barcodeItem.caseSticker || settings.caseStickerAll || false}
+                                             onChange={toggleHandler('caseSticker')} icon="bi-box"
+                                             disabled={settings.caseStickerAll}/>
+                    </div>
+                </FormColumn>
                 <ItemInput field="Custom1" label={settings.custom1Name} value={barcodeItem.Custom1}
                            onChange={changeHandler('Custom1')}/>
                 <ItemInput field="Custom2" label={settings.custom2Name} value={barcodeItem.Custom2}

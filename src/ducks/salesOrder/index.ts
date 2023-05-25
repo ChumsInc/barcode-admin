@@ -14,7 +14,7 @@ import {
 } from "./actions";
 import {SortProps} from "chums-components";
 import {detailSorter, itemStickerQty} from "./utils";
-import {loadCustomer} from "../customer/actions";
+import {loadCustomer, removeCustomerItem, saveCustomerItem} from "../customer/actions";
 
 const defaultSODetailSort: SortProps<SODetailTableField> = {field: 'BinLocation', ascending: true};
 
@@ -114,7 +114,14 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
             state.saving = QueryStatus.uninitialized;
             state.qtyGenerated = null;
         })
-    ;
+        .addCase(saveCustomerItem.fulfilled, (state, action) => {
+            state.detail = parseSalesOrderLines(action.payload || {}, state.detail, state.extra)
+                .sort(detailSorter(state.sort));
+        })
+        .addCase(removeCustomerItem.fulfilled, (state, action) => {
+            state.detail = parseSalesOrderLines(action.payload || {}, state.detail, state.extra)
+                .sort(detailSorter(state.sort));
+        })
 
 });
 

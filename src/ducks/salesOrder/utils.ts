@@ -17,14 +17,14 @@ export const detailSorter = (sort: SortProps<SODetailTableField>) => (a: Barcode
     const sortMod = ascending ? 1 : -1;
     switch (field) {
     case 'LineKey':
-    case 'SequenceNo':
+    case 'LineSeqNo':
         return (a[field] > b[field] ? 1 : -1) * sortMod;
     case 'ItemCode':
     case 'BinLocation':
     case 'UnitOfMeasure':
         return (
             a[field].toLowerCase() === b[field].toLowerCase()
-                ? (a.SequenceNo > b.SequenceNo ? 1 : -1)
+                ? (a.LineSeqNo > b.LineSeqNo ? 1 : -1)
                 : (a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1)
         ) * sortMod;
     case 'AltItemCode':
@@ -39,15 +39,15 @@ export const detailSorter = (sort: SortProps<SODetailTableField>) => (a: Barcode
     case 'Custom3':
     case 'Custom4':
         if (!a.item || !b.item) {
-            return (a.SequenceNo > b.SequenceNo ? 1 : -1) * sortMod;
+            return (a.LineSeqNo > b.LineSeqNo ? 1 : -1) * sortMod;
         }
         return (
             a.item[field].toLowerCase() === b.item[field].toLowerCase()
-                ? (a.SequenceNo > b.SequenceNo ? 1 : -1)
+                ? (a.LineSeqNo > b.LineSeqNo ? 1 : -1)
                 : (a.item[field].toLowerCase() > b.item[field].toLowerCase() ? 1 : -1)
         ) * sortMod;
     default:
-        return (a.SequenceNo > b.SequenceNo ? 1 : -1) * sortMod;
+        return (a.LineSeqNo > b.LineSeqNo ? 1 : -1) * sortMod;
     }
 }
 
