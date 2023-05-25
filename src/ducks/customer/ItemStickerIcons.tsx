@@ -12,20 +12,20 @@ const ItemStickerIcons = ({item}: { item?: BarcodeItem }) => {
         <div>
             <span className={classNames('me-1', {
                 'bi-1-square': !(itemSticker || itemStickerAll),
-                'bi-1-square-fill': itemSticker || itemStickerAll,
                 'text-black-50': !(itemSticker || itemStickerAll),
+                'bi-1-square-fill': itemSticker || itemStickerAll,
                 'text-primary': itemSticker || itemStickerAll
             })}/>
             <span className={classNames('me-1', {
-                'bi-bag': !(bagSticker || itemStickerAll),
-                'bi-bag-fill': bagSticker || bagStickerAll,
+                'bi-bag': !(bagSticker || bagStickerAll),
                 'text-black-50': !(bagSticker || bagStickerAll),
+                'bi-bag-fill': bagSticker || bagStickerAll,
                 'text-primary': bagSticker || bagStickerAll
             })}/>
             <span className={classNames('me-1', {
                 'bi-box': !(caseSticker || caseStickerAll),
-                'bi-box-fill': caseSticker || caseStickerAll,
                 'text-black-50': !(caseSticker || caseStickerAll),
+                'bi-box-fill': caseSticker || caseStickerAll,
                 'text-primary': caseSticker || caseStickerAll
             })}/>
         </div>
