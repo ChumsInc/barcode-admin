@@ -42,7 +42,7 @@ export const itemSorter = ({field, ascending}: SortProps<BarcodeItem>) =>
     }
 
 export const itemFilter = (filter: string) => (item: BarcodeItem) => {
-    return item.ItemCode.toLowerCase().includes(filter)
+    return item.ItemCode.toLowerCase().includes(filter.toLowerCase())
         || item.ItemDescription.toLowerCase().includes(filter.toLowerCase())
         || item.UPC.toLowerCase().includes(filter.toLowerCase());
 }
