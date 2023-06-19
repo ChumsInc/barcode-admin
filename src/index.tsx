@@ -6,6 +6,7 @@ import App from './app/App';
 import store from './app/configureStore'
 import CssBaseline from "@mui/material/CssBaseline";
 
+
 window.localStorage.setItem('debug', '*');
 const container = document.getElementById('app');
 const root = createRoot(container!);
@@ -13,10 +14,7 @@ const root = createRoot(container!);
 root.render(
     <React.StrictMode>
         <Provider store={store}>
-            <Router>
-                <CssBaseline />
-                <App/>
-            </Router>
+            <App/>
         </Provider>
     </React.StrictMode>
 );
