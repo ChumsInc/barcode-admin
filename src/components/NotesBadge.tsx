@@ -1,5 +1,6 @@
 import React, {MouseEvent, useId, useState} from 'react';
-import {Popover, Typography} from "@mui/material";
+import Popover from "@mui/material/Popover";
+import Typography from "@mui/material/Typography";
 import {BootstrapBGColor} from "chums-components";
 import classNames from "classnames";
 

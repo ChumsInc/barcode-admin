@@ -14,7 +14,7 @@ import {removeCustomerItem, saveCustomerItem} from "./actions";
 import ExistingItemAlert from "./ExistingItemAlert";
 import ItemInput from "./ItemInput";
 import RemoveItemDialog from "./RemoveItemDialog";
-import {TextareaAutosize} from "@mui/material";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
 import AssignNextUPCButton from "./AssignNextUPCButton";
 import StickerToggleButton from "./StickerToggleButton";
 

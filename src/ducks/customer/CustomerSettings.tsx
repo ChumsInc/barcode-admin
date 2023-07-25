@@ -3,26 +3,34 @@ import {useAppDispatch} from "../../app/configureStore";
 import {BarcodeCustomerSettings, Editable} from "chums-types";
 import {newCustomer} from "../customers/utils";
 import {useSelector} from "react-redux";
-import {selectCurrentCustomer, selectCustomerItemsCount} from "./selectors";
+import {
+    selectCurrentCustomer,
+    selectCustomerItemsCount,
+    selectCustomerLoading,
+    selectCustomerSaving
+} from "./selectors";
 import {customerKey} from "../../utils/customer";
 import CustomerAutocomplete from "../../components/CustomerAutocomplete";
 import {BarcodeCustomerList, SearchCustomer} from "../../types";
-import {TextareaAutosize} from "@mui/material";
+import {TextareaAutosize, TextField} from "@mui/material";
 import {Alert, FormCheck, noop} from "chums-components";
 import CustomOptionSetting from "../../components/CustomOptionSetting";
 import {saveCustomer} from "./actions";
-import {selectCustomerList, selectCustomersLoaded, selectCustomersLoading} from "../customers/selectors";
+import {selectCustomerList, selectCustomersLoaded} from "../customers/selectors";
 import {loadCustomers} from "../customers/actions";
 import InactiveCustomerAlert from "./InactiveCustomerAlert";
 import {selectCanEdit} from "../user";
 import ReloadCustomerButton from "./ReloadCustomerButton";
 import StickerToggleButton from "./StickerToggleButton";
+import Button from "@mui/material/Button";
+import CustomerProgressBar from "./CustomerProgressBar";
 
+
+function isDuplicate(customer: BarcodeCustomerSettings, customerList: BarcodeCustomerList): boolean {
+    return !!customerList[customerKey(customer)] && customerList[customerKey(customer)].id !== customer.id;
+}
 
 const CustomerSettings = () => {
-    function isDuplicate(customer: BarcodeCustomerSettings, customerList: BarcodeCustomerList): boolean {
-        return !!customerList[customerKey(customer)] && customerList[customerKey(customer)].id !== customer.id;
-    }
 
     const dispatch = useAppDispatch();
     const [customer, setCustomer] = useState<BarcodeCustomerSettings & Editable>({...newCustomer});
@@ -32,8 +40,9 @@ const CustomerSettings = () => {
     const current = useSelector(selectCurrentCustomer);
     const customerList = useSelector(selectCustomerList);
     const loaded = useSelector(selectCustomersLoaded);
-    const loading = useSelector(selectCustomersLoading);
-    const [duplicate, setDuplicate] = useState(isDuplicate(customer, customerList));
+    const loading = useSelector(selectCustomerLoading);
+    const saving = useSelector(selectCustomerSaving);
+    const [customerExists, setCustomerExists] = useState(isDuplicate(customer, customerList));
     const activeId = useId();
 
     useEffect(() => {
@@ -47,7 +56,7 @@ const CustomerSettings = () => {
     }, [current]);
 
     useEffect(() => {
-        setDuplicate(isDuplicate(customer, customerList));
+        setCustomerExists(isDuplicate(customer, customerList));
         setCustomerSearch(customerKey(customer));
     }, [customer, customerList])
 
@@ -66,7 +75,8 @@ const CustomerSettings = () => {
 
         setCustomer({...customer, [field]: !customer[field], changed: true});
     }
-    const onSelectHandler = (searchCustomer?: SearchCustomer) => {
+    const onSelectHandler = (searchCustomer?: SearchCustomer | null) => {
+        console.debug('onSelectHandler()', searchCustomer);
         if (!canEdit) {
             return;
         }
@@ -100,12 +110,13 @@ const CustomerSettings = () => {
             <form onSubmit={saveHandler}>
                 {!!customer.CustomerNo && <h2>{customer.CustomerName} ({customerKey(customer)})</h2>}
                 {!customer.CustomerNo && <h2>New Customer</h2>}
-                <div className="row g-3 align-items-baseline mt-3">
-                    <div className="col-auto">ID</div>
-                    <div className="col-auto text-secondary">{customer.id || 'NEW'}</div>
-                    <div className="col-auto">Account No</div>
+                <div className="row g-3 align-items-baseline mt-3 mb-1">
                     <div className="col-auto">
-                        <CustomerAutocomplete customer={customer} onSelectCustomer={onSelectHandler}/>
+                        <TextField size="small" variant="filled" inputProps={{readOnly: true}} label="ID"
+                                   value={customer.id ?? 'NEW'}/>
+                    </div>
+                    <div className="col-auto">
+                        <CustomerAutocomplete customer={customer} onSelectCustomer={onSelectHandler} required/>
                     </div>
                     <div className="col-auto">
                         <div className="form-check form-check-inline">
@@ -116,23 +127,23 @@ const CustomerSettings = () => {
 
                     </div>
                     <div className="col-auto">
-                        <button type="submit" className="btn btn-sm btn-primary"
-                                disabled={duplicate}>
+                        <Button type="submit" variant="outlined" size="small" disabled={customerExists}>
                             Save
-                        </button>
+                        </Button>
                     </div>
                     <div className="col-auto">
                         <ReloadCustomerButton/>
                     </div>
-                    {!duplicate && customer.changed && (
+                    {!customerExists && customer.changed && (
                         <div className="col">
                             <Alert color="warning"><strong className="me-3">Changed!</strong>Don't forget to
                                 save.</Alert>
                         </div>
                     )}
                 </div>
+                <CustomerProgressBar/>
                 <InactiveCustomerAlert/>
-                {duplicate && (
+                {customerExists && (
                     <Alert color="danger">
                         <strong className="me-3">Heads Up!</strong>
                         {customerList[customerKey(customer)].CustomerName} ({customerKey(customerList[customerKey(customer)])})
@@ -241,16 +252,22 @@ const CustomerSettings = () => {
                     <h4>Customer Sticker Settings</h4>
                     <div>
                         <div className="btn-group btn-group-sm me-5">
-                            <StickerToggleButton checked={customer.itemStickerAll ?? false} onChange={toggleCustomer('itemStickerAll')} icon="bi-1-square" disabled={!canEdit} />
-                            <StickerToggleButton checked={customer.bagStickerAll ?? false} onChange={toggleCustomer('bagStickerAll')} icon="bi-bag" disabled={!canEdit} />
-                            <StickerToggleButton checked={customer.caseStickerAll ?? false} onChange={toggleCustomer('caseStickerAll')} icon="bi-box" disabled={!canEdit} />
+                            <StickerToggleButton checked={customer.itemStickerAll ?? false}
+                                                 onChange={toggleCustomer('itemStickerAll')} icon="bi-1-square"
+                                                 disabled={!canEdit}/>
+                            <StickerToggleButton checked={customer.bagStickerAll ?? false}
+                                                 onChange={toggleCustomer('bagStickerAll')} icon="bi-bag"
+                                                 disabled={!canEdit}/>
+                            <StickerToggleButton checked={customer.caseStickerAll ?? false}
+                                                 onChange={toggleCustomer('caseStickerAll')} icon="bi-box"
+                                                 disabled={!canEdit}/>
                         </div>
                         <small>Require stickers for all items if checked</small>
                     </div>
                 </div>
             </form>
             <div>
-                <hr />
+                <hr/>
                 <Alert color="info">
                     <strong>Configured items</strong>: {itemsCount}
                 </Alert>

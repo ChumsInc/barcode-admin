@@ -3,13 +3,18 @@ import {SearchCustomer} from "../types";
 import {fetchCustomerLookup} from "../api/customer";
 import {customerKey} from "../utils/customer";
 import AutoComplete from "./AutoComplete";
+import Autocomplete from "@mui/material/Autocomplete";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import TextField from "@mui/material/TextField";
+import {FilledInputProps} from "@mui/material/FilledInput/FilledInput";
 
 const BarcodeCustomerAutocomplete = AutoComplete<SearchCustomer>;
 
-export interface CustomerAutocompleteProps extends HTMLAttributes<HTMLInputElement> {
-    customer: SearchCustomer;
+export interface CustomerAutocompleteProps extends FilledInputProps {
+    customer: SearchCustomer | null;
     onChange?: (ev: ChangeEvent<HTMLInputElement>) => void;
-    onSelectCustomer: (customer?: SearchCustomer) => void;
+    onSelectCustomer: (customer?: SearchCustomer|null) => void;
     children?: React.ReactNode;
 }
 
@@ -18,19 +23,26 @@ const CustomerAutocomplete = ({
                                   onChange,
                                   onSelectCustomer,
                                   children,
-                                  ...props
+                                  ...inputProps
                               }: CustomerAutocompleteProps) => {
-    const [value, setValue] = useState(customerKey(customer));
-    const [results, setResults] = useState<SearchCustomer[]>([]);
+    const [value, setValue] = useState<SearchCustomer | null>(customer);
+    const [hint, setHint] = useState<SearchCustomer|null>(null);
+    const [inputValue, setInputValue] = useState('');
+    const [open, setOpen] = useState(false);
+
+
+    const [results, setResults] = useState<readonly SearchCustomer[]>([]);
     const [loading, setLoading] = useState(false);
     const [tHandle, setTHandle] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
     const id = useId();
 
     useEffect(() => {
-        setValue(customerKey(customer));
-        loadCustomerSearch(customerKey(customer));
-    }, [customer.ARDivisionNo, customer.CustomerNo, customer.CustomerName, customer.Company]);
+        setValue(customer);
+        if (customer) {
+            loadCustomerSearch(customerKey(customer));
+        }
+    }, [customer]);
 
     useEffect(() => {
         return () => {
@@ -39,71 +51,74 @@ const CustomerAutocomplete = ({
     }, [])
 
     useEffect(() => {
-        if (value.length < 2) {
+        if (inputValue.length < 2) {
             return;
         }
         window.clearTimeout(tHandle);
-        const t = window.setTimeout(() => loadCustomerSearch(value), 350);
+        const t = window.setTimeout(() => loadCustomerSearch(inputValue), 350);
         setTHandle(t);
-    }, [value]);
+    }, [inputValue]);
 
-    const loadCustomerSearch = (value: string) => {
+
+    const loadCustomerSearch = async (value: string) => {
         if (loading) {
             return;
         }
         setLoading(true);
-        fetchCustomerLookup(value)
-            .then(results => {
-                setResults(results);
-                setLoading(false);
-                const [customer] = results.filter(customer => customerKey(customer) === value);
-                onSelectCustomer(customer);
-            })
-            .catch((err: unknown) => {
-                setLoading(false);
-                if (err instanceof Error) {
-                    console.log(err.message);
-                }
-            });
-    }
-
-    const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => {
-        setValue(ev.target.value);
-        if (onChange) {
-            onChange(ev);
+        try {
+            const results = await fetchCustomerLookup(value);
+            setResults(results);
+            const [hint] = results.filter(c => c.CustomerName.startsWith(value) || customerKey(c).startsWith(value));
+            setHint(hint ?? null);
+            setLoading(false);
+        } catch (err: unknown) {
+            setLoading(false);
+            if (err instanceof Error) {
+                console.debug("loadCustomerSearch()", err.message);
+            }
         }
-    }
-    const recordChangeHandler = (customer?: SearchCustomer) => {
-        if (customer) {
-            setValue(customerKey(customer))
-        }
-    }
-
-    const customerFilter = (value: string) => (row: SearchCustomer) => {
-        console.log(row);
-        return !row
-            || customerKey(row).toLowerCase().startsWith(value.toLowerCase())
-            || row.CustomerName?.toLowerCase().includes(value.toLowerCase());
-    }
-
-    const renderItem = (row: SearchCustomer) => {
-        return (
-            <div><strong className="me-3">{customerKey(row)}</strong>{row.CustomerName}</div>
-        )
     }
 
     return (
-        <div className="input-group input-group-sm" ref={containerRef}>
-            <span className="input-group-text">
-                <span className="bi-search"/>
-            </span>
-            <BarcodeCustomerAutocomplete containerRef={containerRef} {...props}
-                                          value={value} data={results} onChange={changeHandler}
-                                          onChangeRecord={recordChangeHandler}
-                                          renderItem={renderItem}
-                                          itemKey={row => customerKey(row)} filter={customerFilter}/>
-            {children}
-        </div>
+        <Autocomplete open={open} onOpen={() => setOpen(true)} size="small"
+                      onClose={() => setOpen(false)}
+                      loading={loading}
+                      isOptionEqualToValue={(option, value) => !!value && customerKey(option) === customerKey(value)}
+                      value={value}
+                      onKeyDown={(ev) => {
+                          if (ev.key === 'Tab' && hint) {
+                              setInputValue(customerKey(hint));
+                              onSelectCustomer(hint);
+                          }
+                      }}
+                      onChange={(ev: any, newValue: SearchCustomer | null) => {
+                          setValue(newValue);
+                          onSelectCustomer(newValue);
+                      }}
+                      onInputChange={(ev, newInputValue) => {
+                          setInputValue(newInputValue);
+                      }}
+                      filterOptions={(x) => x}
+                      getOptionLabel={(option) => typeof option === 'string' ? option : customerKey(option)}
+                      renderInput={
+                          (params) => <TextField {...params} variant="filled" sx={{width: '25rem'}}
+                                                 label="Customer No" InputProps={{
+                              ...inputProps,
+                              ...params.InputProps,
+                              endAdornment: (<>
+                                  {loading ? <CircularProgress color="inherit" size="20"/> : null}
+                                  {params.InputProps.endAdornment}
+                              </>)
+                          }}/>
+                      }
+                      renderOption={(props, option) => (
+                          <Box component="li" {...props}
+                               style={{display: 'flex', justifyContent: 'space-between', width: '100%', flexShrink: 0}}>
+                              <Box><strong>{customerKey(option)}</strong></Box>
+                              <Box sx={{ml: 2}}>{option.CustomerName}</Box>
+                          </Box>
+                      )}
+                      options={results}/>
     )
 
 }

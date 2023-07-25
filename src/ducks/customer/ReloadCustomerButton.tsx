@@ -3,7 +3,7 @@ import {useAppDispatch} from "../../app/configureStore";
 import {loadCustomer} from "./actions";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer, selectCustomerLoading} from "./selectors";
-import {SpinnerButton} from "chums-components";
+import Button from "@mui/material/Button";
 
 const ReloadCustomerButton = () => {
     const dispatch = useAppDispatch();
@@ -15,11 +15,10 @@ const ReloadCustomerButton = () => {
     }
 
     return (
-        <SpinnerButton type="button" size="sm" color="outline-primary"
-                       spinning={loading}
-                       onClick={() => dispatch(loadCustomer(currentCustomer?.id))}>
+        <Button type="button" size="small" variant="text"
+                onClick={() => dispatch(loadCustomer(currentCustomer?.id))}>
             Reload Customer
-        </SpinnerButton>
+        </Button>
     )
 }
 

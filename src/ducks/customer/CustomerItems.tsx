@@ -7,6 +7,7 @@ import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "./selectors";
 import ReloadCustomerButton from "./ReloadCustomerButton";
 import CustomerInfo from "./CustomerInfo";
+import CustomerProgressBar from "./CustomerProgressBar";
 
 const CustomerItems = () => {
     const customer = useSelector(selectCurrentCustomer);
@@ -25,6 +26,7 @@ const CustomerItems = () => {
                     <ReloadCustomerButton/>
                 </div>
             </div>
+            <CustomerProgressBar />
             {customer?.active && (
                 <div className="row g-3">
                     <div className="col-6 col-md-7 col-lg-8 col-xl-9">
