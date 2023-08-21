@@ -136,6 +136,7 @@ const SalesOrderDetailTable = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [fields, setFields] = useState(getColumns(settings));
+    const [shipTo, setShipTo] = useState('');
 
     useEffect(() => {
         setFields(getColumns(settings));

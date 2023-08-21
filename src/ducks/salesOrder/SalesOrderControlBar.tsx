@@ -1,14 +1,14 @@
-import React, {FormEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useEffect, useId, useState} from 'react';
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
 import {
     selectDetailSort,
     selectExtraQuantity,
     selectSalesOrderLoading,
-    selectSalesOrderNo,
+    selectSalesOrderNo, selectShipTo, selectShipToList,
     selectStickerQty
 } from "./selectors";
-import {generateStickers, loadSalesOrder, setExtraStickers} from "./actions";
+import {generateStickers, loadSalesOrder, setExtraStickers, setShipTo} from "./actions";
 import {FormCheck, SpinnerButton} from "chums-components";
 import {useSearchParams} from "react-router-dom";
 import StickerQuantityGeneratedAlert from "./StickerQuantityGeneratedAlert";
@@ -23,6 +23,9 @@ const SalesOrderControlBar = () => {
     const count = useSelector(selectStickerQty);
     const [so, setSO] = useState(salesOrderNo);
     const [reversed, setReversed] = useState<boolean>(false);
+    const shipTo = useSelector(selectShipTo);
+    const shipToList = useSelector(selectShipToList);
+    const listId = useId();
 
 
     useEffect(() => {
@@ -36,6 +39,10 @@ const SalesOrderControlBar = () => {
         setSO(salesOrderNo);
         setSearchParams({salesOrderNo});
     }, [salesOrderNo]);
+
+    const handleChangeShipTo = (ev:ChangeEvent<HTMLInputElement>) => {
+        dispatch(setShipTo(ev.target.value));
+    }
 
     const submitHandler = (ev: FormEvent) => {
         ev.preventDefault();
@@ -68,7 +75,14 @@ const SalesOrderControlBar = () => {
                 </div>
             </div>
             <div className="col-auto">
-
+                <div className="input-group input-group-sm">
+                    <div className="input-group-text">Store</div>
+                    <input type="search" className="form-control form-control-sm"
+                           value={shipTo} onChange={handleChangeShipTo} list={listId} />
+                    <datalist id={listId}>
+                        {shipToList.map(value => (<option key={value}>{value}</option>))}'
+                    </datalist>
+                </div>
             </div>
             <div className="col-auto">
                 Sort: <strong>{sort.field}</strong>

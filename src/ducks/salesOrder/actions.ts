@@ -12,7 +12,13 @@ import {SortProps} from "chums-components";
 import {RootState} from "../../app/configureStore";
 import {selectCurrentCustomer, selectCustomerItems} from "../customer/selectors";
 import Decimal from "decimal.js";
-import {selectExtraQuantity, selectSalesOrder, selectSalesOrderDetailItems, selectSalesOrderLoading} from "./selectors";
+import {
+    selectExtraQuantity,
+    selectSalesOrder,
+    selectSalesOrderDetailItems,
+    selectSalesOrderLoading,
+    selectShipTo
+} from "./selectors";
 import {itemStickerQty} from "./utils";
 
 export function parseSalesOrderLines(items: BarcodeItemList, detail: SalesOrderDetailBarcodeItem[], extra: number): BarcodeSODetailLine[] {
@@ -29,6 +35,7 @@ export function parseSalesOrderLines(items: BarcodeItemList, detail: SalesOrderD
             WarehouseCode,
             QuantityOrdered,
             QuantityShipped,
+            UDF_SHIP_CODE,
         } = row;
         const Quantity = new Decimal(QuantityOrdered).sub(QuantityShipped).toString();
         const stickerQty = !!items[ItemCode]
@@ -50,6 +57,7 @@ export function parseSalesOrderLines(items: BarcodeItemList, detail: SalesOrderD
             item: items[row.ItemCode],
             selected: false,
             stickerQty,
+            UDF_SHIP_CODE,
         }
     })
 }
@@ -97,8 +105,10 @@ export const generateStickers = createAsyncThunk<number, boolean>(
         const state = getState() as RootState;
         const currentCustomer = selectCurrentCustomer(state);
         const salesOrder = selectSalesOrder(state);
+        const shipTo = selectShipTo(state);
         const lines: BarcodeSOLineItem[] = selectSalesOrderDetailItems(state)
             .filter(row => row.selected && !!row.stickerQty && !!row.item)
+            .filter(row => !shipTo || row.UDF_SHIP_CODE === shipTo)
             .map(row => {
                 const {LineKey, item, Quantity, stickerQty} = row;
                 return {LineKey, item_id: item?.ID ?? 0, quantity: stickerQty ?? 0};
@@ -126,6 +136,8 @@ export const generateStickers = createAsyncThunk<number, boolean>(
 )
 
 export const setLineQty = createAction<{ lineKey: string; qty: number }>('salesOrder/setLineQty');
+
+export const setShipTo = createAction<string>('salesOrder/setShipTo');
 
 export const toggleLineSelected = createAction<{ lineKey: string; forced?: boolean }>('salesOrder/toggleLineSelected');
 export const toggleAllSelected = createAction<boolean>('salesOrder/toggleAllSelected');

@@ -8,7 +8,7 @@ import {
     parseSalesOrderLines,
     setExtraStickers,
     setLineQty,
-    setLineSort,
+    setLineSort, setShipTo,
     toggleAllSelected,
     toggleLineSelected
 } from "./actions";
@@ -26,8 +26,10 @@ export interface SalesOrderState {
     loading: QueryStatus;
     saving: QueryStatus;
     loaded: boolean;
+    shipTo: string;
     qtyGenerated: number|null;
-    sort: SortProps<SODetailTableField>
+    sort: SortProps<SODetailTableField>;
+    shipToList: string[]
 }
 
 const initialSalesOrderState: SalesOrderState = {
@@ -38,8 +40,10 @@ const initialSalesOrderState: SalesOrderState = {
     loading: QueryStatus.uninitialized,
     saving: QueryStatus.uninitialized,
     loaded: false,
+    shipTo: '',
     qtyGenerated: null,
     sort: {...defaultSODetailSort},
+    shipToList: [],
 }
 
 const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
@@ -49,6 +53,7 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
                 state.orderHeader = null;
                 state.detail = [];
                 state.loaded = false;
+                state.shipTo = '';
             }
             state.salesOrderNo = action.meta.arg;
             state.loading = QueryStatus.pending;
@@ -63,6 +68,12 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
             state.detail = action.payload?.detail ?? [];
             state.orderHeader = action.payload?.header ?? null;
             state.qtyGenerated = null;
+            state.shipToList = action.payload?.detail?.reduce((pv, cv) => {
+                if (!!cv.UDF_SHIP_CODE && !pv.includes(cv.UDF_SHIP_CODE)) {
+                    return [...pv, cv.UDF_SHIP_CODE].sort();
+                }
+                return pv;
+            }, [] as string[]) ?? [];
         })
         .addCase(setExtraStickers, (state, action) => {
             state.extra = action.payload;
@@ -88,7 +99,9 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
         })
         .addCase(toggleAllSelected, (state, action) => {
             state.detail = [
-                ...state.detail.filter(row => row.ItemType === '1' && !!row.item).map(row => ({...row, selected: action.payload})),
+                ...state.detail
+                    .filter(row => row.ItemType === '1' && !!row.item)
+                    .map(row => ({...row, selected: action.payload})),
                 ...state.detail.filter(row => row.ItemType !== '1' || !row.item),
             ].sort(detailSorter(state.sort))
         })
@@ -99,6 +112,8 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
         .addCase(loadCustomer.fulfilled, (state, action) => {
             state.detail = parseSalesOrderLines(action.payload?.items || {}, state.detail, state.extra)
                 .sort(detailSorter(state.sort));
+            state.shipTo = '';
+            state.shipToList = [];
         })
         .addCase(generateStickers.pending, (state, action) => {
             state.saving = QueryStatus.pending;
@@ -121,6 +136,9 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
         .addCase(removeCustomerItem.fulfilled, (state, action) => {
             state.detail = parseSalesOrderLines(action.payload || {}, state.detail, state.extra)
                 .sort(detailSorter(state.sort));
+        })
+        .addCase(setShipTo, (state, action) => {
+            state.shipTo = action.payload;
         })
 
 });
