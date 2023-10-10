@@ -49,7 +49,7 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
         return fields;
     }
     if (customer.reqItemDescription) {
-        fields.push({field: 'ItemDescription', title: 'Description', sortable: true});
+        fields.push({field: 'ItemDescription', title: 'Description', sortable: true, className: 'remove-whitespace'});
     }
     if (customer.reqAltItemNumber) {
         fields.push({field: 'AltItemCode', title: 'Alternate Item', sortable: true});

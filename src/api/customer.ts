@@ -121,7 +121,8 @@ export async function postCustomerItem(item:BarcodeItem):Promise<BarcodeItemList
             .replace(':customer_id', encodeURIComponent(item.CustomerID))
             .replace(':item_id', encodeURIComponent(item.ID));
         const method = item.ID ? 'PUT' : 'POST';
-        const res = await fetchJSON<{result?:BarcodeItem[]}>(url, {method, body: JSON.stringify(item)});
+        const body = JSON.stringify({...item, ItemDescription: item.ItemDescription.trim()})
+        const res = await fetchJSON<{result?:BarcodeItem[]}>(url, {method, body});
         return buildItemList(res.result ?? []);
     } catch(err:unknown) {
         if (err instanceof Error) {
