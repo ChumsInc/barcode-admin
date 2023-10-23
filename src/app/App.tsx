@@ -42,23 +42,22 @@ const App = () => {
     );
 
 
-
     return (
         <ErrorBoundary>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
+                <Router>
+                    <Routes>
+                        <Route path="/" element={<AppContent/>}>
+                            <Route index element={<CustomerList/>}/>
+                            <Route path="/:id/orders" element={<CustomerOrder />}/>
+                            <Route path="/:id/settings" element={<CustomerSettings />}/>
+                            <Route path="/:id/items" element={<CustomerItems />}/>
+                            <Route path="*" element={<h2>Not Found</h2>}/>
+                        </Route>
+                    </Routes>
+                </Router>
             </ThemeProvider>
-            <Router>
-                <Routes>
-                    <Route path="/" element={<AppContent/>}>
-                        <Route index element={<CustomerList/>}/>
-                        <Route path="/:id/orders" element={<CustomerOrder />}/>
-                        <Route path="/:id/settings" element={<CustomerSettings />}/>
-                        <Route path="/:id/items" element={<CustomerItems />}/>
-                        <Route path="*" element={<h2>Not Found</h2>}/>
-                    </Route>
-                </Routes>
-            </Router>
         </ErrorBoundary>
     )
 }
