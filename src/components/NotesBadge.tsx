@@ -3,7 +3,8 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import {BootstrapBGColor} from "chums-components";
 import classNames from "classnames";
-import {IconButton, Tooltip} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import NotesIcon from '@mui/icons-material/Notes';
 const NotesBadge = ({
 

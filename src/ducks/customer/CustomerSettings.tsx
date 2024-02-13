@@ -12,7 +12,8 @@ import {
 import {customerKey} from "../../utils/customer";
 import CustomerAutocomplete from "../../components/CustomerAutocomplete";
 import {BarcodeCustomerList, SearchCustomer} from "../../types";
-import {TextareaAutosize, TextField} from "@mui/material";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
+import TextField from "@mui/material/TextField";
 import {Alert, FormCheck, noop} from "chums-components";
 import CustomOptionSetting from "../../components/CustomOptionSetting";
 import {saveCustomer} from "./actions";
