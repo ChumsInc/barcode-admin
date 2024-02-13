@@ -26,10 +26,16 @@ import ItemStickerIcons from "../customer/ItemStickerIcons";
 const getColumns = (customer: BarcodeCustomerSettings | null) => {
     const fields: SortableTableField<SODetailTableField>[] = [
         {
-            field: 'SequenceNo',
+            field: 'LineKey',
             title: <StickerSelectToggleAll/>,
             sortable: false,
             render: (row) => <StickerSelectToggle lineKey={row.LineKey}/>
+        },
+        {
+            field: 'SequenceNo',
+            title: "Line",
+            sortable: true,
+            render: (row) => row.LineKey,
         },
         {
             field: 'ItemCode', title: 'Item', sortable: true, render: (row) => (
@@ -159,9 +165,10 @@ const SalesOrderDetailTable = () => {
             <SalesOrderComments/>
             <SalesOrderCustomerAlert/>
             <TablePagination page={page} onChangePage={pageChangeHandler} rowsPerPage={rowsPerPage}
+
                              onChangeRowsPerPage={rowsPerPageChangeHandler} count={detail.length}/>
-            <SortableTable fields={fields} data={detail.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                           rowClassName={(row) => classNames({'text-danger': !row.item})}
+            <SortableTable fields={fields} data={detail.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)} className="table-hover"
+                           rowClassName={(row) => classNames({'text-danger': !row.item, 'table-warning': !row.selected})}
                            currentSort={sort} keyField="LineKey" onChangeSort={(sort) => dispatch(setLineSort(sort))}
             />
         </div>

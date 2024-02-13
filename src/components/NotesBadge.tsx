@@ -3,7 +3,8 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import {BootstrapBGColor} from "chums-components";
 import classNames from "classnames";
-
+import {IconButton, Tooltip} from "@mui/material";
+import NotesIcon from '@mui/icons-material/Notes';
 const NotesBadge = ({
 
                         note,
@@ -32,25 +33,15 @@ const NotesBadge = ({
     if (!note) {
         return null;
     }
+
     return (
-        <div>
-            <div className={classNames("badge", {[`bg-${color}`]: !!color})} style={{cursor: 'pointer'}}
-                 onClick={handleToggle} aria-describedby={id}>
-                <span className="bi-card-text"/>
-            </div>
-            <Popover open={Boolean(badgeRef)} id={id} anchorEl={badgeRef} onClose={handleClose}
-                     anchorOrigin={{vertical: 'bottom', horizontal: 'left'}} onClick={handleClose}>
-                <Typography sx={{
-                    width: 400,
-                    maxWidth: '50vw',
-                    height: 'auto',
-                    whiteSpace: 'pre-wrap',
-                    m: 1,
-                    overflow: 'auto'
-                }}>{note}</Typography>
-            </Popover>
-        </div>
+        <Tooltip title={note}>
+            <IconButton color="info" size="small" sx={{color: 'white', backgroundColor: 'info.main'}}>
+                <NotesIcon />
+            </IconButton>
+        </Tooltip>
     )
+
 }
 
 export default NotesBadge;
