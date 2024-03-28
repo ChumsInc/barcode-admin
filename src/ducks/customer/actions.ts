@@ -7,7 +7,7 @@ import {
     postCustomerSettings,
     postGenNextUPC
 } from "../../api/customer";
-import {BarcodeCustomerResponse, BarcodeItemList, ColorUPCRecord, SortProps} from "../../types";
+import {BarcodeCustomerResponse, BarcodeItemList, ColorUPCRecord, CustomUPCBarcodeItem, SortProps} from "../../types";
 import {
     selectCurrentCustomer,
     selectCustomerLoading,
@@ -76,7 +76,7 @@ export const saveCustomerItem = createAsyncThunk<BarcodeItemList, BarcodeItem>(
     }
 )
 
-export const assignNextUPC = createAsyncThunk<void, BarcodeItem>(
+export const assignNextUPC = createAsyncThunk<void, CustomUPCBarcodeItem>(
     'customer/item/generateCustomUPC',
     async (arg, {getState, dispatch}) => {
         const state = getState() as RootState;

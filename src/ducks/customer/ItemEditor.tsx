@@ -17,6 +17,8 @@ import RemoveItemDialog from "./RemoveItemDialog";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import AssignNextUPCButton from "./AssignNextUPCButton";
 import StickerToggleButton from "./StickerToggleButton";
+import Tooltip from "@mui/material/Tooltip";
+import {formatGTIN} from "@chumsinc/gtin-tools";
 
 export interface EditableItem extends BarcodeItem {
     changed?: boolean;
@@ -164,26 +166,30 @@ const ItemEditor = () => {
                 </ItemInput>
                 <ItemInput field="UPC" label="UPC" value={barcodeItem.UPC} onChange={changeHandler('UPC')}
                            helpText="Automatically calculates check digits for numeric codes length 11-14, 16-18">
-                    <button type="button"
-                            className={classNames("btn btn-sm btn-outline-secondary", {
-                                'btn-secondary': barcodeItem.UPC === sageItem?.UDF_UPC,
-                                'btn-outline-secondary': barcodeItem.UPC !== sageItem?.UDF_UPC,
-                            })}
-                            title={sageItem?.UDF_UPC ?? undefined}
-                            disabled={!sageItem || !canEdit} onClick={setSageValue('UPC', 'UDF_UPC')}>
-                                <span
-                                    className={classNames("bi-chevron-left", {'text-light': barcodeItem.UPC === sageItem?.UDF_UPC})}/>
-                    </button>
-                    <button type="button"
-                            className={classNames("btn btn-sm", {
-                                'btn-info': barcodeItem.UPC === sageItem?.UDF_UPC_BY_COLOR,
-                                'btn-outline-info': barcodeItem.UPC !== sageItem?.UDF_UPC_BY_COLOR,
-                            })}
-                            title={sageItem?.UDF_UPC_BY_COLOR ?? undefined}
-                            disabled={!sageItem || !canEdit} onClick={setSageValue('UPC', 'UDF_UPC_BY_COLOR')}>
-                        <span className="bi-chevron-left"/>
-                    </button>
-                    <AssignNextUPCButton/>
+                    <Tooltip title={formatGTIN(sageItem?.UDF_UPC ?? '')}>
+                        <button type="button"
+                                className={classNames("btn btn-sm btn-outline-secondary", {
+                                    'btn-secondary': barcodeItem.UPC === sageItem?.UDF_UPC,
+                                    'btn-outline-secondary': barcodeItem.UPC !== sageItem?.UDF_UPC,
+                                })}
+                                title={sageItem?.UDF_UPC ?? undefined}
+                                disabled={!sageItem || !canEdit} onClick={setSageValue('UPC', 'UDF_UPC')}>
+                                    <span
+                                        className={classNames("bi-chevron-left", {'text-light': barcodeItem.UPC === sageItem?.UDF_UPC})}/>
+                        </button>
+                    </Tooltip>
+                    <Tooltip title={formatGTIN(sageItem?.UDF_UPC_BY_COLOR ?? '')}>
+                        <button type="button"
+                                className={classNames("btn btn-sm", {
+                                    'btn-info': barcodeItem.UPC === sageItem?.UDF_UPC_BY_COLOR,
+                                    'btn-outline-info': barcodeItem.UPC !== sageItem?.UDF_UPC_BY_COLOR,
+                                })}
+                                title={sageItem?.UDF_UPC_BY_COLOR ?? undefined}
+                                disabled={!sageItem || !canEdit} onClick={setSageValue('UPC', 'UDF_UPC_BY_COLOR')}>
+                            <span className="bi-chevron-left"/>
+                        </button>
+                    </Tooltip>
+                    <AssignNextUPCButton sageItem={sageItem}/>
                 </ItemInput>
                 <FormColumn label="Stickers">
                     <div className="btn-group btn-group-sm" role="group" aria-label="Toggle Required Stickers">

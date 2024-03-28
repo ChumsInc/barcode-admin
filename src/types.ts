@@ -128,3 +128,7 @@ export interface ColorUPCRecord {
     UDF_UPC: string|null;
     UDF_UPC_BY_COLOR: string|null;
 }
+
+export interface CustomUPCBarcodeItem extends BarcodeItem {
+    customItemCode?: string;
+}
