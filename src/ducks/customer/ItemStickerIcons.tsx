@@ -18,13 +18,13 @@ const ItemStickerIcons = ({item}: { item?: BarcodeItem }) => {
             })}/>
             <span className={classNames('me-1', {
                 'bi-bag': !(bagSticker || bagStickerAll),
-                'text-black-50': !(bagSticker || bagStickerAll),
+                'text-secondary': !(bagSticker || bagStickerAll),
                 'bi-bag-fill': bagSticker || bagStickerAll,
                 'text-primary': bagSticker || bagStickerAll
             })}/>
             <span className={classNames('me-1', {
                 'bi-box': !(caseSticker || caseStickerAll),
-                'text-black-50': !(caseSticker || caseStickerAll),
+                'text-secondary': !(caseSticker || caseStickerAll),
                 'bi-box-fill': caseSticker || caseStickerAll,
                 'text-primary': caseSticker || caseStickerAll
             })}/>

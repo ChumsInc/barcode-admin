@@ -172,7 +172,6 @@ const ItemEditor = () => {
                                     'btn-secondary': barcodeItem.UPC === sageItem?.UDF_UPC,
                                     'btn-outline-secondary': barcodeItem.UPC !== sageItem?.UDF_UPC,
                                 })}
-                                title={sageItem?.UDF_UPC ?? undefined}
                                 disabled={!sageItem || !canEdit} onClick={setSageValue('UPC', 'UDF_UPC')}>
                                     <span
                                         className={classNames("bi-chevron-left", {'text-light': barcodeItem.UPC === sageItem?.UDF_UPC})}/>
@@ -184,7 +183,6 @@ const ItemEditor = () => {
                                     'btn-info': barcodeItem.UPC === sageItem?.UDF_UPC_BY_COLOR,
                                     'btn-outline-info': barcodeItem.UPC !== sageItem?.UDF_UPC_BY_COLOR,
                                 })}
-                                title={sageItem?.UDF_UPC_BY_COLOR ?? undefined}
                                 disabled={!sageItem || !canEdit} onClick={setSageValue('UPC', 'UDF_UPC_BY_COLOR')}>
                             <span className="bi-chevron-left"/>
                         </button>

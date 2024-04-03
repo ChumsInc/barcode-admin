@@ -1,8 +1,7 @@
 <!doctype html public "storage">
 <html lang="en-us">
 <head>
-    <meta charSet="utf-8"/>
-    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <meta charset="utf-8"/>
     <title>Barcode Admin - CHUMS</title>
     <meta name="description" content="Barcode Admin"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -20,19 +19,33 @@
     <script src="https://intranet.chums.com/js/preferred-theme.js"></script>
 </head>
 <body>
-<header class="site-header">
-    <nav class="navbar navbar-chums navbar-expand-lg navbar-light bg-body-tertiary fixed-top">
-        <div class="site-logo">
-            <div class="logo-center">
-                <a href="/">
-                    <img class="logo" id="navbar-logo"
-                         src="/images/logos/40YearBadgeLogo_RGB_091322.png"
-                         style="margin-top: 0;">
-                </a>
-            </div>
-        </div>
-    </nav>
-</header>
+<div class="row justify-content-end align-items-baseline mt-1">
+    <div class="col-auto">Color Theme</div>
+    <div class="col-auto">
+        <button class="btn btn-sm btn-dark" id="--use-dark-theme">
+            <span class="bi-moon-fill"></span>
+        </button>
+        <button class="btn btn-sm btn-light" id="--use-light-theme">
+            <span class="bi-sun-fill"></span>
+        </button>
+        <button class="btn btn-sm btn-secondary" id="--use-auto-theme">
+            <span class="bi-sunset-fill"></span>
+        </button>
+    </div>
+    <script>
+        if (window?.CHUMS?.setTheme !== undefined) {
+            document.querySelector('#--use-dark-theme')?.addEventListener('click', () =>{
+                CHUMS.setTheme(CHUMS.theme.dark)
+            });
+            document.querySelector('#--use-light-theme')?.addEventListener('click', () => {
+                CHUMS.setTheme(CHUMS.theme.light)
+            });
+            document.querySelector('#--use-auto-theme')?.addEventListener('click', () => {
+                CHUMS.setTheme('auto')
+            });
+        }
+    </script>
+</div>
 <main class="container-fluid">
     <div>
         <div>

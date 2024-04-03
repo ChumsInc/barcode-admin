@@ -44,7 +44,7 @@ const AssignNextUPCButton = ({sageItem}:{sageItem:SageItem|null}) => {
     return (
         <>
             <button type="button"
-                    className={classNames("btn btn-sm btn-warning", {'btn-warning': !disabled, 'btn-outline-warning': disabled})}
+                    className={classNames("btn btn-sm", {'btn-warning': !disabled, 'btn-outline-warning': disabled})}
                     title="Assign new custom UPC"
                     onClick={() => setOpen(true)}
                     disabled={disabled}>
