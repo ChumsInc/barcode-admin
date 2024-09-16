@@ -6,15 +6,18 @@
  * @copyright Copyright &copy; 2011, steve
  */
 
+use chums\ui\WebUI2;
+use chums\ui\CSSOptions;
+use chums\user\Groups;
+
 require_once "autoload.inc.php";
-require_once "access.inc.php";
 
-$bodyPath = "apps/barcode-admin";
-$title = "Barcode Admin";
-
-$ui = new WebUI($bodyPath, $title, '', true, 5);
-$ui->bodyClassName = 'container-fluid';
-
-$ui->AddCSS("public/main.css");
-$ui->addManifest('public/js/manifest.json');
-$ui->Send();
+$ui = new WebUI2([
+    'requiredRoles' => [Groups::BARCODE],
+    'title' => 'Barcode Admin',
+    "bodyClassName" => 'container-fluid',
+    "contentFile" => 'body.inc.php',
+]);
+$ui->addCSS('public/main.css', CSSOptions::parse(['useTimestampVersion' => true]))
+    ->addManifestJSON('public/js/manifest.json')
+    ->render();
