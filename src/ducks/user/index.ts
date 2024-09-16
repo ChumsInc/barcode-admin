@@ -29,11 +29,13 @@ export const selectRoles = (state:RootState) => state.user.roles;
 export const selectCanEdit = (state:RootState) => state.user.roles.includes('barcode_edit') || state.user.roles.includes('root');
 export const selectCanAssignNewUPC = (state:RootState) => state.user.roles.includes('product-admin') || state.user.roles.includes('root');
 
-export const loadUserValidation = createAsyncThunk<UserValidationResponse>(
+export const loadUserValidation = createAsyncThunk<UserValidationResponse|null>(
     'user/validate',
     async () => {
         const res = await fetchUserValidation();
-        res.loaded = new Date().toISOString();
+        if (res) {
+            res.loaded = new Date().toISOString();
+        }
         return res;
     },
     {
@@ -51,10 +53,10 @@ const userReducer = createReducer(initialUserState, (builder) => {
         })
         .addCase(loadUserValidation.fulfilled, (state, action) => {
             state.loading = false;
-            state.valid = action.payload.valid ?? false;
-            state.user = action.payload.profile?.user ?? null;
-            state.roles = action.payload.profile?.roles ?? [];
-            state.loaded = action.payload.loaded;
+            state.valid = action.payload?.valid ?? false;
+            state.user = action.payload?.profile?.user ?? null;
+            state.roles = action.payload?.profile?.roles ?? [];
+            state.loaded = action.payload?.loaded ?? null;
             state.error = null;
         })
         .addCase(loadUserValidation.rejected, (state, action) => {

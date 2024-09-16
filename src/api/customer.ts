@@ -10,16 +10,16 @@ import {fetchJSON} from "chums-components";
 import {BarcodeCustomer, BarcodeCustomerSettings, BarcodeItem} from "chums-types";
 import {customerKey, itemKey} from "../utils/customer";
 
-export async function fetchCustomers():Promise<BarcodeCustomerList> {
+export async function fetchCustomers(): Promise<BarcodeCustomerList> {
     try {
-        const url = `/api/operations/barcodes/customers/list/chums`;
-        const res = await fetchJSON<{result?: BarcodeCustomer[]}>(url);
-        const list:BarcodeCustomerList = {};
+        const url = `/api/operations/barcodes/customers.json`;
+        const res = await fetchJSON<{ result?: BarcodeCustomer[] }>(url);
+        const list: BarcodeCustomerList = {};
         res?.result?.forEach(row => {
             list[customerKey(row)] = row;
         });
         return list;
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("loadCustomers()", err.message);
             return Promise.reject(err);
@@ -29,7 +29,7 @@ export async function fetchCustomers():Promise<BarcodeCustomerList> {
     }
 }
 
-export async function fetchCustomer(customerId:number|string|null):Promise<BarcodeCustomerResponse> {
+export async function fetchCustomer(customerId: number | string | null): Promise<BarcodeCustomerResponse> {
     try {
         if (!customerId) {
             return {settings: null};
@@ -39,7 +39,7 @@ export async function fetchCustomer(customerId:number|string|null):Promise<Barco
             settings,
             items,
         }
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("fetchCustomer()", err.message);
             return Promise.reject(err);
@@ -48,11 +48,12 @@ export async function fetchCustomer(customerId:number|string|null):Promise<Barco
         return Promise.reject(new Error('Error in fetchCustomer()'));
     }
 }
-export async function fetchCustomerSettings(customerId:number|string):Promise<BarcodeCustomerSettings|null> {
+
+export async function fetchCustomerSettings(customerId: number | string): Promise<BarcodeCustomerSettings | null> {
     try {
-        const url = '/api/operations/barcodes/customers/:id'.replace(':id', encodeURIComponent(customerId));
-        const res = await fetchJSON<{result:BarcodeCustomerSettings[]}>(url);
-        const [settings] = res?.result;
+        const url = '/api/operations/barcodes/customers/:id.json'.replace(':id', encodeURIComponent(customerId));
+        const res = await fetchJSON<{ result: BarcodeCustomerSettings[] }>(url);
+        const [settings] = res?.result ?? [];
         if (settings) {
             settings.reqAltItemNumber = Boolean(settings.reqAltItemNumber);
             settings.reqItemDescription = Boolean(settings.reqItemDescription);
@@ -67,7 +68,7 @@ export async function fetchCustomerSettings(customerId:number|string):Promise<Ba
             settings.reqCustom4 = Boolean(settings.reqCustom4);
         }
         return settings ?? null;
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("loadCustomer()", err.message);
             return Promise.reject(err);
@@ -77,14 +78,14 @@ export async function fetchCustomerSettings(customerId:number|string):Promise<Ba
     }
 }
 
-export async function postCustomerSettings(customer:BarcodeCustomer):Promise<BarcodeCustomerSettings|null> {
+export async function postCustomerSettings(customer: BarcodeCustomer): Promise<BarcodeCustomerSettings | null> {
     try {
         const url = '/api/operations/barcodes/customers/:id'.replace(':id', encodeURIComponent(customer.id));
         const body = JSON.stringify(customer);
-        const res = await fetchJSON<{result:BarcodeCustomerSettings[]}>(url, {method: 'POST', body});
-        const [settings] = res?.result;
+        const res = await fetchJSON<{ result: BarcodeCustomerSettings[] }>(url, {method: 'POST', body});
+        const [settings] = res?.result ?? [];
         return settings ?? null;
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postCustomerSettings()", err.message);
             return Promise.reject(err);
@@ -94,8 +95,8 @@ export async function postCustomerSettings(customer:BarcodeCustomer):Promise<Bar
     }
 }
 
-const buildItemList = (items:BarcodeItem[]):BarcodeItemList => {
-    const list:BarcodeItemList = {};
+const buildItemList = (items: BarcodeItem[]): BarcodeItemList => {
+    const list: BarcodeItemList = {};
     items.forEach(row => {
         list[itemKey(row)] = row;
     })
@@ -103,13 +104,13 @@ const buildItemList = (items:BarcodeItem[]):BarcodeItemList => {
 
 }
 
-export async function fetchCustomerItems(customerId:number|string):Promise<BarcodeItemList> {
+export async function fetchCustomerItems(customerId: number | string): Promise<BarcodeItemList> {
     try {
-        const url = '/api/operations/barcodes/items/:customer_id'
+        const url = '/api/operations/barcodes/customers/:customer_id/items.json'
             .replace(':customer_id', encodeURIComponent(customerId));
-        const res = await fetchJSON<{result?:BarcodeItem[]}>(url);
-        return buildItemList(res.result ?? []);
-    } catch(err:unknown) {
+        const res = await fetchJSON<{ result?: BarcodeItem[] }>(url);
+        return buildItemList(res?.result ?? []);
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("loadCustomer()", err.message);
             return Promise.reject(err);
@@ -119,19 +120,23 @@ export async function fetchCustomerItems(customerId:number|string):Promise<Barco
     }
 }
 
-export async function postCustomerItem(item:BarcodeItem):Promise<BarcodeItemList> {
+export async function postCustomerItem(item: BarcodeItem): Promise<BarcodeItemList> {
     try {
         if (!item.CustomerID) {
             return Promise.reject(new Error('Item is missing customerId'));
         }
-        const url = ('/api/operations/barcodes/items/:customer_id' + (item.ID ? '/:item_id' : ''))
+        const url = (
+            item.ID
+                ? '/api/operations/barcodes/customers/:customer_id/items/:item_id.json'
+                : '/api/operations/barcodes/customers/:customer_id/items.json'
+        )
             .replace(':customer_id', encodeURIComponent(item.CustomerID))
-            .replace(':item_id', encodeURIComponent(item.ID));
+            .replace(':item_id', encodeURIComponent(item.ID ?? 0));
         const method = item.ID ? 'PUT' : 'POST';
         const body = JSON.stringify({...item, ItemDescription: item.ItemDescription.trim()})
-        const res = await fetchJSON<{result?:BarcodeItem[]}>(url, {method, body});
-        return buildItemList(res.result ?? []);
-    } catch(err:unknown) {
+        const res = await fetchJSON<{ result?: BarcodeItem[] }>(url, {method, body});
+        return buildItemList(res?.result ?? []);
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("loadCustomer()", err.message);
             return Promise.reject(err);
@@ -141,17 +146,17 @@ export async function postCustomerItem(item:BarcodeItem):Promise<BarcodeItemList
     }
 }
 
-export async function deleteCustomerItem(item:BarcodeItem):Promise<BarcodeItemList> {
+export async function deleteCustomerItem(item: BarcodeItem): Promise<BarcodeItemList> {
     try {
         if (!item.CustomerID || !item.ID) {
             return Promise.reject(new Error('Item is missing customerId or itemId'));
         }
-        const url = '/api/operations/barcodes/items/:customer_id/:item_id'
+        const url = '/api/operations/barcodes/customers/:customer_id/items/:item_id.json'
             .replace(':customer_id', encodeURIComponent(item.CustomerID))
             .replace(':item_id', encodeURIComponent(item.ID));
-        const res = await fetchJSON<{result?:BarcodeItem[]}>(url, {method: 'DELETE'});
-        return buildItemList(res.result ?? []);
-    } catch(err:unknown) {
+        const res = await fetchJSON<{ result?: BarcodeItem[] }>(url, {method: 'DELETE'});
+        return buildItemList(res?.result ?? []);
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("deleteCustomerItem()", err.message);
             return Promise.reject(err);
@@ -161,16 +166,16 @@ export async function deleteCustomerItem(item:BarcodeItem):Promise<BarcodeItemLi
     }
 }
 
-export async function fetchCustomerLookup(search:string):Promise<SearchCustomer[]> {
+export async function fetchCustomerLookup(search: string): Promise<SearchCustomer[]> {
     try {
         if (search === '') {
             return [];
         }
         const url = `/api/search/customer/chums/:search`
             .replace(':search', encodeURIComponent(search));
-        const {result} = await fetchJSON<{result: SearchCustomer[]}>(url);
-        return result ?? [];
-    } catch(err:unknown) {
+        const res = await fetchJSON<{ result: SearchCustomer[] }>(url);
+        return res?.result ?? [];
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("getCustomerLookup()", err.message);
             return Promise.reject(err);
@@ -180,15 +185,22 @@ export async function fetchCustomerLookup(search:string):Promise<SearchCustomer[
     }
 }
 
-export async function postGenNextUPC(item:CustomUPCBarcodeItem, notes: string):Promise<ColorUPCRecord|null> {
+export async function postGenNextUPC(item: CustomUPCBarcodeItem, notes: string): Promise<ColorUPCRecord | null> {
     try {
-        const {nextUPC} = await fetchJSON<{nextUPC:string}>('/api/operations/sku/by-color/next', {cache: 'no-cache'});
-        const {colorUPC} = await fetchJSON<{colorUPC: ColorUPCRecord}>('/api/operations/sku/by-color', {
+        const resNextUPC = await fetchJSON<{
+            nextUPC: string
+        }>('/api/operations/sku/by-color/next', {cache: 'no-cache'});
+        const resColorUPC = await fetchJSON<{ colorUPC: ColorUPCRecord }>('/api/operations/sku/by-color', {
             method: 'POST',
-            body: JSON.stringify({company: 'chums', ItemCode: item.customItemCode ?? item.ItemCode, upc: nextUPC, notes})
+            body: JSON.stringify({
+                company: 'chums',
+                ItemCode: item.customItemCode ?? item.ItemCode,
+                upc: resNextUPC?.nextUPC,
+                notes
+            })
         });
-        return colorUPC ?? null;
-    } catch(err:unknown) {
+        return resColorUPC?.colorUPC ?? null;
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postGenNextUPC()", err.message);
             return Promise.reject(err);

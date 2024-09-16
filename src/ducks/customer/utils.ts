@@ -50,7 +50,6 @@ export const itemFilter = (filter: string) => (item: BarcodeItem) => {
 export const newItem: BarcodeItem = {
     ID: 0,
     CustomerID: 0,
-    Company: 'chums',
     ItemCode: '',
     AltItemCode: '',
     ItemDescription: '',

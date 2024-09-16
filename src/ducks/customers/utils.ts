@@ -40,7 +40,6 @@ export const newCustomer:BarcodeCustomerSettings = {
     CustomerName: '',
     Notes: '',
     SpecialInstructions: '',
-    Company: 'chums',
     custom1Name: '',
     custom2Name: '',
     custom3Name: '',

@@ -48,7 +48,7 @@ export interface SortProps<T = any> {
     ascending: boolean;
 }
 
-export type SearchCustomer = Pick<BarcodeCustomer, 'Company' | 'ARDivisionNo' | 'CustomerNo' | 'CustomerName'>
+export type SearchCustomer = Pick<BarcodeCustomer, 'ARDivisionNo' | 'CustomerNo' | 'CustomerName'>
 
 export type BarcodeItemSettingsMap = {
     [field in keyof BarcodeItem]?: keyof BarcodeCustomerSettings;

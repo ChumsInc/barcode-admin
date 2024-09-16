@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {SortableTableField} from "chums-components/dist/types";
-import {BarcodeCustomerSettings} from "chums-types";
-import {SODetailTableField} from "../../types";
+import {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
+import {BarcodeSODetailLine, SODetailTableField} from "../../types";
 import StickerQuantityInput from "./StickerQuantityInput";
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
@@ -24,7 +24,7 @@ import classNames from "classnames";
 import ItemStickerIcons from "../customer/ItemStickerIcons";
 
 const getColumns = (customer: BarcodeCustomerSettings | null) => {
-    const fields: SortableTableField<SODetailTableField>[] = [
+    const fields: (SortableTableField<SODetailTableField>|SortableTableField<Omit<BarcodeItem, 'ItemCode'>>)[] = [
         {
             field: 'LineKey',
             title: <StickerSelectToggleAll/>,
@@ -54,7 +54,7 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
                                       disabled={!row.item || row.ItemType !== '1'}/>
             )
         },
-        {field: 'itemSticker', title: 'Stickers', render: (row) => <ItemStickerIcons item={row.item} />}
+        {field: 'itemSticker', title: 'Stickers', render: (row:BarcodeSODetailLine) => <ItemStickerIcons item={row.item} />}
     ];
     if (!customer) {
         return fields;
@@ -64,7 +64,7 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
             field: 'ItemDescription',
             title: 'Description',
             sortable: true,
-            render: ({item}) => item?.ItemDescription ?? null
+            render: (row:BarcodeSODetailLine) => row.item?.ItemDescription ?? null
         });
     }
     if (customer.reqAltItemNumber) {
@@ -72,29 +72,29 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
             field: 'AltItemCode',
             title: 'Alternate Item',
             sortable: true,
-            render: ({item}) => item?.AltItemCode ?? null
+            render: (row:BarcodeSODetailLine) => row.item?.AltItemCode ?? null
         });
     }
     if (customer.reqColor) {
-        fields.push({field: 'Color', title: 'Color', sortable: true, render: ({item}) => item?.Color ?? null});
+        fields.push({field: 'Color', title: 'Color', sortable: true, render: (row:BarcodeSODetailLine) => row.item?.Color ?? null});
     }
     if (customer.reqSKU) {
-        fields.push({field: 'SKU', title: 'SKU', sortable: true, render: ({item}) => item?.SKU ?? null});
+        fields.push({field: 'SKU', title: 'SKU', sortable: true, render: (row:BarcodeSODetailLine) => row.item?.SKU ?? null});
     }
     if (customer.reqCustomerPart) {
         fields.push({
             field: 'CustomerPart',
             title: 'Customer Part',
             sortable: true,
-            render: ({item}) => item?.CustomerPart ?? null
+            render: (row:BarcodeSODetailLine) => row.item?.CustomerPart ?? null
         });
     }
     if (customer.reqUPC) {
-        fields.push({field: 'UPC', title: 'UPC', sortable: true, render: ({item}) => item?.UPC ?? null});
+        fields.push({field: 'UPC', title: 'UPC', sortable: true, render: (row:BarcodeSODetailLine) => row.item?.UPC ?? null});
     }
     if (customer.reqMSRP) {
         fields.push({
-            field: 'MSRP', title: 'MSRP', sortable: true, render: ({item}) => item?.MSRP ?? null
+            field: 'MSRP', title: 'MSRP', sortable: true, render: (row:BarcodeSODetailLine) => row.item?.MSRP ?? null
         });
     }
     if (customer.reqCustom1) {
@@ -102,7 +102,7 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
             field: 'Custom1',
             title: customer.custom1Name,
             sortable: true,
-            render: ({item}) => item?.Custom1 ?? null
+            render: (row:BarcodeSODetailLine) => row.item?.Custom1 ?? null
         });
     }
     if (customer.reqCustom2) {
@@ -110,7 +110,7 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
             field: 'Custom2',
             title: customer.custom2Name,
             sortable: true,
-            render: ({item}) => item?.Custom2 ?? null
+            render: (row:BarcodeSODetailLine) => row.item?.Custom2 ?? null
         });
     }
     if (customer.reqCustom3) {
@@ -118,7 +118,7 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
             field: 'Custom3',
             title: customer.custom3Name,
             sortable: true,
-            render: ({item}) => item?.Custom3 ?? null
+            render: (row:BarcodeSODetailLine) => row.item?.Custom3 ?? null
         });
     }
     if (customer.reqCustom4) {
@@ -126,7 +126,7 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
             field: 'Custom4',
             title: customer.custom4Name,
             sortable: true,
-            render: ({item}) => item?.Custom4 ?? null
+            render: (row:BarcodeSODetailLine) => row.item?.Custom4 ?? null
         });
     }
     return fields;
@@ -167,7 +167,7 @@ const SalesOrderDetailTable = () => {
             <TablePagination page={page} onChangePage={pageChangeHandler} rowsPerPage={rowsPerPage}
 
                              onChangeRowsPerPage={rowsPerPageChangeHandler} count={detail.length}/>
-            <SortableTable fields={fields} data={detail.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)} className="table-hover"
+            <SortableTable<any> fields={fields} data={detail.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)} className="table-hover"
                            rowClassName={(row) => classNames({'text-danger': !row.item, 'table-warning': !row.selected})}
                            currentSort={sort} keyField="LineKey" onChangeSort={(sort) => dispatch(setLineSort(sort))}
             />
