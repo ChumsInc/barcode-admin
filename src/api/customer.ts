@@ -80,9 +80,12 @@ export async function fetchCustomerSettings(customerId: number | string): Promis
 
 export async function postCustomerSettings(customer: BarcodeCustomer): Promise<BarcodeCustomerSettings | null> {
     try {
-        const url = '/api/operations/barcodes/customers/:id'.replace(':id', encodeURIComponent(customer.id));
+        const url = customer.id
+            ? '/api/operations/barcodes/customers/:id.json'.replace(':id', encodeURIComponent(customer.id))
+            : '/api/operations/barcodes/customers.json';
         const body = JSON.stringify(customer);
-        const res = await fetchJSON<{ result: BarcodeCustomerSettings[] }>(url, {method: 'POST', body});
+        const method = customer.id ? 'PUT' : 'POST';
+        const res = await fetchJSON<{ result: BarcodeCustomerSettings[] }>(url, {method, body});
         const [settings] = res?.result ?? [];
         return settings ?? null;
     } catch (err: unknown) {
