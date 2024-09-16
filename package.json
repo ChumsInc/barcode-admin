@@ -1,6 +1,6 @@
 {
   "name": "barcode-admin",
-  "version": "4.1.11",
+  "version": "4.1.12",
   "description": "CHUMS Barcode Admin",
   "main": "index.js",
   "author": "Steve Montgomery",
