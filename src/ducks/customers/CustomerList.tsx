@@ -17,7 +17,7 @@ import {customerFilter, customerSort} from "./utils";
 import {SortProps} from "../../types";
 import {SortableTable, SpinnerButton, TablePagination} from "chums-components";
 import CustomerFilter from "./CustomerFilter";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router";
 import NotesBadge from "../../components/NotesBadge";
 import {SortableTableField} from "chums-components/dist/types";
 import CustomerSearchBySO from "./CustomerSearchBySO";

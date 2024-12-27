@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from "classnames";
-import {NavLink} from "react-router-dom";
+import {NavLink} from "react-router";
 
 export interface NavTabItemProps {
     id: string;

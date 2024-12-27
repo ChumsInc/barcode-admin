@@ -1,6 +1,6 @@
 import React, {FormEvent, useState} from "react";
 import {useAppSelector} from "../../app/configureStore";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 import {fetchSOSearch} from "../../api/order-stickers";
 import {selectCustomerList} from "./selectors";
 import {customerKey} from "../../utils/customer";

@@ -5,7 +5,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import Button from "@mui/material/Button";
+import Button from "react-bootstrap/Button";
 
 
 export interface AssignNextUPCDialogProps {
@@ -32,8 +32,8 @@ const AssignNextUPCDialog = ({item, open, onConfirm, onCancel}: AssignNextUPCDia
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onCancel}>Cancel</Button>
-                <Button onClick={onConfirm} autoFocus>Confirm</Button>
+                <Button onClick={onCancel} variant="secondary">Cancel</Button>
+                <Button onClick={onConfirm} autoFocus variant="primary">Confirm</Button>
             </DialogActions>
         </Dialog>
     )

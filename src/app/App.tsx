@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes} from "react-router";
 import {useAppDispatch} from "./configureStore";
 import {useSelector} from "react-redux";
 import {loadUserValidation, selectProfileValid} from "../ducks/user";
@@ -13,7 +13,7 @@ import {loadCustomers} from "../ducks/customers/actions";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from "@mui/material/CssBaseline";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import {HashRouter as Router} from 'react-router-dom';
+import {HashRouter as Router} from 'react-router';
 
 const App = () => {
     const dispatch = useAppDispatch();

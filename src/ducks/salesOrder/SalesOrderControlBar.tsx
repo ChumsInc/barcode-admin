@@ -10,7 +10,7 @@ import {
 } from "./selectors";
 import {generateStickers, loadSalesOrder, setExtraStickers, setShipTo} from "./actions";
 import {FormCheck, SpinnerButton} from "chums-components";
-import {useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router";
 import StickerQuantityGeneratedAlert from "./StickerQuantityGeneratedAlert";
 
 const SalesOrderControlBar = () => {
