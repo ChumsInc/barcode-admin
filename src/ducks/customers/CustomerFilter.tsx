@@ -1,30 +1,38 @@
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, useId} from 'react';
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectCustomerListFilter, selectShowInactiveCustomers} from "./selectors";
-import {InputGroup} from "chums-components";
+import InputGroup from "react-bootstrap/InputGroup";
 import {setCustomersFilter, toggleShowInactive} from "./actions";
 import {selectCanEdit} from "../user";
+import {FormControl} from "react-bootstrap";
 
 const CustomerFilter = () => {
     const dispatch = useAppDispatch();
     const filter = useSelector(selectCustomerListFilter);
     const isAdmin = useSelector(selectCanEdit);
     const showInactive = useSelector(selectShowInactiveCustomers);
+    const idSearch = useId();
+    const idShowInactive = useId();
 
     const onToggleShowInactive = (ev: ChangeEvent<HTMLInputElement>) => {
         dispatch(toggleShowInactive(ev.target.checked))
     }
     return (
-        <InputGroup bsSize="sm">
-            <span className="input-group-text bi-funnel-fill"/>
-            <input type="search" className="form-control form-control-sm" value={filter}
+        <InputGroup size="sm">
+            <InputGroup.Text as="label" htmlFor={idSearch} aria-label="Filter">
+                <span className="bi-funnel-fill" aria-hidden>Filter</span>
+            </InputGroup.Text>
+            <FormControl type="search" size="sm" value={filter}
                    onChange={(ev) => dispatch(setCustomersFilter(ev.target.value))}/>
-            {isAdmin && (<div className="input-group-text">
-                <span className="me-1">Show Inactive</span>
-                <input type="checkbox" className="form-check-input mt-0" checked={showInactive}
+            {isAdmin && (
+                <>
+                <InputGroup.Text className="input-group-text" as="label" htmlFor={idShowInactive}>
+                    Show Inactive
+                </InputGroup.Text>
+                <InputGroup.Checkbox id={idShowInactive} checked={showInactive}
                        onChange={onToggleShowInactive}/>
-            </div>)}
+                </>)}
         </InputGroup>
     )
 }

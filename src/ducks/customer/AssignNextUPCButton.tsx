@@ -16,8 +16,9 @@ import {SageItem} from "../../types";
 import {formatGTIN} from "@chumsinc/gtin-tools";
 import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
+import {SearchItem} from "chums-types";
 
-const AssignNextUPCButton = ({sageItem}:{sageItem:SageItem|null}) => {
+const AssignNextUPCButton = ({sageItem}:{sageItem:SearchItem|null}) => {
     const dispatch = useAppDispatch();
     const currentCustomer = useSelector(selectCurrentCustomer);
     const item = useSelector(selectCustomerItem);

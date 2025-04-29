@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Alert} from "chums-components";
+import Alert from "react-bootstrap/Alert";
 import {useSelector} from "react-redux";
 import {loadVersion, selectVersion} from "./index";
 import {useAppDispatch} from "../../app/configureStore";
@@ -15,7 +15,7 @@ const VersionAlert = () => {
         return null;
     }
     return (
-        <Alert color="light"><strong className="me-1">Version:</strong>{version}</Alert>
+        <Alert variant="info"><strong className="me-1">Version:</strong>{version}</Alert>
     )
 }
 

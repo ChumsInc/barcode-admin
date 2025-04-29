@@ -8,9 +8,11 @@ import customersReducer from "../ducks/customers";
 import customerReducer from "../ducks/customer";
 import salesOrderReducer from "../ducks/salesOrder";
 import versionReducer from "../ducks/version";
+import {alertsSlice} from "@chumsinc/alert-list";
+
 
 const rootReducer = combineReducers({
-    alerts: alertsReducer,
+    [alertsSlice.reducerPath]: alertsSlice.reducer,
     customer: customerReducer,
     customers: customersReducer,
     item: itemReducer,

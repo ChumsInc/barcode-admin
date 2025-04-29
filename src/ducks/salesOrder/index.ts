@@ -12,7 +12,7 @@ import {
     toggleAllSelected,
     toggleLineSelected
 } from "./actions";
-import {SortProps} from "chums-components";
+import {SortProps} from "@chumsinc/sortable-tables";
 import {detailSorter, itemStickerQty} from "./utils";
 import {loadCustomer, removeCustomerItem, saveCustomerItem} from "../customer/actions";
 

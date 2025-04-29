@@ -1,20 +1,20 @@
 import React from 'react';
-import {useAppDispatch} from "../../app/configureStore";
-import {useSelector} from "react-redux";
-import {dismissAlert, selectAlerts} from "./index";
-import {Alert} from "chums-components";
+import {useAppDispatch, useAppSelector} from "../../app/configureStore";
+import {ContextAlert} from '@chumsinc/react-bootstrap-addons'
+import {dismissAlert, selectAllAlerts} from "@chumsinc/alert-list";
 
 const AlertList = () => {
     const dispatch = useAppDispatch();
-    const list = useSelector(selectAlerts);
+    const list = useAppSelector(selectAllAlerts);
 
     return (
         <div>
             {list.map(alert => (
-                <Alert key={alert.id} context={alert.context} count={alert.count} color={alert.color ?? 'warning'}
-                       canDismiss onDismiss={() => dispatch(dismissAlert(alert.id))}>
+                <ContextAlert key={alert.id} context={alert.context} count={alert.count}
+                              variant="warning"
+                              dismissible onClose={() => dispatch(dismissAlert(alert))}>
                     {alert.message}
-                </Alert>
+                </ContextAlert>
             ))}
         </div>
     )

@@ -22,7 +22,7 @@ const StickerItemComment = ({lineKey, itemCode, commentText, notes, specialInstr
             <div className="me-3" onClick={clickHandler}>{itemCode}</div>
             {!!commentText && <NotesBadge note={commentText}/>}
             {!!notes && <NotesBadge note={notes}/>}
-            {!!specialInstructions && <NotesBadge note={specialInstructions} color="warning"/>}
+            {!!specialInstructions && <NotesBadge note={specialInstructions} bg="warning"/>}
         </div>
     )
 }

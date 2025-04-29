@@ -1,13 +1,15 @@
 import React, {InputHTMLAttributes} from 'react';
 import {BarcodeItem} from "chums-types";
-import {FormColumn} from "chums-components";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "./selectors";
 import {itemSettingsMap} from "../../utils/customer";
 import {selectCanEdit} from "../user";
+import {Col, Form, FormControl, FormControlProps, Row} from "react-bootstrap";
+import InputGroup from "react-bootstrap/InputGroup";
 
 
-export interface ItemInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'children'> {
+
+export interface ItemInputProps extends Omit<FormControlProps, 'children'> {
     field: keyof BarcodeItem;
     label: string;
     helpText?: string;
@@ -24,14 +26,17 @@ const ItemInput = ({field, value, label, onChange, helpText, children, ...inputP
 
 
     return (
-        <FormColumn label={label}>
-            <div className="input-group input-group-sm">
-                <input value={value} onChange={onChange} className="form-control form-control-sm" {...inputProps}
-                       readOnly={!canEdit}/>
-                {children}
-            </div>
-            {!!helpText && <small className="text-muted">{helpText}</small>}
-        </FormColumn>
+        <Form.Group as={Row}>
+            <Form.Label column sm={4}>{label}</Form.Label>
+            <Col sm={8}>
+                <InputGroup size="sm">
+                    <FormControl size="sm" value={value} onChange={onChange}  {...inputProps}
+                           readOnly={!canEdit}/>
+                    {children}
+                </InputGroup>
+                {!!helpText && <small className="text-secondary">{helpText}</small>}
+            </Col>
+        </Form.Group>
     )
 }
 

@@ -1,5 +1,6 @@
 import {SageItem} from "../types";
-import {fetchJSON} from "chums-components";
+import {fetchJSON} from "@chumsinc/ui-utils";
+import {SearchItem} from "chums-types";
 
 export async function fetchItemInfo(itemCode: string):Promise<SageItem|null> {
     try {
@@ -17,11 +18,11 @@ export async function fetchItemInfo(itemCode: string):Promise<SageItem|null> {
     }
 }
 
-export async function fetchItemLookup(search:string):Promise<SageItem[]> {
+export async function fetchItemLookup(search:string):Promise<SearchItem[]> {
     try {
         const url = '/api/search/item/chums/:search'
             .replace(':search', encodeURIComponent(search));
-        const res = await fetchJSON<{result: SageItem[]}>(url);
+        const res = await fetchJSON<{result: SearchItem[]}>(url);
         return res?.result ?? [];
     } catch(err:unknown) {
         if (err instanceof Error) {

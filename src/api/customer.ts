@@ -6,7 +6,7 @@ import {
     CustomUPCBarcodeItem,
     SearchCustomer
 } from "../types";
-import {fetchJSON} from "chums-components";
+import {fetchJSON} from "@chumsinc/ui-utils";
 import {BarcodeCustomer, BarcodeCustomerSettings, BarcodeItem} from "chums-types";
 import {customerKey, itemKey} from "../utils/customer";
 

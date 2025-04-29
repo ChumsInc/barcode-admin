@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import {SortProps} from "chums-components";
+import {SortProps} from "@chumsinc/sortable-tables";
 import {BarcodeSODetailLine, SODetailTableField} from "../../types";
 
 export const itemStickerQty = (row: Pick<BarcodeSODetailLine, 'ItemType' | 'Quantity' | 'UnitOfMeasureConvFactor'>, extra: number): number | null => {

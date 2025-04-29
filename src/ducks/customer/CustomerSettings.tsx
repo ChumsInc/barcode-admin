@@ -14,7 +14,6 @@ import CustomerAutocomplete from "../../components/CustomerAutocomplete";
 import {BarcodeCustomerList, SearchCustomer} from "../../types";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import TextField from "@mui/material/TextField";
-import {Alert, FormCheck, noop} from "chums-components";
 import CustomOptionSetting from "../../components/CustomOptionSetting";
 import {saveCustomer} from "./actions";
 import {selectCustomerList, selectCustomersLoaded} from "../customers/selectors";
@@ -25,6 +24,8 @@ import ReloadCustomerButton from "./ReloadCustomerButton";
 import StickerToggleButton from "./StickerToggleButton";
 import Button from "@mui/material/Button";
 import CustomerProgressBar from "./CustomerProgressBar";
+import Alert from "react-bootstrap/Alert";
+import FormCheck from "react-bootstrap/FormCheck";
 
 
 function isDuplicate(customer: BarcodeCustomerSettings, customerList: BarcodeCustomerList): boolean {
@@ -45,6 +46,13 @@ const CustomerSettings = () => {
     const saving = useSelector(selectCustomerSaving);
     const [customerExists, setCustomerExists] = useState(isDuplicate(customer, customerList));
     const activeId = useId();
+    const idReqAltItemCode = useId();
+    const idReqDescription = useId();
+    const idReqColor = useId();
+    const idReqSKU = useId();
+    const idReqCustomerPart = useId();
+    const idReqUPC = useId();
+    const idReqMSRP = useId();
 
     useEffect(() => {
         if (!loaded && !loading) {
@@ -111,21 +119,18 @@ const CustomerSettings = () => {
             <form onSubmit={saveHandler}>
                 {!!customer.CustomerNo && <h2>{customer.CustomerName} ({customerKey(customer)})</h2>}
                 {!customer.CustomerNo && <h2>New Customer</h2>}
-                <div className="row g-3 align-items-baseline mt-3 mb-1">
+                <div className="row g-3 align-items-center mt-3 mb-1">
                     <div className="col-auto">
-                        <TextField size="small" variant="filled" inputProps={{readOnly: true}} label="ID"
+                        <TextField size="small" variant="filled" slotProps={{htmlInput: {readOnly: true}}} label="ID"
                                    value={customer.id ?? 'NEW'}/>
                     </div>
                     <div className="col-auto">
                         <CustomerAutocomplete customer={customer} onSelectCustomer={onSelectHandler} required/>
                     </div>
                     <div className="col-auto">
-                        <div className="form-check form-check-inline">
-                            <input type="checkbox" className="form-check-input" id={activeId}
-                                   checked={customer.active} onChange={toggleCustomer('active')}/>
-                            <label className="form-check-label" htmlFor={activeId}>Active Customer</label>
-                        </div>
-
+                        <FormCheck type="checkbox" label="Active Customer" id={activeId}
+                                   checked={customer.active} onChange={toggleCustomer('active')}
+                        />
                     </div>
                     <div className="col-auto">
                         <Button type="submit" variant="outlined" size="small" disabled={customerExists}>
@@ -137,7 +142,7 @@ const CustomerSettings = () => {
                     </div>
                     {!customerExists && customer.changed && (
                         <div className="col">
-                            <Alert color="warning"><strong className="me-3">Changed!</strong>Don't forget to
+                            <Alert variant="warning"><strong className="me-3">Changed!</strong>Don't forget to
                                 save.</Alert>
                         </div>
                     )}
@@ -181,18 +186,21 @@ const CustomerSettings = () => {
                 <div className="row g-3">
                     <div className="col-lg-4">
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="Item Code" checked={true} onChange={noop} readOnly/>
+                            <FormCheck type="checkbox" label="Item Code" checked={true} readOnly/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="Alt Item No" checked={customer.reqAltItemNumber}
+                            <FormCheck type="checkbox" label="Alt Item No" id={idReqAltItemCode}
+                                       checked={customer.reqAltItemNumber}
                                        onChange={toggleCustomer('reqAltItemNumber')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="Description" checked={customer.reqItemDescription}
+                            <FormCheck type="checkbox" label="Description" id={idReqDescription}
+                                       checked={customer.reqItemDescription}
                                        onChange={toggleCustomer('reqItemDescription')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="Color" checked={customer.reqColor}
+                            <FormCheck type="checkbox" label="Color" id={idReqColor}
+                                       checked={customer.reqColor}
                                        onChange={toggleCustomer('reqColor')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
@@ -200,19 +208,23 @@ const CustomerSettings = () => {
                     </div>
                     <div className="col-lg-4">
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="SKU" checked={customer.reqSKU}
+                            <FormCheck type="checkbox" label="SKU" id={idReqSKU}
+                                       checked={customer.reqSKU}
                                        onChange={toggleCustomer('reqSKU')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="Customer Part No" checked={customer.reqCustomerPart}
+                            <FormCheck type="checkbox" label="Customer Part No" id={idReqCustomerPart}
+                                       checked={customer.reqCustomerPart}
                                        onChange={toggleCustomer('reqCustomerPart')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="UPC" checked={customer.reqUPC}
+                            <FormCheck type="checkbox" label="UPC" id={idReqUPC}
+                                       checked={customer.reqUPC}
                                        onChange={toggleCustomer('reqUPC')} readOnly={!canEdit}/>
                         </div>
                         <div className="my-1">
-                            <FormCheck type="checkbox" label="MSRP" checked={customer.reqMSRP}
+                            <FormCheck type="checkbox" label="MSRP" id={idReqMSRP}
+                                       checked={customer.reqMSRP}
                                        onChange={toggleCustomer('reqMSRP')} readOnly={!canEdit}/>
                         </div>
                     </div>

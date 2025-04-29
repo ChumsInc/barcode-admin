@@ -1,38 +1,43 @@
 import React, {ChangeEvent, InputHTMLAttributes, useEffect, useId, useRef, useState} from 'react';
-import {SageItem} from "../types";
 import {fetchItemLookup} from "../api/item";
 import AutoComplete from "./AutoComplete";
+import {SearchItem} from "chums-types";
+import {useDebounceValue} from "usehooks-ts";
 
-const SageItemAutocomplete = AutoComplete<SageItem>;
+const SageItemAutocomplete = AutoComplete<SearchItem>;
 
 export interface ItemAutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
     itemCode: string;
     onChange: (ev: ChangeEvent<HTMLInputElement>) => void;
-    onSelectItem: (item?: SageItem) => void;
+    onSelectItem: (item?: SearchItem) => void;
     children?: React.ReactNode;
 }
 
 const ItemAutocomplete = ({itemCode, onChange, onSelectItem, children, ...props}: ItemAutocompleteProps) => {
     const [value, setValue] = useState(itemCode);
-    const [results, setResults] = useState<SageItem[]>([]);
+    const [debouncedValue, setDebouncedValue] = useDebounceValue(itemCode, 350);
+    const [results, setResults] = useState<SearchItem[]>([]);
     const [loading, setLoading] = useState(false);
     const [tHandle, setTHandle] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const id = useId();
     useEffect(() => {
-        setValue(itemCode);
-        const [item] = results.filter(item => item.ItemCode === itemCode);
+        setValue(debouncedValue);
+        const [item] = results.filter(item => item.ItemCode === debouncedValue);
         onSelectItem(item || null);
-        loadItemSearch(itemCode)
-    }, [itemCode])
+        loadItemSearch(debouncedValue)
+    }, [debouncedValue])
 
     useEffect(() => {
-
         return () => {
             window.clearTimeout(tHandle);
         }
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        setDebouncedValue(value);
+    }, [value]);
 
     const loadItemSearch = (value: string) => {
         if (loading) {
@@ -56,6 +61,7 @@ const ItemAutocomplete = ({itemCode, onChange, onSelectItem, children, ...props}
     }
     useEffect(() => {
         if (value.length < 2) {
+            setResults([]);
             return;
         }
         window.clearTimeout(tHandle);
@@ -68,14 +74,15 @@ const ItemAutocomplete = ({itemCode, onChange, onSelectItem, children, ...props}
         onChange(ev);
     }
 
-    const recordChangeHandler = (item?: SageItem) => {
+    const recordChangeHandler = (item?: SearchItem) => {
         setValue(item?.ItemCode ?? '')
         onSelectItem(item);
     }
 
-    const itemFilter = (value: string) => (row: SageItem) => row.ItemCode.startsWith(value) || row.ItemCodeDesc.toLowerCase().includes(value.toLowerCase());
+    const itemFilter = (value: string) => (row: SearchItem) => row.ItemCode.startsWith(value) || row.ItemCodeDesc.toLowerCase().includes(value.toLowerCase());
 
-    const renderItem = (row: SageItem) => <div><strong className="me-3">{row.ItemCode}</strong> {row.ItemCodeDesc}</div>
+    const renderItem = (row: SearchItem) => <div><strong className="me-3">{row.ItemCode}</strong> {row.ItemCodeDesc}
+    </div>
 
     return (
         <div className="input-group input-group-sm" ref={containerRef}>

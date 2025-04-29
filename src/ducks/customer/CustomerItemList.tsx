@@ -12,9 +12,8 @@ import {
     selectItemsSort
 } from "./selectors";
 import {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
-import {SortableTableField} from "chums-components/dist/types";
+import {SortableTable, SortableTableField, TablePagination} from "@chumsinc/sortable-tables";
 import {loadCustomer, setCurrentItem, setItemSort, setPage, setRowsPerPage} from "./actions";
-import {SortableTable, TablePagination} from "chums-components";
 import {SortProps} from "../../types";
 import classNames from "classnames";
 import CustomerItemBadges from "../../components/CustomerItemBadges";
@@ -49,7 +48,7 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
         return fields;
     }
     if (customer.reqItemDescription) {
-        fields.push({field: 'ItemDescription', title: 'Description', sortable: true, className: 'remove-whitespace'});
+        fields.push({field: 'ItemDescription', title: 'Description', sortable: true, className: 'text-wrap'});
     }
     if (customer.reqAltItemNumber) {
         fields.push({field: 'AltItemCode', title: 'Alternate Item', sortable: true});
@@ -85,7 +84,7 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
         fields.push({field: 'Custom4', title: customer.custom4Name, sortable: true});
     }
     fields.push({
-        field: 'itemSticker', title: 'Stickers', render: (row) => <ItemStickerIcons item={row} />
+        field: 'itemSticker', title: 'Stickers', render: (row) => <ItemStickerIcons item={row}/>
     })
     fields.push({
         field: 'ProductStatus', title: 'Status', sortable: true,
@@ -98,8 +97,8 @@ const getColumns = (customer: BarcodeCustomerSettings | null) => {
         title: <span className="bi-card-text"/>,
         render: (item) => (
             <>
-                <NotesBadge note={item.SpecialInstructions} color="warning"/>
-                <NotesBadge note={item.Notes} color="info"/>
+                <NotesBadge note={item.SpecialInstructions} bg="warning"/>
+                <NotesBadge note={item.Notes} bg="info"/>
             </>
         )
     })
@@ -160,7 +159,8 @@ const CustomerItemList = () => {
                                selected={(row: BarcodeItem) => row.ID === currentItem?.ID}/>
             </div>
             <TablePagination page={page} onChangePage={(page) => dispatch(setPage(page))}
-                             rowsPerPage={rowsPerPage} onChangeRowsPerPage={(rpp) => dispatch(setRowsPerPage(rpp))}
+                             rowsPerPage={rowsPerPage}
+                             rowsPerPageProps={{onChange: (rpp) => dispatch(setRowsPerPage(rpp))}}
                              showFirst showLast
                              count={filteredItems.length}/>
         </div>

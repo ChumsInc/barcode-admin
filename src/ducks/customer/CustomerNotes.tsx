@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "./selectors";
-import {Alert} from "chums-components"
+import Alert from "react-bootstrap/Alert"
 
 const CustomerNotes = () => {
     const current = useSelector(selectCurrentCustomer);
@@ -9,7 +9,7 @@ const CustomerNotes = () => {
         return null
     }
     return (
-        <Alert color="info">
+        <Alert variant="info">
             <strong><span className="bi-card-checklist me-1"/>Customer Notes</strong>
             <div style={{whiteSpace: 'pre-wrap'}}>{current.Notes}</div>
         </Alert>

@@ -1,18 +1,15 @@
 import React, {MouseEvent, useId, useState} from 'react';
-import Popover from "@mui/material/Popover";
-import Typography from "@mui/material/Typography";
-import {BootstrapBGColor} from "chums-components";
-import classNames from "classnames";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import NotesIcon from '@mui/icons-material/Notes';
-const NotesBadge = ({
+import {Variant} from "react-bootstrap/types";
 
+const NotesBadge = ({
                         note,
-                        color = 'info'
+                        bg = 'info'
                     }: {
     note: string | null;
-    color?: BootstrapBGColor;
+    bg?: Variant;
 }) => {
     const [open, setOpen] = useState(false);
     const [badgeRef, setBadgeRef] = useState<HTMLDivElement | null>(null);
@@ -38,7 +35,7 @@ const NotesBadge = ({
     return (
         <Tooltip title={note}>
             <IconButton color="info" size="small" sx={{color: 'white', backgroundColor: 'info.main'}}>
-                <NotesIcon />
+                <NotesIcon/>
             </IconButton>
         </Tooltip>
     )

@@ -8,7 +8,7 @@ import {
     GenerateStickerProps,
     SalesOrderDetailBarcodeItem
 } from "../../types";
-import {SortProps} from "chums-components";
+import {SortProps} from "@chumsinc/sortable-tables";
 import {RootState} from "../../app/configureStore";
 import {selectCurrentCustomer, selectCustomerItems} from "../customer/selectors";
 import Decimal from "decimal.js";

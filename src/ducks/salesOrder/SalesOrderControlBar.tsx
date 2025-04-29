@@ -9,9 +9,10 @@ import {
     selectStickerQty
 } from "./selectors";
 import {generateStickers, loadSalesOrder, setExtraStickers, setShipTo} from "./actions";
-import {FormCheck, SpinnerButton} from "chums-components";
 import {useSearchParams} from "react-router";
 import StickerQuantityGeneratedAlert from "./StickerQuantityGeneratedAlert";
+import {SpinnerButton} from "@chumsinc/react-bootstrap-addons";
+import FormCheck from "react-bootstrap/FormCheck";
 
 const SalesOrderControlBar = () => {
     const dispatch = useAppDispatch();
@@ -26,6 +27,7 @@ const SalesOrderControlBar = () => {
     const shipTo = useSelector(selectShipTo);
     const shipToList = useSelector(selectShipToList);
     const listId = useId();
+    const idPrintReversed = useId();
 
 
     useEffect(() => {
@@ -62,7 +64,7 @@ const SalesOrderControlBar = () => {
                         <input type="search" value={so} className="form-control"
                                maxLength={7} minLength={6}
                                onChange={(ev) => setSO(ev.target.value)}/>
-                        <SpinnerButton type="submit" color="primary" spinning={loading} size="sm">Load</SpinnerButton>
+                        <SpinnerButton type="submit" variant="primary" spinning={loading} size="sm">Load</SpinnerButton>
                     </div>
                 </form>
             </div>
@@ -88,7 +90,7 @@ const SalesOrderControlBar = () => {
                 Sort: <strong>{sort.field}</strong>
             </div>
             <div className="col-auto">
-                <FormCheck type={"checkbox"} label={"Print Reversed"}
+                <FormCheck type={"checkbox"} label={"Print Reversed"} id={idPrintReversed}
                            checked={reversed}
                            onChange={(ev) => setReversed(ev.target.checked)}/>
             </div>

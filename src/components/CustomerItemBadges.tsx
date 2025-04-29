@@ -1,6 +1,6 @@
 import React from 'react';
 import {ProductType} from "chums-types";
-import {Badge} from "chums-components";
+import {Badge} from "react-bootstrap";
 
 
 export interface CustomerItemBadgesProps {
@@ -19,8 +19,8 @@ const CustomerItemBadges = ({inactiveItem, productType, productStatus}: Customer
 
     return (
         <>
-            {!!productStatus && <Badge color="warning">{productStatus}</Badge>}
-            {!productType && <Badge color="info">Custom</Badge>}
+            {!!productStatus && <Badge bg="warning" text="dark">{productStatus}</Badge>}
+            {!productType && <Badge bg="info">Custom</Badge>}
         </>
     )
 }

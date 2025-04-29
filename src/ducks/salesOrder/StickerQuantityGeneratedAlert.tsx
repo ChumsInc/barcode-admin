@@ -2,7 +2,7 @@ import React from 'react';
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectQtyGenerated} from "./selectors";
-import {Alert} from "chums-components";
+import Alert from "react-bootstrap/Alert";
 import {dismissQtyGenerated} from "./actions";
 
 const StickerQuantityGeneratedAlert = () => {
@@ -17,8 +17,8 @@ const StickerQuantityGeneratedAlert = () => {
         );
     }
     return (
-        <Alert color={qtyGenerated === 0 ? 'danger' : 'success'} canDismiss
-               onDismiss={() => dispatch(dismissQtyGenerated())}>
+        <Alert variant={qtyGenerated === 0 ? 'danger' : 'success'} dismissible
+               onClose={() => dispatch(dismissQtyGenerated())}>
             <strong>Qty Generated</strong>: {qtyGenerated}
         </Alert>
     )

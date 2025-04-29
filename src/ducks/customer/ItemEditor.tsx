@@ -2,10 +2,8 @@ import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react'
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer, selectCustomerItem, selectCustomerLoading, selectItemAction} from "./selectors";
-import {BarcodeItem, Editable} from "chums-types";
+import {BarcodeItem, Editable, SearchItem} from "chums-types";
 import {newItem} from "./utils";
-import {Alert, FormColumn, SpinnerButton} from "chums-components";
-import {SageItem} from "../../types";
 import ItemAutocomplete from "../../components/ItemAutocomplete";
 import {selectCanEdit} from "../user";
 import classNames from "classnames";
@@ -19,6 +17,10 @@ import AssignNextUPCButton from "./AssignNextUPCButton";
 import StickerToggleButton from "./StickerToggleButton";
 import Tooltip from "@mui/material/Tooltip";
 import {formatGTIN} from "@chumsinc/gtin-tools";
+import {Col, Form, Row} from "react-bootstrap";
+import {SpinnerButton} from "@chumsinc/react-bootstrap-addons";
+import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
 
 export interface EditableItem extends BarcodeItem {
     changed?: boolean;
@@ -35,7 +37,7 @@ const ItemEditor = () => {
 
 
     const [barcodeItem, setBarcodeItem] = useState<BarcodeItem & Editable>({...newItem, CustomerID: settings?.id});
-    const [sageItem, setSageItem] = useState<SageItem | null>(null);
+    const [sageItem, setSageItem] = useState<SearchItem | null>(null);
     const [locked, setLocked] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -48,7 +50,7 @@ const ItemEditor = () => {
     }, [currentItem]);
 
 
-    const selectItemHandler = (item?: SageItem) => {
+    const selectItemHandler = (item?: SearchItem | null) => {
         setSageItem(item ?? null);
         if (item) {
             console.log('selectItemHandler', item);
@@ -70,7 +72,7 @@ const ItemEditor = () => {
 
     const lockHandler = () => setLocked(!locked);
 
-    const setSageValue = (field: keyof BarcodeItem, sageField: keyof SageItem) => () => {
+    const setSageValue = (field: keyof BarcodeItem, sageField: keyof SearchItem) => () => {
         if (!sageItem || !canEdit) {
             return;
         }
@@ -114,23 +116,26 @@ const ItemEditor = () => {
     return (
         <div>
             <h3>Item Settings</h3>
-            <form onSubmit={saveHandler}>
-                <FormColumn label="Item">
-                    <ItemAutocomplete value={barcodeItem.ItemCode ?? ''}
-                                      itemCode={barcodeItem.ItemCode} onChange={changeHandler('ItemCode')}
-                                      readOnly={locked || !canEdit}
-                                      required
-                                      onSelectItem={selectItemHandler}>
-                        <button type="button" className="btn btn-outline-secondary"
-                                disabled={!canEdit}
-                                onClick={lockHandler}>
-                            <span className={locked ? 'bi-lock-fill' : 'bi-pencil-fill'}/>
-                        </button>
-                    </ItemAutocomplete>
-                    {(barcodeItem?.ID || sageItem) &&
-                        <small className="text-muted">{sageItem?.ItemCodeDesc ?? 'Invalid Sage Item'}</small>}
-                    <ExistingItemAlert item={barcodeItem}/>
-                </FormColumn>
+            <Form onSubmit={saveHandler}>
+                <Form.Group as={Row} label="Item">
+                    <Form.Label column sm={4}>Item</Form.Label>
+                    <Col sm={8}>
+                        <ItemAutocomplete itemCode={barcodeItem.ItemCode ?? ''}
+                                          onChange={changeHandler('ItemCode')}
+                                          readOnly={locked || !canEdit}
+                                          required
+                                          onSelectItem={selectItemHandler}>
+                            <button type="button" className="btn btn-outline-secondary"
+                                    disabled={!canEdit}
+                                    onClick={lockHandler}>
+                                <span className={locked ? 'bi-lock-fill' : 'bi-pencil-fill'}/>
+                            </button>
+                        </ItemAutocomplete>
+                        {(barcodeItem?.ID || sageItem) &&
+                            <small className="text-muted">{sageItem?.ItemCodeDesc ?? 'Invalid Sage Item'}</small>}
+                        <ExistingItemAlert item={barcodeItem}/>
+                    </Col>
+                </Form.Group>
                 <ItemInput field={"ItemDescription"} value={barcodeItem.ItemDescription} label={"Description"}
                            onChange={changeHandler('ItemDescription')}>
                     <button type="button" className="btn btn-sm btn-outline-secondary"
@@ -189,19 +194,22 @@ const ItemEditor = () => {
                     </Tooltip>
                     <AssignNextUPCButton sageItem={sageItem}/>
                 </ItemInput>
-                <FormColumn label="Stickers">
-                    <div className="btn-group btn-group-sm" role="group" aria-label="Toggle Required Stickers">
-                        <StickerToggleButton checked={barcodeItem.itemSticker || settings.itemStickerAll || false}
-                                             onChange={toggleHandler('itemSticker')} icon="bi-1-square"
-                                             disabled={settings.itemStickerAll}/>
-                        <StickerToggleButton checked={barcodeItem.bagSticker || settings.bagStickerAll || false}
-                                             onChange={toggleHandler('bagSticker')} icon="bi-bag"
-                                             disabled={settings.bagStickerAll}/>
-                        <StickerToggleButton checked={barcodeItem.caseSticker || settings.caseStickerAll || false}
-                                             onChange={toggleHandler('caseSticker')} icon="bi-box"
-                                             disabled={settings.caseStickerAll}/>
-                    </div>
-                </FormColumn>
+                <Form.Group as={Row} label="Stickers">
+                    <Form.Label column sm={4}>Stickers</Form.Label>
+                    <Col sm={8}>
+                        <div className="btn-group btn-group-sm" role="group" aria-label="Toggle Required Stickers">
+                            <StickerToggleButton checked={barcodeItem.itemSticker || settings.itemStickerAll || false}
+                                                 onChange={toggleHandler('itemSticker')} icon="bi-1-square"
+                                                 disabled={settings.itemStickerAll}/>
+                            <StickerToggleButton checked={barcodeItem.bagSticker || settings.bagStickerAll || false}
+                                                 onChange={toggleHandler('bagSticker')} icon="bi-bag"
+                                                 disabled={settings.bagStickerAll}/>
+                            <StickerToggleButton checked={barcodeItem.caseSticker || settings.caseStickerAll || false}
+                                                 onChange={toggleHandler('caseSticker')} icon="bi-box"
+                                                 disabled={settings.caseStickerAll}/>
+                        </div>
+                    </Col>
+                </Form.Group>
                 <ItemInput field="Custom1" label={settings.custom1Name} value={barcodeItem.Custom1}
                            onChange={changeHandler('Custom1')}/>
                 <ItemInput field="Custom2" label={settings.custom2Name} value={barcodeItem.Custom2}
@@ -210,47 +218,53 @@ const ItemEditor = () => {
                            onChange={changeHandler('Custom3')}/>
                 <ItemInput field="Custom4" label={settings.custom4Name} value={barcodeItem.Custom4}
                            onChange={changeHandler('Custom4')}/>
-                <FormColumn label="Notes" className="mb-1">
-                    <TextareaAutosize minRows={2} value={barcodeItem.Notes ?? ''}
-                                      readOnly={!canEdit}
-                                      className="form-control form-control-sm"
-                                      onChange={changeHandler('Notes')}/>
-                </FormColumn>
-                <FormColumn label="Special Instructions" className="mb-1">
-                    <TextareaAutosize minRows={2} value={barcodeItem.SpecialInstructions ?? ''}
-                                      readOnly={!canEdit}
-                                      className="form-control form-control-sm"
-                                      onChange={changeHandler('SpecialInstructions')}/>
-                </FormColumn>
-                <div className="mt-3 row g-3">
-                    <div className="col-auto">
-                        <SpinnerButton type="submit" color="primary"
-                                       spinning={itemAction === 'loading' || itemAction === 'saving'}
-                                       disabled={!canEdit || !barcodeItem.ItemCode || itemAction !== 'idle'}>
-                            Save Item
-                        </SpinnerButton>
-                    </div>
-                    <div className="col-auto">
-                        <button type="button" className="btn btn-outline-secondary"
-                                onClick={newItemHandler} disabled={!canEdit || itemAction !== 'idle'}>
-                            New Item
-                        </button>
-                    </div>
-                    <div className="col-auto">
-                        <button type="button" className="btn btn-outline-danger"
+                <Form.Group as={Row} className="mb-1">
+                    <Form.Label column sm={4}>Notes</Form.Label>
+                    <Col>
+                        <TextareaAutosize minRows={2} value={barcodeItem.Notes ?? ''}
+                                          readOnly={!canEdit}
+                                          className="form-control form-control-sm"
+                                          onChange={changeHandler('Notes')}/>
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className="mb-1">
+                    <Form.Label column sm={4}>Special Instructions</Form.Label>
+                    <Col>
+                        <TextareaAutosize minRows={2} value={barcodeItem.SpecialInstructions ?? ''}
+                                          readOnly={!canEdit}
+                                          className="form-control form-control-sm"
+                                          onChange={changeHandler('SpecialInstructions')}/>
+                    </Col>
+                </Form.Group>
+                <Row className="mt-3 g-3 justify-content-end">
+                    <Col xs="auto">
+                        <Button type="button" variant="outline-danger" size="sm"
                                 onClick={() => {
                                     setConfirmDelete(true)
                                 }}
                                 disabled={!canEdit || itemAction !== 'idle'}>
                             Delete Item
-                        </button>
+                        </Button>
                         <RemoveItemDialog item={currentItem} open={confirmDelete} onConfirm={deleteHandler}
                                           onCancel={() => setConfirmDelete(false)}/>
-                    </div>
-                </div>
-            </form>
+                    </Col>
+                    <Col xs="auto">
+                        <Button type="button" variant="outline-secondary" size="sm"
+                                onClick={newItemHandler} disabled={!canEdit || itemAction !== 'idle'}>
+                            New Item
+                        </Button>
+                    </Col>
+                    <Col xs="auto">
+                        <SpinnerButton type="submit" color="primary" size="sm"
+                                       spinning={itemAction === 'loading' || itemAction === 'saving'}
+                                       disabled={!canEdit || !barcodeItem.ItemCode || itemAction !== 'idle'}>
+                            Save Item
+                        </SpinnerButton>
+                    </Col>
+                </Row>
+            </Form>
             {barcodeItem.changed && (
-                <Alert color="warning">
+                <Alert variant="warning">
                     <span className="bi-exclamation-triangle-fill me-1"/>
                     Don't forget to save!
                 </Alert>

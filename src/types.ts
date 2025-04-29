@@ -4,10 +4,10 @@ import {
     BarcodeItem,
     Item,
     SalesOrder,
-    SalesOrderDetailLine, UserRecord,
+    SalesOrderDetailLine,
+    UserRecord,
     WarehouseItem
 } from "chums-types";
-import {BootstrapColor} from "chums-components";
 
 export interface BarcodeCustomerList {
     [key: string]: BarcodeCustomer;
@@ -35,13 +35,6 @@ export interface SageItem extends Item {
     detail: WarehouseItem[];
 }
 
-export interface ErrorAlert {
-    id: number;
-    context: string;
-    message: string;
-    count: number;
-    color?: BootstrapColor;
-}
 
 export interface SortProps<T = any> {
     field: keyof T;
@@ -49,6 +42,8 @@ export interface SortProps<T = any> {
 }
 
 export type SearchCustomer = Pick<BarcodeCustomer, 'ARDivisionNo' | 'CustomerNo' | 'CustomerName'>
+
+export type SearchItem = Pick<SageItem, 'ItemCode'|'ItemCodeDesc'>
 
 export type BarcodeItemSettingsMap = {
     [field in keyof BarcodeItem]?: keyof BarcodeCustomerSettings;
@@ -118,15 +113,15 @@ export interface ColorUPCRecord {
     company: string;
     id: number;
     ItemCode: string;
-    ItemCodeDesc: string|null;
+    ItemCodeDesc: string | null;
     upc: string;
-    notes: string|null;
+    notes: string | null;
     tags: unknown;
     active: boolean;
-    ProductType: string|null;
-    InactiveItem: string|null;
-    UDF_UPC: string|null;
-    UDF_UPC_BY_COLOR: string|null;
+    ProductType: string | null;
+    InactiveItem: string | null;
+    UDF_UPC: string | null;
+    UDF_UPC_BY_COLOR: string | null;
 }
 
 export interface CustomUPCBarcodeItem extends BarcodeItem {

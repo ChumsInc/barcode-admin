@@ -1,12 +1,11 @@
 import React, {useEffect} from 'react';
 import {useParams} from "react-router";
-import {TabList} from 'chums-components';
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "../ducks/customer/selectors";
 import {useAppDispatch} from "./configureStore";
 import {loadCustomer} from "../ducks/customer/actions";
 import NavTabItem from "../components/NavTabItem";
-import {loadCustomers} from "../ducks/customers/actions";
+import {Nav} from "react-bootstrap";
 
 
 const AppTabs = () => {
@@ -21,15 +20,18 @@ const AppTabs = () => {
     }, [id]);
 
     return (
-        <TabList className="justify-content-center mb-3">
-            <NavTabItem id={'home'} to={'/'} title={'Customers'}/>
-            <NavTabItem id={'settings'} title={customer?.CustomerName ?? 'Customer Settings'}
-                        to={`/${customer?.id ?? 0}/settings`}/>
-            <NavTabItem id={'orders'} title={'Order Stickers'} disabled={!customer?.id}
-                        to={`/${customer?.id ?? 0}/orders`}/>
-            <NavTabItem id={'items'} title={'Customer Items'} disabled={!customer?.id}
-                        to={`/${customer?.id ?? 0}/items`}/>
-        </TabList>
+        <Nav variant="tabs" className="justify-content-center mb-3" defaultActiveKey={'home'} activeKey={id}>
+            <NavTabItem to="/" id="home">Customers</NavTabItem>
+            <NavTabItem to={`/${customer?.id ?? 0}/settings`} id="settings">
+                {customer?.CustomerName ?? 'Customer Settings'}
+            </NavTabItem>
+            <NavTabItem id="orders" to={`${customer?.id ?? 0}/orders`} disabled={!customer?.id}>
+                Order Stickers
+            </NavTabItem>
+            <NavTabItem id="items" to={`${customer?.id ?? 0}/items`} disabled={!customer?.id}>
+                Customer Items
+            </NavTabItem>
+        </Nav>
     )
 }
 

@@ -1,7 +1,7 @@
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, useId} from 'react';
 import {useSelector} from "react-redux";
 import {selectSalesOrderDetail} from "./selectors";
-import {FormCheck} from "chums-components";
+import FormCheck from "react-bootstrap/FormCheck";
 import {useAppDispatch} from "../../app/configureStore";
 import {toggleLineSelected} from "./actions";
 
@@ -12,6 +12,7 @@ export interface StickerSelectToggleProps {
 const StickerSelectToggle = ({lineKey}: StickerSelectToggleProps) => {
     const dispatch = useAppDispatch();
     const detail = useSelector(selectSalesOrderDetail);
+    const id = useId();
 
     const [row] = detail.filter(row => row.ItemType === '1' && row.LineKey === lineKey);
 
@@ -21,7 +22,8 @@ const StickerSelectToggle = ({lineKey}: StickerSelectToggleProps) => {
     }));
 
     return (
-        <FormCheck type={"checkbox"} label={""} checked={row?.selected} onChange={changeHandler}
+        <FormCheck type={"checkbox"} id={id}
+                   aria-lable="Row Selected" checked={row?.selected} onChange={changeHandler}
                    disabled={!row || !row.item}/>
     )
 }

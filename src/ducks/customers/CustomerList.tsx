@@ -8,20 +8,21 @@ import {
     selectCustomerRowsPerPage,
     selectCustomersLoaded,
     selectCustomersLoading,
-    selectCustomersPage, selectShowInactiveCustomers
+    selectCustomersPage,
+    selectShowInactiveCustomers
 } from "./selectors";
 import {loadCustomers, setCustomersSort, setPage, setRowsPerPage} from "./actions";
 import {BarcodeCustomer} from "chums-types";
 import {customerKey} from "../../utils/customer";
 import {customerFilter, customerSort} from "./utils";
 import {SortProps} from "../../types";
-import {SortableTable, SpinnerButton, TablePagination} from "chums-components";
+import {SortableTable, SortableTableField, TablePagination} from "@chumsinc/sortable-tables";
 import CustomerFilter from "./CustomerFilter";
 import {Link, useNavigate} from "react-router";
 import NotesBadge from "../../components/NotesBadge";
-import {SortableTableField} from "chums-components/dist/types";
 import CustomerSearchBySO from "./CustomerSearchBySO";
 import classNames from "classnames";
+import {SpinnerButton} from "@chumsinc/react-bootstrap-addons";
 
 
 const tableFields: SortableTableField<BarcodeCustomer>[] = [
@@ -47,7 +48,7 @@ const tableFields: SortableTableField<BarcodeCustomer>[] = [
         title: 'Notes/Instructions',
         sortable: true,
         render: (row) => (<div className="d-flex flex-nowrap gap-3">
-            <NotesBadge note={row.Notes}/><NotesBadge note={row.SpecialInstructions} color="warning"/>
+            <NotesBadge note={row.Notes}/><NotesBadge note={row.SpecialInstructions} bg="warning"/>
         </div>)
     },
 ];
@@ -67,7 +68,7 @@ const CustomerList = () => {
 
     const [sortedList, setSortedList] = useState<BarcodeCustomer[]>(
         Object.values(list)
-            .filter(row => showInactive || row.active )
+            .filter(row => showInactive || row.active)
             .filter(row => !filter || row.CustomerName.includes(filter) || customerKey(row).includes(filter))
             .sort(customerSort(sort))
     )
@@ -82,7 +83,7 @@ const CustomerList = () => {
 
     useEffect(() => {
         const sortedList = Object.values(list)
-            .filter(row => showInactive || row.active )
+            .filter(row => showInactive || row.active)
             .filter(customerFilter(filter))
             .sort(customerSort(sort));
         setSortedList(sortedList);
@@ -111,16 +112,16 @@ const CustomerList = () => {
                     </button>
                 </div>
                 <div className="col-4">
-                    <CustomerSearchBySO />
+                    <CustomerSearchBySO/>
                 </div>
             </div>
             <SortableTable fields={tableFields} data={pagedList}
                            rowClassName={(row) => classNames({'table-warning': !row.active})}
                            currentSort={sort} keyField="id" onChangeSort={sortChangedHandler}/>
-            <TablePagination bsSize="sm" page={page} rowsPerPage={rowsPerPage} count={sortedList.length}
+            <TablePagination size="sm" page={page} rowsPerPage={rowsPerPage} count={sortedList.length}
                              showFirst showLast
                              onChangePage={(page: number) => dispatch(setPage(page))}
-                             onChangeRowsPerPage={(rowsPerPage: number) => dispatch(setRowsPerPage(rowsPerPage))}/>
+                             rowsPerPageProps={{onChange: (rowsPerPage: number) => dispatch(setRowsPerPage(rowsPerPage))}}/>
         </div>
     )
 }

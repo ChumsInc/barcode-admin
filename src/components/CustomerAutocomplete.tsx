@@ -1,20 +1,18 @@
-import React, {ChangeEvent, HTMLAttributes, useEffect, useId, useRef, useState} from 'react';
+import React, {ChangeEvent, useEffect, useId, useRef, useState} from 'react';
 import {SearchCustomer} from "../types";
 import {fetchCustomerLookup} from "../api/customer";
 import {customerKey} from "../utils/customer";
-import AutoComplete from "./AutoComplete";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import {FilledInputProps} from "@mui/material/FilledInput/FilledInput";
 
-const BarcodeCustomerAutocomplete = AutoComplete<SearchCustomer>;
 
 export interface CustomerAutocompleteProps extends FilledInputProps {
     customer: SearchCustomer | null;
     onChange?: (ev: ChangeEvent<HTMLInputElement>) => void;
-    onSelectCustomer: (customer?: SearchCustomer|null) => void;
+    onSelectCustomer: (customer?: SearchCustomer | null) => void;
     children?: React.ReactNode;
 }
 
@@ -26,7 +24,7 @@ const CustomerAutocomplete = ({
                                   ...inputProps
                               }: CustomerAutocompleteProps) => {
     const [value, setValue] = useState<SearchCustomer | null>(customer);
-    const [hint, setHint] = useState<SearchCustomer|null>(null);
+    const [hint, setHint] = useState<SearchCustomer | null>(null);
     const [inputValue, setInputValue] = useState('');
     const [open, setOpen] = useState(false);
 
@@ -40,7 +38,8 @@ const CustomerAutocomplete = ({
     useEffect(() => {
         setValue(customer);
         if (customer) {
-            loadCustomerSearch(customerKey(customer));
+            loadCustomerSearch(customerKey(customer))
+                .catch(err => console.debug("loadCustomerSearch()", err.message));
         }
     }, [customer]);
 

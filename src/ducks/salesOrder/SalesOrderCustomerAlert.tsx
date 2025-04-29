@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert} from "chums-components";
+import Alert from "react-bootstrap/Alert";
 import {useSelector} from "react-redux";
 import {selectSalesOrder} from "./selectors";
 import {selectCurrentCustomer} from "../customer/selectors";
@@ -18,7 +18,7 @@ const SalesOrderCustomerAlert = () => {
     const soCustomer = customerKey(so);
 
     return (
-        <Alert color="warning">
+        <Alert variant="warning">
             <div className="row g-3">
                 <div className="col-auto bi-shop me-3" />
                 <div className="col-auto"><strong className="me-3">{soCustomer} -- {so.BillToName}</strong></div>

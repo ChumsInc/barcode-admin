@@ -1,7 +1,7 @@
 import {RootState} from "../../app/configureStore";
 import {QueryStatus} from "@reduxjs/toolkit/query";
 import {createSelector} from "@reduxjs/toolkit";
-import {SortProps} from "chums-components";
+import {SortProps} from "@chumsinc/sortable-tables";
 import {SODetailTableField} from "../../types";
 import {detailSorter} from "./utils";
 
