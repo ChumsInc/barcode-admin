@@ -101,7 +101,7 @@ const CustomerList = () => {
                     <CustomerFilter/>
                 </div>
                 <div className="col-auto">
-                    <SpinnerButton type="button" size="sm" spinning={loading}
+                    <SpinnerButton type="button" size="sm" spinning={loading} spinnerProps={{size: 'sm'}}
                                    onClick={() => dispatch(loadCustomers())}>
                         Reload
                     </SpinnerButton>

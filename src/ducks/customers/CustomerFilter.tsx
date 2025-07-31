@@ -21,7 +21,7 @@ const CustomerFilter = () => {
     return (
         <InputGroup size="sm">
             <InputGroup.Text as="label" htmlFor={idSearch} aria-label="Filter">
-                <span className="bi-funnel-fill" aria-hidden>Filter</span>
+                <span className="bi-funnel-fill" aria-hidden />
             </InputGroup.Text>
             <FormControl type="search" size="sm" value={filter}
                    onChange={(ev) => dispatch(setCustomersFilter(ev.target.value))}/>
