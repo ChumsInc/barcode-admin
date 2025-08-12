@@ -2,7 +2,7 @@ import {fetchJSON} from "@chumsinc/ui-utils";
 
 export async function fetchVersion():Promise<string|null> {
     try {
-        const res = await fetchJSON<{version: string}>('package.json');
+        const res = await fetchJSON<{version: string}>('package.json', {cache: 'no-cache'});
         return res?.version ?? null;
     } catch(err:unknown) {
         if (err instanceof Error) {
