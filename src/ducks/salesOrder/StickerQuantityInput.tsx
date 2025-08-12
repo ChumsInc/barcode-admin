@@ -1,5 +1,5 @@
-import React, {ChangeEvent} from 'react';
-import {useAppDispatch} from "../../app/configureStore";
+import {type ChangeEvent} from 'react';
+import {useAppDispatch} from "@/app/configureStore";
 import {setLineQty} from "./actions";
 
 export interface StickerQuantityInputProps {

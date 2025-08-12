@@ -1,6 +1,6 @@
 import {createAsyncThunk, createReducer} from "@reduxjs/toolkit";
-import {fetchVersion} from "../../api/version";
-import {RootState} from "../../app/configureStore";
+import {fetchVersion} from "@/api/version";
+import type {RootState} from "@/app/configureStore";
 
 export interface VersionState {
     version: string|null;

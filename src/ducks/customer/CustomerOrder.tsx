@@ -1,4 +1,3 @@
-import React from 'react';
 import SalesOrderControlBar from "../salesOrder/SalesOrderControlBar";
 import SalesOrderDetailTable from "../salesOrder/SalesOrderDetailTable";
 import {useSelector} from "react-redux";

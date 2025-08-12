@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {useAppDispatch} from "../../app/configureStore";
+import {useEffect, useState} from 'react';
+import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
 import {loadUserValidation, selectProfileError, selectProfileLoading, selectProfileValid} from "./index";
 import Alert from "react-bootstrap/Alert";

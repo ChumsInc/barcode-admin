@@ -1,5 +1,5 @@
-import React, {ChangeEvent, FormEvent, useEffect, useId, useState} from 'react';
-import {useAppDispatch} from "../../app/configureStore";
+import {type ChangeEvent, type FormEvent, useEffect, useId, useState} from 'react';
+import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
 import {
     selectDetailSort,

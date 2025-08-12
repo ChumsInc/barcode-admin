@@ -1,5 +1,5 @@
-import React, {useId} from 'react';
-import {BarcodeItem} from "chums-types";
+import {useId} from 'react';
+import type {BarcodeItem} from "chums-types";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";

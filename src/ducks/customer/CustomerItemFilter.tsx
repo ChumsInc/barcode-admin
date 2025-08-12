@@ -1,5 +1,5 @@
-import React, {ChangeEvent} from 'react';
-import {useAppDispatch} from "../../app/configureStore";
+import  {type ChangeEvent} from 'react';
+import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
 import {selectItemsFilter} from "./selectors";
 import {setItemFilter} from "./actions";

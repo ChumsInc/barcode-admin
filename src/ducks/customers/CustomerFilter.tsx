@@ -1,5 +1,5 @@
-import React, {ChangeEvent, useId} from 'react';
-import {useAppDispatch} from "../../app/configureStore";
+import {type ChangeEvent, useId} from 'react';
+import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
 import {selectCustomerListFilter, selectShowInactiveCustomers} from "./selectors";
 import InputGroup from "react-bootstrap/InputGroup";

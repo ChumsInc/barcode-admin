@@ -1,4 +1,3 @@
-import React from 'react';
 import {useSelector} from "react-redux";
 import {selectCustomerLoading, selectCustomerSaving} from "./selectors";
 import Box from "@mui/material/Box";

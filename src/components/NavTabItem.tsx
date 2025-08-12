@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from "classnames";
-import {NavLink, NavLinkProps} from "react-router";
+import {NavLink, type NavLinkProps} from "react-router";
 import {NavItem} from "react-bootstrap";
 
 export interface NavTabItemProps extends NavLinkProps {
@@ -13,7 +13,7 @@ export interface NavTabItemProps extends NavLinkProps {
     children: React.ReactNode;
 }
 
-const NavTabItem = ({id, to, title, icon, className, canClose, disabled, onClose, children}: NavTabItemProps) => {
+const NavTabItem = ({id, to, icon, className, canClose, disabled, onClose, children}: NavTabItemProps) => {
     const closeHandler = () => {
         if (onClose) {
             onClose(id);

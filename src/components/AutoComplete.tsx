@@ -1,9 +1,9 @@
 import React, {
-    ChangeEvent,
-    CSSProperties,
-    InputHTMLAttributes,
-    KeyboardEvent,
-    ReactNode,
+    type ChangeEvent,
+    type CSSProperties,
+    type InputHTMLAttributes,
+    type KeyboardEvent,
+    type ReactNode,
     useEffect,
     useState,
 } from 'react';
@@ -48,7 +48,7 @@ export default function AutoComplete<T = any>({
     const [values, setValues] = useState<T[]>(data.slice(0, 50));
     const [open, setOpen] = useState(false);
     const [index, setIndex] = useState(-1);
-    const [minWidth, setMinWidth] = useState<string>('100px');
+    const [minWidth] = useState<string>('100px');
     const {refs, floatingStyles} = useFloating({
         placement: 'bottom-end',
     });

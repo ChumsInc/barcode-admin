@@ -1,16 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {SortableTable, SortableTableField, TablePagination} from "@chumsinc/sortable-tables";
-import {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
-import {BarcodeSODetailLine, SODetailTableField} from "../../types";
+import {useEffect, useState} from 'react';
+import {SortableTable, type SortableTableField, TablePagination} from "@chumsinc/sortable-tables";
+import type {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
+import type {BarcodeSODetailLine, SODetailTableField} from "../../types";
 import StickerQuantityInput from "./StickerQuantityInput";
-import {useAppDispatch} from "../../app/configureStore";
+import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
-import {
-    selectDetailSort,
-    selectSalesOrder,
-    selectSalesOrderDetailComments,
-    selectSalesOrderDetailItems
-} from "./selectors";
+import {selectDetailSort, selectSalesOrderDetailItems} from "./selectors";
 import {selectCurrentCustomer} from "../customer/selectors";
 import {setLineSort} from "./actions";
 import StickerSelectToggle from "./StickerSelectToggle";
@@ -154,13 +149,13 @@ const SalesOrderDetailTable = () => {
     const dispatch = useAppDispatch();
     const settings = useSelector(selectCurrentCustomer);
     const sort = useSelector(selectDetailSort);
-    const so = useSelector(selectSalesOrder);
+    // const so = useSelector(selectSalesOrder);
     const detail = useSelector(selectSalesOrderDetailItems);
-    const comments = useSelector(selectSalesOrderDetailComments);
+    // const comments = useSelector(selectSalesOrderDetailComments);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [fields, setFields] = useState(getColumns(settings));
-    const [shipTo, setShipTo] = useState('');
+    // const [shipTo, setShipTo] = useState('');
 
     useEffect(() => {
         setFields(getColumns(settings));

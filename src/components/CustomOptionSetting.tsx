@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useId} from 'react';
+import {type ChangeEvent, useId} from 'react';
 import {useSelector} from "react-redux";
 import {selectCanEdit} from "@/ducks/user";
 import InputGroup from "react-bootstrap/InputGroup";

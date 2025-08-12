@@ -1,4 +1,3 @@
-import React from 'react';
 import CustomerItemList from "./CustomerItemList";
 import ItemEditor from "./ItemEditor";
 import CustomerItemFilter from "./CustomerItemFilter";

@@ -1,51 +1,35 @@
 <!doctype html>
 <html lang="en-us">
 <head>
-    <meta charset="utf-8"/>
-    <title>Barcode Admin - CHUMS</title>
+    <meta charSet="utf-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <title>Barcode Admin / localhost</title>
     <meta name="description" content="Barcode Admin"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&family=Roboto:wght@300;400;700&display=swap"
           rel="stylesheet">
-    <link rel="stylesheet" href="/node_modules/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" type="text/css" href="/node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/node_modules/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/css/intranet.css?v=1494436263">
     <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/css/chums.css">
-    <link rel="stylesheet" type="text/css" href="public/main.css">
     <link rel="icon" type="image/x-icon" href="https://intranet.chums.com/favicon.ico"/>
     <script src="https://intranet.chums.com/js/preferred-theme.js"></script>
 </head>
 <body>
-<div class="row justify-content-end align-items-baseline mt-1">
-    <div class="col-auto">Color Theme</div>
-    <div class="col-auto">
-        <button class="btn btn-sm btn-dark" id="--use-dark-theme">
-            <span class="bi-moon-fill"></span>
-        </button>
-        <button class="btn btn-sm btn-light" id="--use-light-theme">
-            <span class="bi-sun-fill"></span>
-        </button>
-        <button class="btn btn-sm btn-secondary" id="--use-auto-theme">
-            <span class="bi-sunset-fill"></span>
-        </button>
-    </div>
-    <script>
-        if (window?.CHUMS?.setTheme !== undefined) {
-            document.querySelector('#--use-dark-theme')?.addEventListener('click', () =>{
-                CHUMS.setTheme(CHUMS.theme.dark)
-            });
-            document.querySelector('#--use-light-theme')?.addEventListener('click', () => {
-                CHUMS.setTheme(CHUMS.theme.light)
-            });
-            document.querySelector('#--use-auto-theme')?.addEventListener('click', () => {
-                CHUMS.setTheme('auto')
-            });
-        }
-    </script>
-</div>
+<header class="site-header">
+    <nav class="navbar navbar-chums navbar-expand-lg navbar-light bg-body-tertiary scroll-top">
+        <div class="site-logo">
+            <div class="logo-center">
+                <a href="/">
+                    <img class="logo" id="navbar-logo" alt="Chums Logo"
+                         src="https://intranet.chums.com/images/logos/Chums-Logo-Badge-Red-RGB.png"
+                         style="margin-top: 0;">
+                </a>
+            </div>
+        </div>
+    </nav>
+</header>
 <main class="container-fluid">
     <div>
         <div>

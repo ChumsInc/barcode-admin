@@ -1,10 +1,9 @@
-import React from 'react';
 import Alert from "react-bootstrap/Alert";
 import {useSelector} from "react-redux";
 import {selectSalesOrder} from "./selectors";
 import {selectCurrentCustomer} from "../customer/selectors";
 import {selectCustomerList} from "../customers/selectors";
-import {customerKey} from "../../utils/customer";
+import {customerKey} from "@/utils/customer";
 
 const SalesOrderCustomerAlert = () => {
     const so = useSelector(selectSalesOrder);

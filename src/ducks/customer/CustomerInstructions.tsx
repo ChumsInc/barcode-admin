@@ -1,4 +1,3 @@
-import React from 'react';
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "./selectors";
 import {Alert} from "react-bootstrap";

@@ -1,4 +1,3 @@
-import React from 'react';
 import {useSelector} from "react-redux";
 import {selectSalesOrderDetailComments} from "./selectors";
 import Alert from "react-bootstrap/Alert";

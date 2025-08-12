@@ -1,8 +1,8 @@
-import {UserRecord} from "chums-types";
+import type {UserRecord} from "chums-types";
 import {createAsyncThunk, createReducer} from "@reduxjs/toolkit";
-import {UserValidationResponse} from "../../types";
+import type {UserValidationResponse} from "../../types";
 import {fetchUserValidation} from "../../api/user";
-import {RootState} from "../../app/configureStore";
+import type {RootState} from "../../app/configureStore";
 
 export interface UserState {
     valid: boolean;
@@ -39,7 +39,7 @@ export const loadUserValidation = createAsyncThunk<UserValidationResponse|null>(
         return res;
     },
     {
-        condition(arg, {getState}) {
+        condition(_, {getState}) {
             return !selectProfileLoading(getState() as RootState);
         }
     }

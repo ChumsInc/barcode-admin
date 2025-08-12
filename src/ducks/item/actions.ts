@@ -1,5 +1,5 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {SageItem} from "../../types";
+import type {SageItem} from "../../types";
 import {fetchItemInfo} from "../../api/item";
 
 export const loadItem = createAsyncThunk<SageItem|null, string>(

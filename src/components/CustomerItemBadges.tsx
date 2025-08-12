@@ -1,5 +1,4 @@
-import React from 'react';
-import {ProductType} from "chums-types";
+import type {ProductType} from "chums-types";
 import {Badge} from "react-bootstrap";
 
 

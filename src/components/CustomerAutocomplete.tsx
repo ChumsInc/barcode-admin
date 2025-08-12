@@ -1,12 +1,12 @@
-import React, {ChangeEvent, useEffect, useId, useRef, useState} from 'react';
-import {SearchCustomer} from "../types";
+import React, {type ChangeEvent, useEffect, useState} from 'react';
+import type {SearchCustomer} from "../types";
 import {fetchCustomerLookup} from "../api/customer";
 import {customerKey} from "../utils/customer";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
-import {FilledInputProps} from "@mui/material/FilledInput/FilledInput";
+import {type FilledInputProps} from "@mui/material/FilledInput";
 
 
 export interface CustomerAutocompleteProps extends FilledInputProps {
@@ -32,8 +32,8 @@ const CustomerAutocomplete = ({
     const [results, setResults] = useState<readonly SearchCustomer[]>([]);
     const [loading, setLoading] = useState(false);
     const [tHandle, setTHandle] = useState(0);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const id = useId();
+    // const containerRef = useRef<HTMLDivElement>(null);
+    // const id = useId();
 
     useEffect(() => {
         setValue(customer);
@@ -90,11 +90,11 @@ const CustomerAutocomplete = ({
                               onSelectCustomer(hint);
                           }
                       }}
-                      onChange={(ev: any, newValue: SearchCustomer | null) => {
+                      onChange={(_, newValue: SearchCustomer | null) => {
                           setValue(newValue);
                           onSelectCustomer(newValue);
                       }}
-                      onInputChange={(ev, newInputValue) => {
+                      onInputChange={(_, newInputValue) => {
                           setInputValue(newInputValue);
                       }}
                       filterOptions={(x) => x}

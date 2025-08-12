@@ -1,5 +1,5 @@
-import {BarcodeCustomer, BarcodeItem} from "chums-types";
-import {BarcodeItemSettingsMap} from "../types";
+import type {BarcodeCustomer, BarcodeItem} from "chums-types";
+import type {BarcodeItemSettingsMap} from "../types";
 
 export const customerKey = (row:Pick<BarcodeCustomer, 'ARDivisionNo'|'CustomerNo'>) => [row.ARDivisionNo, row.CustomerNo].filter(v => !!v).join('-');
 export const itemKey = (row:BarcodeItem) => row.ItemCode;

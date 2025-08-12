@@ -1,4 +1,4 @@
-import {UserValidationResponse} from "../types";
+import type {UserValidationResponse} from "../types";
 import {fetchJSON} from "@chumsinc/ui-utils";
 
 export async function fetchUserValidation():Promise<UserValidationResponse|null> {

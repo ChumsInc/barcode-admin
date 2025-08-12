@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {useParams} from "react-router";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "../ducks/customer/selectors";

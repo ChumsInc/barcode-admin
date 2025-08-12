@@ -1,4 +1,3 @@
-import React from 'react';
 import {useSelector} from "react-redux";
 import {selectMissingItems} from "./selectors";
 import Alert from "react-bootstrap/Alert";

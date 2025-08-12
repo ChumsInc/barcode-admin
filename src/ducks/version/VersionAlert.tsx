@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
+import  {useEffect} from 'react';
 import Alert from "react-bootstrap/Alert";
 import {useSelector} from "react-redux";
 import {loadVersion, selectVersion} from "./index";
-import {useAppDispatch} from "../../app/configureStore";
+import {useAppDispatch} from "@/app/configureStore";
 import {Container} from "react-bootstrap";
 
 const VersionAlert = () => {

@@ -1,4 +1,4 @@
-import {
+import type {
     BarcodeCustomerList,
     BarcodeCustomerResponse,
     BarcodeItemList,
@@ -7,7 +7,7 @@ import {
     SearchCustomer
 } from "../types";
 import {fetchJSON} from "@chumsinc/ui-utils";
-import {BarcodeCustomer, BarcodeCustomerSettings, BarcodeItem} from "chums-types";
+import type {BarcodeCustomer, BarcodeCustomerSettings, BarcodeItem} from "chums-types";
 import {customerKey, itemKey} from "../utils/customer";
 
 export async function fetchCustomers(): Promise<BarcodeCustomerList> {
@@ -174,8 +174,9 @@ export async function fetchCustomerLookup(search: string): Promise<SearchCustome
         if (search === '') {
             return [];
         }
-        const url = `/api/search/customer/chums/:search`
-            .replace(':search', encodeURIComponent(search));
+        const params = new URLSearchParams();
+        params.set('search', search);
+        const url = `/api/search/customer.json?${params.toString()}`;
         const res = await fetchJSON<{ result: SearchCustomer[] }>(url);
         return res?.result ?? [];
     } catch (err: unknown) {

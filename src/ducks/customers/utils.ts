@@ -1,6 +1,6 @@
-import {SortProps} from "../../types";
-import {BarcodeCustomer, BarcodeCustomerSettings} from "chums-types";
-import {customerKey} from "../../utils/customer";
+import type {SortProps} from "../../types";
+import type {BarcodeCustomer, BarcodeCustomerSettings} from "chums-types";
+import {customerKey} from "@/utils/customer";
 
 export const customerSort = ({field, ascending}: SortProps<BarcodeCustomer>) =>
     (a: BarcodeCustomer, b: BarcodeCustomer):number => {

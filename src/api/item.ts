@@ -1,6 +1,6 @@
-import {SageItem} from "../types";
+import type {SageItem} from "../types";
 import {fetchJSON} from "@chumsinc/ui-utils";
-import {SearchItem} from "chums-types";
+import type {SearchItem} from "chums-types";
 
 export async function fetchItemInfo(itemCode: string):Promise<SageItem|null> {
     try {
@@ -20,8 +20,9 @@ export async function fetchItemInfo(itemCode: string):Promise<SageItem|null> {
 
 export async function fetchItemLookup(search:string):Promise<SearchItem[]> {
     try {
-        const url = '/api/search/item/chums/:search'
-            .replace(':search', encodeURIComponent(search));
+        const params = new URLSearchParams();
+        params.set('search', search);
+        const url = `/api/search/item.json?${params.toString()}`;
         const res = await fetchJSON<{result: SearchItem[]}>(url);
         return res?.result ?? [];
     } catch(err:unknown) {

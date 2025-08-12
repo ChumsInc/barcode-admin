@@ -1,7 +1,7 @@
-import React, {ChangeEvent, InputHTMLAttributes, useEffect, useId, useRef, useState} from 'react';
+import React, {type ChangeEvent, type InputHTMLAttributes, useEffect, useRef, useState} from 'react';
 import {fetchItemLookup} from "../api/item";
 import AutoComplete from "./AutoComplete";
-import {SearchItem} from "chums-types";
+import type {SearchItem} from "chums-types";
 import {useDebounceValue} from "usehooks-ts";
 
 const SageItemAutocomplete = AutoComplete<SearchItem>;
@@ -21,7 +21,7 @@ const ItemAutocomplete = ({itemCode, onChange, onSelectItem, children, ...props}
     const [tHandle, setTHandle] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const id = useId();
+    // const id = useId();
     useEffect(() => {
         setValue(debouncedValue);
         const [item] = results.filter(item => item.ItemCode === debouncedValue);

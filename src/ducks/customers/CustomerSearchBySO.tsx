@@ -1,9 +1,9 @@
-import React, {FormEvent, useState} from "react";
-import {useAppSelector} from "../../app/configureStore";
+import {type FormEvent, useState} from "react";
+import {useAppSelector} from "@/app/configureStore";
 import {useNavigate} from "react-router";
-import {fetchSOSearch} from "../../api/order-stickers";
+import {fetchSOSearch} from "@/api/order-stickers";
 import {selectCustomerList} from "./selectors";
-import {customerKey} from "../../utils/customer";
+import {customerKey} from "@/utils/customer";
 import {selectCustomerLoading} from "../customer/selectors";
 import {selectSalesOrderLoading} from "../salesOrder/selectors";
 

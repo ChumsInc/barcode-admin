@@ -1,5 +1,5 @@
 import {QueryStatus} from "@reduxjs/toolkit/query";
-import {BarcodeSalesOrderHeader, BarcodeSODetailLine, SODetailTableField} from "../../types";
+import type {BarcodeSalesOrderHeader, BarcodeSODetailLine, SODetailTableField} from "../../types";
 import {createReducer} from "@reduxjs/toolkit";
 import {
     dismissQtyGenerated,
@@ -8,11 +8,12 @@ import {
     parseSalesOrderLines,
     setExtraStickers,
     setLineQty,
-    setLineSort, setShipTo,
+    setLineSort,
+    setShipTo,
     toggleAllSelected,
     toggleLineSelected
 } from "./actions";
-import {SortProps} from "@chumsinc/sortable-tables";
+import type {SortProps} from "@chumsinc/sortable-tables";
 import {detailSorter, itemStickerQty} from "./utils";
 import {loadCustomer, removeCustomerItem, saveCustomerItem} from "../customer/actions";
 
@@ -27,7 +28,7 @@ export interface SalesOrderState {
     saving: QueryStatus;
     loaded: boolean;
     shipTo: string;
-    qtyGenerated: number|null;
+    qtyGenerated: number | null;
     sort: SortProps<SODetailTableField>;
     shipToList: string[]
 }
@@ -59,7 +60,7 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
             state.loading = QueryStatus.pending;
             state.qtyGenerated = null;
         })
-        .addCase(loadSalesOrder.rejected, (state, action) => {
+        .addCase(loadSalesOrder.rejected, (state,) => {
             state.loading = QueryStatus.rejected;
         })
         .addCase(loadSalesOrder.fulfilled, (state, action) => {
@@ -115,13 +116,13 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
             state.shipTo = '';
             state.shipToList = [];
         })
-        .addCase(generateStickers.pending, (state, action) => {
+        .addCase(generateStickers.pending, (state,) => {
             state.saving = QueryStatus.pending;
         })
-        .addCase(generateStickers.rejected, (state, action) => {
+        .addCase(generateStickers.rejected, (state,) => {
             state.saving = QueryStatus.rejected;
         })
-        .addCase(generateStickers.fulfilled, (state,action) => {
+        .addCase(generateStickers.fulfilled, (state, action) => {
             state.saving = QueryStatus.fulfilled;
             state.qtyGenerated = action.payload ?? null;
         })

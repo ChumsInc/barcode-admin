@@ -1,8 +1,8 @@
-import React, {ChangeEvent, useId} from 'react';
+import {type ChangeEvent, useId} from 'react';
 import {useSelector} from "react-redux";
 import {selectSalesOrderDetail} from "./selectors";
 import FormCheck from "react-bootstrap/FormCheck";
-import {useAppDispatch} from "../../app/configureStore";
+import {useAppDispatch} from "@/app/configureStore";
 import {toggleLineSelected} from "./actions";
 
 export interface StickerSelectToggleProps {

@@ -1,12 +1,11 @@
-import React, {InputHTMLAttributes} from 'react';
-import {BarcodeItem} from "chums-types";
+import React from 'react';
+import type {BarcodeItem} from "chums-types";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "./selectors";
-import {itemSettingsMap} from "../../utils/customer";
+import {itemSettingsMap} from "@/utils/customer";
 import {selectCanEdit} from "../user";
-import {Col, Form, FormControl, FormControlProps, Row} from "react-bootstrap";
+import {Col, Form, FormControl, type FormControlProps, Row} from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
-
 
 
 export interface ItemInputProps extends Omit<FormControlProps, 'children'> {
@@ -31,7 +30,7 @@ const ItemInput = ({field, value, label, onChange, helpText, children, ...inputP
             <Col sm={8}>
                 <InputGroup size="sm">
                     <FormControl size="sm" value={value} onChange={onChange}  {...inputProps}
-                           readOnly={!canEdit}/>
+                                 readOnly={!canEdit}/>
                     {children}
                 </InputGroup>
                 {!!helpText && <small className="text-secondary">{helpText}</small>}

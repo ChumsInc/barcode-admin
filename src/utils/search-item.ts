@@ -1,4 +1,4 @@
-import {SearchItem} from "chums-types";
+import type {SearchItem} from "chums-types";
 
 export const defaultSearchItem:SearchItem = {
     ItemCode: '',
@@ -11,5 +11,6 @@ export const defaultSearchItem:SearchItem = {
     UDF_UPC: '',
     filename: '',
     SuggestedRetailPrice: '',
-    UDF_UPC_BY_COLOR: ''
+    UDF_UPC_BY_COLOR: '',
+    TemplateNo: '',
 }

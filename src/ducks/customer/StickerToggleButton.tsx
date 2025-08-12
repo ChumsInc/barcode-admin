@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useId} from 'react';
+import  {type ChangeEvent, useId} from 'react';
 import classNames from "classnames";
 
 const StickerToggleButton = ({checked, onChange, icon, title, disabled}:{

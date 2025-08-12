@@ -1,5 +1,4 @@
-import React from 'react';
-import {BarcodeItem} from "chums-types";
+import type {BarcodeItem} from "chums-types";
 import {useSelector} from "react-redux";
 import {selectCustomerItems} from "./selectors";
 import Alert from "react-bootstrap/Alert";

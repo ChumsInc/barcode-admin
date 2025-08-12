@@ -1,8 +1,8 @@
-import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react'
-import {useAppDispatch} from "../../app/configureStore";
+import {type ChangeEvent, type FormEvent, useEffect, useState} from 'react'
+import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
-import {selectCurrentCustomer, selectCustomerItem, selectCustomerLoading, selectItemAction} from "./selectors";
-import {BarcodeItem, Editable, SearchItem} from "chums-types";
+import {selectCurrentCustomer, selectCustomerItem, selectItemAction} from "./selectors";
+import type {BarcodeItem, Editable, SearchItem} from "chums-types";
 import {newItem} from "./utils";
 import ItemAutocomplete from "../../components/ItemAutocomplete";
 import {selectCanEdit} from "../user";
@@ -30,7 +30,6 @@ const ItemEditor = () => {
     const dispatch = useAppDispatch();
     const currentItem = useSelector(selectCustomerItem);
     const settings = useSelector(selectCurrentCustomer);
-    const loading = useSelector(selectCustomerLoading);
     const itemAction = useSelector(selectItemAction);
 
     const canEdit = useSelector(selectCanEdit);

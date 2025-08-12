@@ -1,6 +1,5 @@
-import React from "react";
 import NotesBadge from "../../components/NotesBadge";
-import {useAppDispatch} from "../../app/configureStore";
+import {useAppDispatch} from "@/app/configureStore";
 import {toggleLineSelected} from "./actions";
 
 export interface StickerItemCommentProps {

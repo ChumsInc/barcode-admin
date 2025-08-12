@@ -1,5 +1,5 @@
-import {BarcodeCustomerList, SortProps} from "../../types";
-import {BarcodeCustomer} from "chums-types";
+import type {BarcodeCustomerList, SortProps} from "../../types";
+import type {BarcodeCustomer} from "chums-types";
 import {createReducer} from "@reduxjs/toolkit";
 import {
     loadCustomers,
@@ -10,8 +10,8 @@ import {
     toggleShowInactive
 } from "./actions";
 import {loadCustomer, saveCustomer} from "../customer/actions";
-import {customerKey} from "../../utils/customer";
-import {getPreference, localStorageKeys, setPreference} from "../../api/preferences";
+import {customerKey} from "@/utils/customer";
+import {getPreference, localStorageKeys, setPreference} from "@/api/preferences";
 
 export interface CustomersState {
     list: BarcodeCustomerList;

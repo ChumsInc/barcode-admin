@@ -1,4 +1,4 @@
-import React, {Component, ReactNode} from "react";
+import {Component, type ReactNode} from "react";
 import {Alert} from "react-bootstrap";
 
 export interface ErrorBoundaryProps {

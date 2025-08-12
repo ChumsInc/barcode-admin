@@ -1,13 +1,13 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
+import type {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
 import {
     deleteCustomerItem,
     fetchCustomer,
     postCustomerItem,
     postCustomerSettings,
     postGenNextUPC
-} from "../../api/customer";
-import {BarcodeCustomerResponse, BarcodeItemList, ColorUPCRecord, CustomUPCBarcodeItem, SortProps} from "../../types";
+} from "@/api/customer";
+import type {BarcodeCustomerResponse, BarcodeItemList, CustomUPCBarcodeItem, SortProps} from "../../types";
 import {
     selectCurrentCustomer,
     selectCustomerLoading,
@@ -15,10 +15,10 @@ import {
     selectCustomUPCLoading,
     selectItemAction
 } from "./selectors";
-import {RootState} from "../../app/configureStore";
+import type {RootState} from "@/app/configureStore";
 import {selectCustomersLoading} from "../customers/selectors";
 import {formatGTIN} from '@chumsinc/gtin-tools';
-import {customerKey} from "../../utils/customer";
+import {customerKey} from "@/utils/customer";
 
 
 export const setCurrentItem = createAction<BarcodeItem | null>('customer/item/select');
@@ -31,12 +31,11 @@ export const setItemShowInactive = createAction<boolean | undefined>('customer/i
 
 export const loadCustomer = createAsyncThunk<BarcodeCustomerResponse | null, number | string | null>(
     'customer/load',
-    async (customerId, {getState, dispatch}) => {
-        const state = getState();
+    async (customerId) => {
         return await fetchCustomer(customerId);
     },
     {
-        condition(arg, {getState}) {
+        condition(_, {getState}) {
             const state = getState() as RootState;
             return !(selectCustomerLoading(state) || selectCustomerSaving(state));
         }
@@ -53,7 +52,7 @@ export const saveCustomer = createAsyncThunk<BarcodeCustomerSettings | null, Bar
         });
     },
     {
-        condition(arg, {getState}) {
+        condition(_, {getState}) {
             const state = getState() as RootState;
             return !(selectCustomerLoading(state)
                 || selectCustomersLoading(state)
@@ -69,7 +68,7 @@ export const saveCustomerItem = createAsyncThunk<BarcodeItemList, BarcodeItem>(
         return await postCustomerItem({...arg, UPC: formatGTIN(arg.UPC, true)})
     },
     {
-        condition(arg, {getState}) {
+        condition(_, {getState}) {
             const state = getState() as RootState;
             return selectItemAction(state) === 'idle';
         }
@@ -99,7 +98,7 @@ export const removeCustomerItem = createAsyncThunk<BarcodeItemList, BarcodeItem>
         return await deleteCustomerItem(arg);
     },
     {
-        condition(arg, {getState}) {
+        condition(_, {getState}) {
             const state = getState() as RootState;
             return selectItemAction(state) === 'idle';
         }

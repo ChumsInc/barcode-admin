@@ -1,0 +1,23 @@
+{
+  "_components-Nv-AO_nR.js": {
+    "file": "assets/components-Nv-AO_nR.js",
+    "name": "components",
+    "imports": [
+      "_vendor-CAtmAK9e.js"
+    ]
+  },
+  "_vendor-CAtmAK9e.js": {
+    "file": "assets/vendor-CAtmAK9e.js",
+    "name": "vendor"
+  },
+  "index.html": {
+    "file": "assets/index-YyAv0pfv.js",
+    "name": "index",
+    "src": "index.html",
+    "isEntry": true,
+    "imports": [
+      "_vendor-CAtmAK9e.js",
+      "_components-Nv-AO_nR.js"
+    ]
+  }
+}

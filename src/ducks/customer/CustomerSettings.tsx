@@ -1,17 +1,12 @@
-import React, {ChangeEvent, FormEvent, useEffect, useId, useState} from 'react';
-import {useAppDispatch} from "../../app/configureStore";
-import {BarcodeCustomerSettings, Editable} from "chums-types";
+import {type ChangeEvent, type FormEvent, useEffect, useId, useState} from 'react';
+import {useAppDispatch} from "@/app/configureStore";
+import type {BarcodeCustomerSettings, Editable} from "chums-types";
 import {newCustomer} from "../customers/utils";
 import {useSelector} from "react-redux";
-import {
-    selectCurrentCustomer,
-    selectCustomerItemsCount,
-    selectCustomerLoading,
-    selectCustomerSaving
-} from "./selectors";
-import {customerKey} from "../../utils/customer";
+import {selectCurrentCustomer, selectCustomerItemsCount, selectCustomerLoading} from "./selectors";
+import {customerKey} from "@/utils/customer";
 import CustomerAutocomplete from "../../components/CustomerAutocomplete";
-import {BarcodeCustomerList, SearchCustomer} from "../../types";
+import type {BarcodeCustomerList, SearchCustomer} from "../../types";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import TextField from "@mui/material/TextField";
 import CustomOptionSetting from "../../components/CustomOptionSetting";
@@ -38,12 +33,11 @@ const CustomerSettings = () => {
     const [customer, setCustomer] = useState<BarcodeCustomerSettings & Editable>({...newCustomer});
     const canEdit = useSelector(selectCanEdit);
     const itemsCount = useSelector(selectCustomerItemsCount);
-    const [customerSearch, setCustomerSearch] = useState(customerKey(customer));
+    const [, setCustomerSearch] = useState(customerKey(customer));
     const current = useSelector(selectCurrentCustomer);
     const customerList = useSelector(selectCustomerList);
     const loaded = useSelector(selectCustomersLoaded);
     const loading = useSelector(selectCustomerLoading);
-    const saving = useSelector(selectCustomerSaving);
     const [customerExists, setCustomerExists] = useState(isDuplicate(customer, customerList));
     const activeId = useId();
     const idReqAltItemCode = useId();
@@ -94,13 +88,13 @@ const CustomerSettings = () => {
         }
     }
 
-    const resetHandler = () => {
-        if (current) {
-            setCustomer({...current})
-        } else {
-            setCustomer({...newCustomer});
-        }
-    }
+    // const resetHandler = () => {
+    //     if (current) {
+    //         setCustomer({...current})
+    //     } else {
+    //         setCustomer({...newCustomer});
+    //     }
+    // }
 
     const saveHandler = (ev: FormEvent) => {
         ev.preventDefault();

@@ -1,4 +1,4 @@
-import {SageItem} from "../../types";
+import type {SageItem} from "../../types";
 import {createReducer} from "@reduxjs/toolkit";
 import {loadItem} from "./actions";
 import {setCurrentItem} from "../customer/actions";
@@ -43,7 +43,7 @@ const itemReducer = createReducer(initialItemState, (builder) => {
             state.loading = false;
             state.item = action.payload;
         })
-        .addCase(loadItem.rejected, (state, action) => {
+        .addCase(loadItem.rejected, (state) => {
             state.loading = false;
             state.loaded = true;
         })

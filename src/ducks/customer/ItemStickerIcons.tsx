@@ -1,5 +1,4 @@
-import React from 'react';
-import {BarcodeItem} from "chums-types";
+import type {BarcodeItem} from "chums-types";
 import classNames from "classnames";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "./selectors";

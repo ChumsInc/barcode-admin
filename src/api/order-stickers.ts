@@ -1,6 +1,6 @@
-import {SalesOrder} from 'chums-types';
+import type {SalesOrder} from 'chums-types';
 import {fetchJSON} from "@chumsinc/ui-utils";
-import {GenerateStickerBody, GenerateStickerProps} from "../types";
+import type {GenerateStickerBody, GenerateStickerProps} from "../types";
 
 export async function fetchSalesOrder(salesOrderNo: string): Promise<SalesOrder | null> {
     try {

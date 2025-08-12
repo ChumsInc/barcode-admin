@@ -1,8 +1,8 @@
-import {RootState} from "../../app/configureStore";
+import type {RootState} from "@/app/configureStore";
 import {QueryStatus} from "@reduxjs/toolkit/query";
 import {createSelector} from "@reduxjs/toolkit";
-import {SortProps} from "@chumsinc/sortable-tables";
-import {SODetailTableField} from "../../types";
+import type {SortProps} from "@chumsinc/sortable-tables";
+import type {SODetailTableField} from "../../types";
 import {detailSorter} from "./utils";
 
 export const selectSalesOrder = (state: RootState) => state.salesOrder.orderHeader;

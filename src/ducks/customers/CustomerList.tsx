@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {useAppDispatch} from "../../app/configureStore";
+import {useEffect, useState} from 'react';
+import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
 import {
     selectCustomerList,
@@ -12,46 +12,18 @@ import {
     selectShowInactiveCustomers
 } from "./selectors";
 import {loadCustomers, setCustomersSort, setPage, setRowsPerPage} from "./actions";
-import {BarcodeCustomer} from "chums-types";
-import {customerKey} from "../../utils/customer";
+import type {BarcodeCustomer} from "chums-types";
+import {customerKey} from "@/utils/customer";
 import {customerFilter, customerSort} from "./utils";
-import {SortProps} from "../../types";
-import {SortableTable, SortableTableField, TablePagination} from "@chumsinc/sortable-tables";
+import type {SortProps} from "../../types";
+import {SortableTable, TablePagination} from "@chumsinc/sortable-tables";
 import CustomerFilter from "./CustomerFilter";
-import {Link, useNavigate} from "react-router";
-import NotesBadge from "../../components/NotesBadge";
+import {useNavigate} from "react-router";
 import CustomerSearchBySO from "./CustomerSearchBySO";
 import classNames from "classnames";
 import {SpinnerButton} from "@chumsinc/react-bootstrap-addons";
+import {customerListFields} from "@/ducks/customers/customerListFields.tsx";
 
-
-const tableFields: SortableTableField<BarcodeCustomer>[] = [
-    {
-        id: 0,
-        field: 'CustomerNo',
-        title: 'Customer No',
-        sortable: true,
-        render: (row) => (<Link to={`/${row.id}/settings`}>{customerKey(row)}</Link>)
-    },
-    {
-        id: 1,
-        field: 'CustomerName',
-        title: 'Customer Name',
-        sortable: true,
-        render: (row) => (<Link to={`/${row.id}/settings`}>{row.CustomerName}</Link>)
-    },
-    {id: 3, field: 'CustomerNo', title: 'Orders', render: (row) => <Link to={`/${row.id}/orders`}>Orders</Link>},
-    {id: 4, field: 'CustomerNo', title: 'Items', render: (row) => <Link to={`/${row.id}/items`}>Items</Link>},
-    {
-        id: 2,
-        field: 'Notes',
-        title: 'Notes/Instructions',
-        sortable: true,
-        render: (row) => (<div className="d-flex flex-nowrap gap-3">
-            <NotesBadge note={row.Notes}/><NotesBadge note={row.SpecialInstructions} bg="warning"/>
-        </div>)
-    },
-];
 
 const CustomerList = () => {
     const dispatch = useAppDispatch();
@@ -115,7 +87,7 @@ const CustomerList = () => {
                     <CustomerSearchBySO/>
                 </div>
             </div>
-            <SortableTable fields={tableFields} data={pagedList}
+            <SortableTable fields={customerListFields} data={pagedList}
                            rowClassName={(row) => classNames({'table-warning': !row.active})}
                            currentSort={sort} keyField="id" onChangeSort={sortChangedHandler}/>
             <TablePagination size="sm" page={page} rowsPerPage={rowsPerPage} count={sortedList.length}

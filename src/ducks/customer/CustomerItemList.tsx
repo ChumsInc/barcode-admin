@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {useAppDispatch} from "../../app/configureStore";
+import {useEffect, useState} from 'react';
+import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
 import {
     selectCurrentCustomer,
@@ -11,99 +11,13 @@ import {
     selectItemsRowsPerPage,
     selectItemsSort
 } from "./selectors";
-import {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
-import {SortableTable, SortableTableField, TablePagination} from "@chumsinc/sortable-tables";
+import type {BarcodeItem, SortProps} from "chums-types";
+import {SortableTable, TablePagination} from "@chumsinc/sortable-tables";
 import {loadCustomer, setCurrentItem, setItemSort, setPage, setRowsPerPage} from "./actions";
-import {SortProps} from "../../types";
 import classNames from "classnames";
-import CustomerItemBadges from "../../components/CustomerItemBadges";
-import Decimal from "decimal.js";
-import is_number from "is-number";
-import NotesBadge from "../../components/NotesBadge";
-import {formatGTIN} from "@chumsinc/gtin-tools";
-import ItemStickerIcons from "./ItemStickerIcons";
+import CustomerItemListContainer from "@/ducks/customer/CustomerItemListContainer";
+import {getCustomerColumns} from "@/ducks/customer/CustomerItemListFields";
 
-const CustomerItemMSRP = ({
-                              msrp,
-                              suggestedRetailPrice
-                          }: { msrp: string, suggestedRetailPrice: string | number | null | undefined }) => {
-    if (!suggestedRetailPrice || !is_number(msrp)) {
-        return <>{msrp}</>;
-    }
-    return (
-        <div className="text-nowrap">
-            <span>{msrp}</span>
-            {new Decimal(msrp).lt(suggestedRetailPrice) && (
-                <span className="ms-1 bi-exclamation-triangle-fill text-danger"/>)}
-            {new Decimal(msrp).gt(suggestedRetailPrice) && (
-                <span className="ms-1 bi-exclamation-triangle-fill text-success"/>)}
-        </div>
-    )
-}
-
-const getColumns = (customer: BarcodeCustomerSettings | null) => {
-    const fields: SortableTableField<BarcodeItem>[] = [];
-    fields.push({field: 'ItemCode', title: 'Item', sortable: true});
-    if (!customer) {
-        return fields;
-    }
-    if (customer.reqItemDescription) {
-        fields.push({field: 'ItemDescription', title: 'Description', sortable: true, className: 'text-wrap'});
-    }
-    if (customer.reqAltItemNumber) {
-        fields.push({field: 'AltItemCode', title: 'Alternate Item', sortable: true});
-    }
-    if (customer.reqColor) {
-        fields.push({field: 'Color', title: 'Color', sortable: true});
-    }
-    if (customer.reqSKU) {
-        fields.push({field: 'SKU', title: 'SKU', sortable: true});
-    }
-    if (customer.reqCustomerPart) {
-        fields.push({field: 'CustomerPart', title: 'Customer Part', sortable: true});
-    }
-    if (customer.reqUPC) {
-        fields.push({field: 'UPC', title: 'UPC', sortable: true, render: (row) => formatGTIN(row.UPC ?? '')});
-    }
-    if (customer.reqMSRP) {
-        fields.push({
-            field: 'MSRP', title: 'MSRP', sortable: true,
-            render: (row) => <CustomerItemMSRP msrp={row.MSRP} suggestedRetailPrice={row.SuggestedRetailPrice}/>
-        });
-    }
-    if (customer.reqCustom1) {
-        fields.push({field: 'Custom1', title: customer.custom1Name, sortable: true});
-    }
-    if (customer.reqCustom2) {
-        fields.push({field: 'Custom2', title: customer.custom2Name, sortable: true});
-    }
-    if (customer.reqCustom3) {
-        fields.push({field: 'Custom3', title: customer.custom3Name, sortable: true});
-    }
-    if (customer.reqCustom4) {
-        fields.push({field: 'Custom4', title: customer.custom4Name, sortable: true});
-    }
-    fields.push({
-        field: 'itemSticker', title: 'Stickers', render: (row) => <ItemStickerIcons item={row}/>
-    })
-    fields.push({
-        field: 'ProductStatus', title: 'Status', sortable: true,
-        render: (item) => <CustomerItemBadges inactiveItem={item.InactiveItem}
-                                              productType={item.ProductType}
-                                              productStatus={item.ProductStatus}/>
-    });
-    fields.push({
-        field: 'SpecialInstructions',
-        title: <span className="bi-card-text"/>,
-        render: (item) => (
-            <>
-                <NotesBadge note={item.SpecialInstructions} bg="warning"/>
-                <NotesBadge note={item.Notes} bg="info"/>
-            </>
-        )
-    })
-    return fields;
-}
 
 const CustomerItemList = () => {
     const dispatch = useAppDispatch();
@@ -114,7 +28,7 @@ const CustomerItemList = () => {
     const loading = useSelector(selectCustomerLoading);
     const page = useSelector(selectItemsPage);
     const rowsPerPage = useSelector(selectItemsRowsPerPage);
-    const [fields, setFields] = useState(getColumns(currentCustomer));
+    const [fields, setFields] = useState(getCustomerColumns(currentCustomer));
     const [pagedData, setPagedData] = useState(filteredItems.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage));
     const sort = useSelector(selectItemsSort);
 
@@ -125,7 +39,7 @@ const CustomerItemList = () => {
     }, [loading, loaded]);
 
     useEffect(() => {
-        setFields(getColumns(currentCustomer));
+        setFields(getCustomerColumns(currentCustomer));
     }, [currentCustomer]);
 
 
@@ -134,7 +48,7 @@ const CustomerItemList = () => {
         setPagedData(pagedData);
     }, [page, rowsPerPage, filteredItems])
 
-    const sortChangeHandler = (nextSort: SortProps) => {
+    const sortChangeHandler = (nextSort: SortProps<BarcodeItem>) => {
         dispatch(setItemSort(nextSort));
     }
 
@@ -150,7 +64,7 @@ const CustomerItemList = () => {
     }
 
     return (
-        <div>
+        <CustomerItemListContainer>
             <div className="table-responsive">
                 <SortableTable fields={fields} data={pagedData} keyField={'ID'}
                                className="bca--customer-item-list"
@@ -163,7 +77,7 @@ const CustomerItemList = () => {
                              rowsPerPageProps={{onChange: (rpp) => dispatch(setRowsPerPage(rpp))}}
                              showFirst showLast
                              count={filteredItems.length}/>
-        </div>
+        </CustomerItemListContainer>
     )
 
 }

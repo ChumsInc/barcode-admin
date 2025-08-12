@@ -1,7 +1,7 @@
-import React, {ChangeEvent, useId} from 'react';
+import {type ChangeEvent, useId} from 'react';
 import {useSelector} from "react-redux";
 import {selectIsAllSelected} from "./selectors";
-import {useAppDispatch} from "../../app/configureStore";
+import {useAppDispatch} from "@/app/configureStore";
 import {toggleAllSelected} from "./actions";
 import FormCheck from "react-bootstrap/FormCheck";
 

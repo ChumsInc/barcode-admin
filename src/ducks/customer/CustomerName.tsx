@@ -1,7 +1,6 @@
-import React from 'react';
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "./selectors";
-import {customerKey} from "../../utils/customer";
+import {customerKey} from "@/utils/customer";
 
 const CustomerName = () => {
     const current = useSelector(selectCurrentCustomer);

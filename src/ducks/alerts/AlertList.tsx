@@ -1,5 +1,4 @@
-import React from 'react';
-import {useAppDispatch, useAppSelector} from "../../app/configureStore";
+import {useAppDispatch, useAppSelector} from "@/app/configureStore";
 import {ContextAlert} from '@chumsinc/react-bootstrap-addons'
 import {dismissAlert, selectAllAlerts} from "@chumsinc/alert-list";
 

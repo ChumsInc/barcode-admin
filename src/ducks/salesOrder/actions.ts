@@ -1,6 +1,6 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {fetchSalesOrder, postOrderStickers} from "../../api/order-stickers";
-import {
+import {fetchSalesOrder, postOrderStickers} from "@/api/order-stickers";
+import type {
     BarcodeItemList,
     BarcodeSalesOrder,
     BarcodeSODetailLine,
@@ -8,8 +8,8 @@ import {
     GenerateStickerProps,
     SalesOrderDetailBarcodeItem
 } from "../../types";
-import {SortProps} from "@chumsinc/sortable-tables";
-import {RootState} from "../../app/configureStore";
+import type {SortProps} from "@chumsinc/sortable-tables";
+import type {RootState} from "@/app/configureStore";
 import {selectCurrentCustomer, selectCustomerItems} from "../customer/selectors";
 import Decimal from "decimal.js";
 import {
@@ -89,7 +89,7 @@ export const loadSalesOrder = createAsyncThunk<BarcodeSalesOrder | null, string>
         }
     },
     {
-        condition: (arg, {getState}) => {
+        condition: (_, {getState}) => {
             const loading = selectSalesOrderLoading(getState() as RootState);
             return !loading;
         },
@@ -110,7 +110,7 @@ export const generateStickers = createAsyncThunk<number, boolean>(
             .filter(row => row.selected && !!row.stickerQty && !!row.item)
             .filter(row => !shipTo || row.UDF_SHIP_CODE === shipTo)
             .map(row => {
-                const {LineKey, item, Quantity, stickerQty} = row;
+                const {LineKey, item, stickerQty} = row;
                 return {LineKey, item_id: item?.ID ?? 0, quantity: stickerQty ?? 0};
             });
         const params: GenerateStickerProps = {
@@ -122,7 +122,7 @@ export const generateStickers = createAsyncThunk<number, boolean>(
         }
         return await postOrderStickers(params);
     }, {
-        condition(arg, {getState}) {
+        condition(_, {getState}) {
             const state = getState() as RootState;
             if (!selectCurrentCustomer(state)) {
                 return false;

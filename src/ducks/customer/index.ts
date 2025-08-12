@@ -1,5 +1,5 @@
-import {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
-import {BarcodeItemList, SortProps} from "../../types";
+import type {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
+import type {BarcodeItemList, SortProps} from "../../types";
 import {createReducer} from "@reduxjs/toolkit";
 import {
     assignNextUPC,
@@ -13,7 +13,7 @@ import {
     setPage,
     setRowsPerPage
 } from "./actions";
-import {getPreference, localStorageKeys, setPreference} from "../../api/preferences";
+import {getPreference, localStorageKeys, setPreference} from "@/api/preferences";
 
 export interface CustomerState {
     settings: BarcodeCustomerSettings | null;
@@ -138,10 +138,10 @@ const customerReducer = createReducer(initialCustomerState, (builder) => {
         .addCase(assignNextUPC.pending, (state) => {
             state.customUPCAction = 'pending';
         })
-        .addCase(assignNextUPC.fulfilled, (state, action) => {
+        .addCase(assignNextUPC.fulfilled, (state) => {
             state.customUPCAction = 'idle'
         })
-        .addCase(assignNextUPC.rejected, (state, action) => {
+        .addCase(assignNextUPC.rejected, (state) => {
             state.customUPCAction = 'idle';
         })
 })
