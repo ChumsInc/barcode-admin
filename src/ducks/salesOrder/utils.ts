@@ -24,7 +24,11 @@ export const detailSorter = (sort: SortProps<SODetailTableField>) => (a: Barcode
     case 'UnitOfMeasure':
         return (
             a[field].toLowerCase() === b[field].toLowerCase()
-                ? (a.LineSeqNo > b.LineSeqNo ? 1 : -1)
+                ? (
+                    a.ItemCode === b.ItemCode
+                        ?  (a.LineSeqNo > b.LineSeqNo ? 1 : -1)
+                        : a.ItemCode.localeCompare(b.ItemCode)
+                )
                 : (a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1)
         ) * sortMod;
     case 'AltItemCode':

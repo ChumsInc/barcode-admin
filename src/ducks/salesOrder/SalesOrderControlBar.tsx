@@ -5,14 +5,16 @@ import {
     selectDetailSort,
     selectExtraQuantity,
     selectSalesOrderLoading,
-    selectSalesOrderNo, selectShipTo, selectShipToList,
+    selectSalesOrderNo,
+    selectShipTo,
+    selectShipToList,
     selectStickerQty
 } from "./selectors";
 import {generateStickers, loadSalesOrder, setExtraStickers, setShipTo} from "./actions";
 import {useSearchParams} from "react-router";
 import StickerQuantityGeneratedAlert from "./StickerQuantityGeneratedAlert";
-import {SpinnerButton} from "@chumsinc/react-bootstrap-addons";
 import FormCheck from "react-bootstrap/FormCheck";
+import {SpinnerButton} from "@chumsinc/react-bootstrap-addons";
 
 const SalesOrderControlBar = () => {
     const dispatch = useAppDispatch();
@@ -42,7 +44,7 @@ const SalesOrderControlBar = () => {
         setSearchParams({salesOrderNo});
     }, [salesOrderNo]);
 
-    const handleChangeShipTo = (ev:ChangeEvent<HTMLInputElement>) => {
+    const handleChangeShipTo = (ev: ChangeEvent<HTMLInputElement>) => {
         dispatch(setShipTo(ev.target.value));
     }
 
@@ -80,7 +82,7 @@ const SalesOrderControlBar = () => {
                 <div className="input-group input-group-sm">
                     <div className="input-group-text">Store</div>
                     <input type="search" className="form-control form-control-sm"
-                           value={shipTo} onChange={handleChangeShipTo} list={listId} />
+                           value={shipTo} onChange={handleChangeShipTo} list={listId}/>
                     <datalist id={listId}>
                         {shipToList.map(value => (<option key={value}>{value}</option>))}'
                     </datalist>
