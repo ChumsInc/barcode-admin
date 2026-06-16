@@ -2,7 +2,7 @@ import {useAppDispatch} from "@/app/configureStore";
 import {loadCustomer} from "./actions";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "./selectors";
-import Button from "@mui/material/Button";
+import Button from "react-bootstrap/Button";
 
 const ReloadCustomerButton = () => {
     const dispatch = useAppDispatch();
@@ -13,7 +13,7 @@ const ReloadCustomerButton = () => {
     }
 
     return (
-        <Button type="button" size="small" variant="text"
+        <Button type="button" size="sm" variant="outline-primary"
                 onClick={() => dispatch(loadCustomer(currentCustomer?.id))}>
             Reload Customer
         </Button>

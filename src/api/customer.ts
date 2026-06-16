@@ -1,5 +1,4 @@
 import type {
-    BarcodeCustomerList,
     BarcodeCustomerResponse,
     BarcodeItemList,
     ColorUPCRecord,
@@ -8,17 +7,13 @@ import type {
 } from "../types";
 import {fetchJSON} from "@chumsinc/ui-utils";
 import type {BarcodeCustomer, BarcodeCustomerSettings, BarcodeItem} from "chums-types";
-import {customerKey, itemKey} from "../utils/customer";
+import {itemKey} from "../utils/customer";
 
-export async function fetchCustomers(): Promise<BarcodeCustomerList> {
+export async function fetchCustomers(): Promise<BarcodeCustomer[]> {
     try {
         const url = `/api/operations/barcodes/customers.json`;
         const res = await fetchJSON<{ result?: BarcodeCustomer[] }>(url);
-        const list: BarcodeCustomerList = {};
-        res?.result?.forEach(row => {
-            list[customerKey(row)] = row;
-        });
-        return list;
+        return res?.result ?? [];
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("loadCustomers()", err.message);
@@ -169,7 +164,7 @@ export async function deleteCustomerItem(item: BarcodeItem): Promise<BarcodeItem
     }
 }
 
-export async function fetchCustomerLookup(search: string): Promise<SearchCustomer[]> {
+export async function fetchCustomerLookup(search: string, signal?: AbortSignal): Promise<SearchCustomer[]> {
     try {
         if (search === '') {
             return [];
@@ -177,7 +172,7 @@ export async function fetchCustomerLookup(search: string): Promise<SearchCustome
         const params = new URLSearchParams();
         params.set('search', search);
         const url = `/api/search/customer.json?${params.toString()}`;
-        const res = await fetchJSON<{ result: SearchCustomer[] }>(url);
+        const res = await fetchJSON<{ result: SearchCustomer[] }>(url, {signal});
         return res?.result ?? [];
     } catch (err: unknown) {
         if (err instanceof Error) {

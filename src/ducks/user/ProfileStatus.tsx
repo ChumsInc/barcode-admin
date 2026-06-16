@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef} from 'react';
 import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
 import {loadUserValidation, selectProfileError, selectProfileLoading, selectProfileValid} from "./index";
@@ -9,21 +9,18 @@ const ProfileStatus = () => {
     const valid = useSelector(selectProfileValid);
     const loading = useSelector(selectProfileLoading);
     const error = useSelector(selectProfileError);
-    const [timer, setTimer] = useState(0);
-
+    const intervalRef = useRef<number>(0);
 
 
     useEffect(() => {
         dispatch(loadUserValidation());
-        const intervalHandle = window.setInterval(() => {
+        intervalRef.current = window.setInterval(() => {
             dispatch(loadUserValidation())
         }, 30 * 60 * 1000);
-        setTimer(() => intervalHandle);
-
         return () => {
-            window.clearTimeout(timer);
+            window.clearTimeout(intervalRef.current);
         }
-    }, [])
+    }, [intervalRef, dispatch])
 
     return (
         <div className="mt-1">
@@ -31,7 +28,7 @@ const ProfileStatus = () => {
             {!!error && <Alert variant="danger">
                 <div><strong>User Validation Error</strong></div>
                 {error}
-            </Alert> }
+            </Alert>}
         </div>
     )
 }

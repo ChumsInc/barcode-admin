@@ -3,7 +3,7 @@ import React, {
     type CSSProperties,
     type InputHTMLAttributes,
     type KeyboardEvent,
-    type ReactNode,
+    type ReactNode, startTransition,
     useEffect,
     useState,
 } from 'react';
@@ -17,7 +17,7 @@ const AutoCompleteListGroup = styled.ul`
     font-size: 0.85rem;
 `
 
-export interface AutoCompleteProps<T = any> extends InputHTMLAttributes<HTMLInputElement> {
+export interface AutoCompleteProps<T = unknown> extends InputHTMLAttributes<HTMLInputElement> {
     containerRef: React.RefObject<HTMLDivElement|null>;
     value: string;
     data: T[];
@@ -30,7 +30,7 @@ export interface AutoCompleteProps<T = any> extends InputHTMLAttributes<HTMLInpu
     filter: (value: string) => (element: T) => boolean;
 }
 
-export default function AutoComplete<T = any>({
+export default function AutoComplete<T = unknown>({
                                                   containerRef,
                                                   value,
                                                   data,
@@ -57,20 +57,18 @@ export default function AutoComplete<T = any>({
 
 
     useEffect(() => {
-        const values = data.filter(filter(value));
-        setValues(values);
-        setIndex(value === '' ? -1 : 0);
-    }, [value]);
-
-    useEffect(() => {
-        setValues(data.filter(filter(value)));
-    }, [data]);
+        startTransition(() => {
+            const values = data.filter(filter(value));
+            setValues(values);
+            setIndex(value === '' ? -1 : 0);
+        })
+    }, [value, data, filter]);
 
     useEffect(() => {
         containerRef.current
             ?.querySelector('li.list-group-item.active')
             ?.scrollIntoView(false);
-    }, [index])
+    }, [index, containerRef])
 
 
     const inputHandler = (ev: KeyboardEvent<HTMLInputElement>) => {
@@ -106,7 +104,7 @@ export default function AutoComplete<T = any>({
                 return;
 
             case 'Enter':
-            case 'Tab':
+            case 'Tab': {
                 const current = values[index];
                 if (!open) {
                     return;
@@ -114,6 +112,7 @@ export default function AutoComplete<T = any>({
                 ev.preventDefault();
                 setOpen(false);
                 return onChangeRecord(current);
+            }
         }
         if (!open) {
             setOpen(true);
@@ -140,7 +139,7 @@ export default function AutoComplete<T = any>({
                    onBlur={() => setOpen(false)} {...props}/>
             <small className="text-muted overflow-hidden">{helpText ?? null}</small>
             {open && (
-                <div  ref={refs.setFloating} style={{
+                <div ref={refs.setFloating} style={{
                     height: 'auto',
                     width: 'max-content',
                     minWidth: minWidth,

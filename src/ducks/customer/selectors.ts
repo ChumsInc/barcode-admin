@@ -3,6 +3,7 @@ import {createSelector} from "@reduxjs/toolkit";
 import {itemFilter, itemSorter} from "./utils";
 
 export const selectCurrentCustomer = (state: RootState) => state.customer.settings;
+export const selectCustomerStatus = (state:RootState) => state.customer.status;
 export const selectCustomerItems = (state: RootState) => state.customer.items;
 
 export const selectCustomerItemsCount = (state: RootState) => Object.keys(state.customer.items).length;

@@ -1,5 +1,5 @@
-import type {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
-import type {BarcodeItemList, SortProps} from "../../types";
+import type {BarcodeCustomerSettings, BarcodeItem, SortProps} from "chums-types";
+import type {BarcodeItemList} from "../../types";
 import {createReducer} from "@reduxjs/toolkit";
 import {
     assignNextUPC,
@@ -8,31 +8,35 @@ import {
     saveCustomer,
     saveCustomerItem,
     setCurrentItem,
-    setItemFilter, setItemShowInactive,
+    setItemFilter,
+    setItemShowInactive,
     setItemSort,
     setPage,
     setRowsPerPage
 } from "./actions";
-import {getPreference, localStorageKeys, setPreference} from "@/api/preferences";
+import {localStorageKeys} from "@/api/preferences";
+import {LocalStore} from "@chumsinc/ui-utils";
 
 export interface CustomerState {
     settings: BarcodeCustomerSettings | null;
+    status: 'idle' | 'loading' | 'saving' | 'rejected';
     items: BarcodeItemList;
     selectedItem: BarcodeItem | null,
     loading: boolean;
     saving: boolean;
-    itemAction: 'idle'|'loading'|'saving'|'deleting';
+    itemAction: 'idle' | 'loading' | 'saving' | 'deleting';
     loaded: boolean;
     sort: SortProps<BarcodeItem>,
     filter: string;
     showInactive: boolean;
     page: number;
     rowsPerPage: number;
-    customUPCAction: 'idle'|'pending';
+    customUPCAction: 'idle' | 'pending';
 }
 
 export const initialCustomerState: CustomerState = {
     settings: null,
+    status: 'idle',
     items: {},
     selectedItem: null,
     loading: false,
@@ -41,15 +45,16 @@ export const initialCustomerState: CustomerState = {
     loaded: false,
     sort: {field: 'ItemCode', ascending: true},
     filter: '',
-    showInactive: getPreference(localStorageKeys.showInactive, true),
+    showInactive: LocalStore.getItem<boolean>(localStorageKeys.showInactive, true),
     page: 0,
-    rowsPerPage: getPreference(localStorageKeys.itemRowsPerPage, 25),
+    rowsPerPage: LocalStore.getItem<number>(localStorageKeys.itemRowsPerPage, 25),
     customUPCAction: 'idle',
 }
 
 const customerReducer = createReducer(initialCustomerState, (builder) => {
     builder
         .addCase(loadCustomer.pending, (state, action) => {
+            state.status = 'loading';
             state.loading = true;
             if (action.meta.arg !== state.settings?.id) {
                 state.settings = null;
@@ -60,6 +65,7 @@ const customerReducer = createReducer(initialCustomerState, (builder) => {
             }
         })
         .addCase(loadCustomer.fulfilled, (state, action) => {
+            state.status = 'idle';
             state.loading = false;
             state.loaded = true;
             state.settings = action.payload?.settings ?? null;
@@ -70,16 +76,20 @@ const customerReducer = createReducer(initialCustomerState, (builder) => {
             }
         })
         .addCase(loadCustomer.rejected, (state) => {
+            state.status = 'rejected';
             state.loading = false;
         })
         .addCase(saveCustomer.pending, (state) => {
+            state.status = 'saving';
             state.saving = true;
         })
         .addCase(saveCustomer.fulfilled, (state, action) => {
+            state.status = 'idle';
             state.saving = false;
             state.settings = action.payload;
         })
         .addCase(saveCustomer.rejected, (state) => {
+            state.status = 'rejected';
             state.saving = false;
         })
         .addCase(setCurrentItem, (state, action) => {
@@ -95,7 +105,7 @@ const customerReducer = createReducer(initialCustomerState, (builder) => {
             if (state.selectedItem?.ID === 0) {
                 const [item] = Object.values(action.payload).filter(item => item.ItemCode === state.selectedItem?.ItemCode);
                 state.selectedItem = item ?? null;
-            } else if (!!state.selectedItem?.ID) {
+            } else if (state.selectedItem?.ID) {
                 const [item] = Object.values(action.payload).filter(item => item.ID === state.selectedItem?.ID);
                 state.selectedItem = item ?? null;
             }
@@ -121,7 +131,6 @@ const customerReducer = createReducer(initialCustomerState, (builder) => {
         .addCase(setRowsPerPage, (state, action) => {
             state.page = 0;
             state.rowsPerPage = action.payload;
-            setPreference(localStorageKeys.itemRowsPerPage, action.payload);
         })
         .addCase(setPage, (state, action) => {
             state.page = action.payload;
@@ -133,7 +142,6 @@ const customerReducer = createReducer(initialCustomerState, (builder) => {
         .addCase(setItemShowInactive, (state, action) => {
             state.showInactive = action.payload ?? !state.showInactive;
             state.page = 0;
-            setPreference(localStorageKeys.showInactive, state.showInactive);
         })
         .addCase(assignNextUPC.pending, (state) => {
             state.customUPCAction = 'pending';

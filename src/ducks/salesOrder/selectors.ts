@@ -1,8 +1,8 @@
 import type {RootState} from "@/app/configureStore";
 import {QueryStatus} from "@reduxjs/toolkit/query";
 import {createSelector} from "@reduxjs/toolkit";
-import type {SortProps} from "@chumsinc/sortable-tables";
-import type {SODetailTableField} from "../../types";
+import type {SortProps} from "chums-types";
+import type {BarcodeSODetailRow} from "../../types";
 import {detailSorter} from "./utils";
 
 export const selectSalesOrder = (state: RootState) => state.salesOrder.orderHeader;
@@ -12,7 +12,7 @@ export const selectSalesOrderNo = (state: RootState) => state.salesOrder.salesOr
 export const selectShipTo = (state:RootState) => state.salesOrder.shipTo;
 export const selectShipToList = (state:RootState) => state.salesOrder.shipToList;
 
-export const selectDetailSort = (state:RootState):SortProps<SODetailTableField> => state.salesOrder.sort;
+export const selectDetailSort = (state:RootState):SortProps<BarcodeSODetailRow> => state.salesOrder.sort;
 
 export const selectSalesOrderDetail = (state: RootState) => state.salesOrder.detail;
 

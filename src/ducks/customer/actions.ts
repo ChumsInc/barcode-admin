@@ -1,5 +1,5 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import type {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
+import type {BarcodeCustomerSettings, BarcodeItem, SortProps} from "chums-types";
 import {
     deleteCustomerItem,
     fetchCustomer,
@@ -7,7 +7,7 @@ import {
     postCustomerSettings,
     postGenNextUPC
 } from "@/api/customer";
-import type {BarcodeCustomerResponse, BarcodeItemList, CustomUPCBarcodeItem, SortProps} from "../../types";
+import type {BarcodeCustomerResponse, BarcodeItemList, CustomUPCBarcodeItem} from "../../types";
 import {
     selectCurrentCustomer,
     selectCustomerLoading,
@@ -16,9 +16,9 @@ import {
     selectItemAction
 } from "./selectors";
 import type {RootState} from "@/app/configureStore";
-import {selectCustomersLoading} from "../customers/selectors";
 import {formatGTIN} from '@chumsinc/gtin-tools';
 import {customerKey} from "@/utils/customer";
+import {selectCustomersStatus} from "@/ducks/customers";
 
 
 export const setCurrentItem = createAction<BarcodeItem | null>('customer/item/select');
@@ -55,7 +55,7 @@ export const saveCustomer = createAsyncThunk<BarcodeCustomerSettings | null, Bar
         condition(_, {getState}) {
             const state = getState() as RootState;
             return !(selectCustomerLoading(state)
-                || selectCustomersLoading(state)
+                || selectCustomersStatus(state) === 'idle'
                 || selectCustomerSaving(state)
             );
         }

@@ -3,12 +3,12 @@ import {fetchSalesOrder, postOrderStickers} from "@/api/order-stickers";
 import type {
     BarcodeItemList,
     BarcodeSalesOrder,
-    BarcodeSODetailLine,
+    BarcodeSODetailLine, BarcodeSODetailRow,
     BarcodeSOLineItem,
     GenerateStickerProps,
     SalesOrderDetailBarcodeItem
 } from "../../types";
-import type {SortProps} from "@chumsinc/sortable-tables";
+import type {SortProps} from "chums-types";
 import type {RootState} from "@/app/configureStore";
 import {selectCurrentCustomer, selectCustomerItems} from "../customer/selectors";
 import Decimal from "decimal.js";
@@ -38,13 +38,14 @@ export function parseSalesOrderLines(items: BarcodeItemList, detail: SalesOrderD
             UDF_SHIP_CODE,
         } = row;
         const Quantity = new Decimal(QuantityOrdered).sub(QuantityShipped).toString();
-        const stickerQty = !!items[ItemCode]
+        const stickerQty = items[ItemCode]
             ? itemStickerQty({ItemType, Quantity, UnitOfMeasureConvFactor}, extra)
             : null;
         return {
             LineKey,
             LineSeqNo,
             ItemCode,
+            ItemCodeDesc: row.ItemCodeDesc,
             WarehouseCode,
             CommentText,
             ItemType,
@@ -142,6 +143,6 @@ export const setShipTo = createAction<string>('salesOrder/setShipTo');
 export const toggleLineSelected = createAction<{ lineKey: string; forced?: boolean }>('salesOrder/toggleLineSelected');
 export const toggleAllSelected = createAction<boolean>('salesOrder/toggleAllSelected');
 
-export const setLineSort = createAction<SortProps<BarcodeSODetailLine>>('salesOrder/setSort');
+export const setLineSort = createAction<SortProps<BarcodeSODetailRow>>('salesOrder/setSort');
 
 export const dismissQtyGenerated = createAction('salesOrder/dismissQtyGenerated');

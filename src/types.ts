@@ -35,12 +35,6 @@ export interface SageItem extends Item {
     detail: WarehouseItem[];
 }
 
-
-export interface SortProps<T = any> {
-    field: keyof T;
-    ascending: boolean;
-}
-
 export type SearchCustomer = Pick<BarcodeCustomer, 'ARDivisionNo' | 'CustomerNo' | 'CustomerName'>
 
 export type SearchItem = Pick<SageItem, 'ItemCode'|'ItemCodeDesc'>
@@ -77,7 +71,7 @@ export interface GenerateStickerProps {
 }
 
 export type SalesOrderDetailBarcodeItem = Pick<SalesOrderDetailLine,
-    'LineKey' | 'LineSeqNo' | 'ItemCode' | 'CommentText' | 'ItemType' | 'BinLocation' | 'UnitOfMeasure' | 'UnitOfMeasureConvFactor'
+    'LineKey' | 'LineSeqNo' | 'ItemCode' | 'ItemCodeDesc' | 'CommentText' | 'ItemType' | 'BinLocation' | 'UnitOfMeasure' | 'UnitOfMeasureConvFactor'
     | 'SequenceNo' | 'WarehouseCode' | 'QuantityOrdered' | 'QuantityShipped' | 'UDF_SHIP_CODE'>
 
 export interface BarcodeSODetailLine extends SalesOrderDetailBarcodeItem {
@@ -95,7 +89,7 @@ export interface BarcodeSalesOrder {
     detail: BarcodeSODetailLine[];
 }
 
-export type SODetailTableField = BarcodeSODetailLine & Omit<BarcodeItem, 'ItemCode'>;
+export type BarcodeSODetailRow = BarcodeSODetailLine & Omit<BarcodeItem, 'ItemCode'>;
 
 
 export type BarcodeType = 'GTIN-12' | 'GTIN-13' | 'GTIN-14' | 'GSIN' | 'SSCC';

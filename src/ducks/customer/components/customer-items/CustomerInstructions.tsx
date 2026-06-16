@@ -1,5 +1,5 @@
 import {useSelector} from "react-redux";
-import {selectCurrentCustomer} from "./selectors";
+import {selectCurrentCustomer} from "../../selectors.ts";
 import {Alert} from "react-bootstrap";
 
 const CustomerInstructions = () => {

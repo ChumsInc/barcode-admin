@@ -1,12 +1,12 @@
-import CustomerItemList from "./CustomerItemList";
-import ItemEditor from "./ItemEditor";
-import CustomerItemFilter from "./CustomerItemFilter";
-import CustomerItemFilterInactive from "./CustomerItemFilterInactive";
+import CustomerItemList from "./CustomerItemList.tsx";
+import ItemEditor from "./ItemEditor.tsx";
+import CustomerItemFilter from "./CustomerItemFilter.tsx";
+import CustomerItemFilterInactive from "./CustomerItemFilterInactive.tsx";
 import {useSelector} from "react-redux";
-import {selectCurrentCustomer} from "./selectors";
-import ReloadCustomerButton from "./ReloadCustomerButton";
-import CustomerInfo from "./CustomerInfo";
-import CustomerProgressBar from "./CustomerProgressBar";
+import {selectCurrentCustomer} from "../../selectors.ts";
+import ReloadCustomerButton from "../../ReloadCustomerButton.tsx";
+import CustomerInfo from "./CustomerInfo.tsx";
+import CustomerProgressBar from "../../CustomerProgressBar.tsx";
 
 const CustomerItems = () => {
     const customer = useSelector(selectCurrentCustomer);

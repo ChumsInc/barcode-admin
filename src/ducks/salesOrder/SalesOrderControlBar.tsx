@@ -1,5 +1,5 @@
-import {type ChangeEvent, type FormEvent, useEffect, useId, useState} from 'react';
-import {useAppDispatch} from "@/app/configureStore";
+import {type ChangeEvent, type FormEvent, startTransition, useEffect, useId, useState} from 'react';
+import {useAppDispatch, useAppSelector} from "@/app/configureStore";
 import {useSelector} from "react-redux";
 import {
     selectDetailSort,
@@ -19,16 +19,18 @@ import {SpinnerButton} from "@chumsinc/react-bootstrap-addons";
 const SalesOrderControlBar = () => {
     const dispatch = useAppDispatch();
     const [searchParams, setSearchParams] = useSearchParams();
-    const salesOrderNo = useSelector(selectSalesOrderNo);
-    const loading = useSelector(selectSalesOrderLoading);
-    const extra = useSelector(selectExtraQuantity);
-    const sort = useSelector(selectDetailSort);
-    const count = useSelector(selectStickerQty);
+    const salesOrderNo = useAppSelector(selectSalesOrderNo);
+    const loading = useAppSelector(selectSalesOrderLoading);
+    const extra = useAppSelector(selectExtraQuantity);
+    const sort = useAppSelector(selectDetailSort);
+    const count = useAppSelector(selectStickerQty);
     const [so, setSO] = useState(salesOrderNo);
     const [reversed, setReversed] = useState<boolean>(false);
+    const [version, setVersion] = useState<number>(1);
     const shipTo = useSelector(selectShipTo);
     const shipToList = useSelector(selectShipToList);
     const listId = useId();
+    const stickerVersionId = useId();
     const idPrintReversed = useId();
 
 
@@ -37,15 +39,22 @@ const SalesOrderControlBar = () => {
         if (!!so && so !== salesOrderNo) {
             dispatch(loadSalesOrder(so.padStart(7, '0')));
         }
-    }, []);
+    }, [dispatch, salesOrderNo, searchParams]);
 
     useEffect(() => {
-        setSO(salesOrderNo);
-        setSearchParams({salesOrderNo});
-    }, [salesOrderNo]);
+        startTransition(() => {
+            setSO(salesOrderNo);
+            setSearchParams({salesOrderNo});
+            setVersion(1);
+        })
+    }, [salesOrderNo, setSearchParams]);
 
     const handleChangeShipTo = (ev: ChangeEvent<HTMLInputElement>) => {
         dispatch(setShipTo(ev.target.value));
+    }
+
+    const versionClickHandler = (ev: ChangeEvent<HTMLInputElement>) => {
+        setVersion(ev.target.checked ? 2 : 1);
     }
 
     const submitHandler = (ev: FormEvent) => {
@@ -95,6 +104,11 @@ const SalesOrderControlBar = () => {
                 <FormCheck type={"checkbox"} label={"Print Reversed"} id={idPrintReversed}
                            checked={reversed}
                            onChange={(ev) => setReversed(ev.target.checked)}/>
+            </div>
+            <div className="col-auto">
+                <FormCheck type={"checkbox"} label={"Include quantity in sticker record"} id={stickerVersionId}
+                           checked={version === 2}
+                           onChange={versionClickHandler}/>
             </div>
             <div className="col-auto">
                 <button type="button" className="btn btn-sm btn-success" disabled={count === 0}

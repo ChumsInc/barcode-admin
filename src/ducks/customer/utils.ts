@@ -1,5 +1,4 @@
-import type {SortProps} from "../../types";
-import type {BarcodeItem} from "chums-types";
+import type {BarcodeItem, SortProps} from "chums-types";
 
 const statusValue = (item: BarcodeItem) => `${!item.ProductType ? 'A' : '_'}`
     + `${item.ProductType === 'D' ? 'D' : '_'}`

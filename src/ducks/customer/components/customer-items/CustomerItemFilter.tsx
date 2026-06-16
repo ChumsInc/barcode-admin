@@ -1,8 +1,8 @@
 import  {type ChangeEvent} from 'react';
-import {useAppDispatch} from "@/app/configureStore";
+import {useAppDispatch} from "@/app/configureStore.ts";
 import {useSelector} from "react-redux";
-import {selectItemsFilter} from "./selectors";
-import {setItemFilter} from "./actions";
+import {selectItemsFilter} from "../../selectors.ts";
+import {setItemFilter} from "../../actions.ts";
 
 const CustomerItemFilter = () => {
     const dispatch = useAppDispatch();

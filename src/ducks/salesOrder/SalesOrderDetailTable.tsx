@@ -1,7 +1,7 @@
-import {useEffect, useState} from 'react';
+import {startTransition, useEffect, useState} from 'react';
 import {SortableTable, type SortableTableField, TablePagination} from "@chumsinc/sortable-tables";
-import type {BarcodeCustomerSettings, BarcodeItem} from "chums-types";
-import type {BarcodeSODetailLine, SODetailTableField} from "../../types";
+import type {BarcodeCustomerSettings} from "chums-types";
+import type {BarcodeSODetailLine, BarcodeSODetailRow} from "../../types";
 import StickerQuantityInput from "./StickerQuantityInput";
 import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
@@ -18,7 +18,7 @@ import classNames from "classnames";
 import ItemStickerIcons from "../customer/ItemStickerIcons";
 
 const getColumns = (customer: BarcodeCustomerSettings | null) => {
-    const fields: (SortableTableField<SODetailTableField> | SortableTableField<Omit<BarcodeItem, 'ItemCode'>>)[] = [
+    const fields: SortableTableField<BarcodeSODetailRow>[] = [
         {
             field: 'LineKey',
             title: <StickerSelectToggleAll/>,
@@ -158,11 +158,15 @@ const SalesOrderDetailTable = () => {
     // const [shipTo, setShipTo] = useState('');
 
     useEffect(() => {
-        setFields(getColumns(settings));
+        startTransition(() => {
+            setFields(getColumns(settings));
+        })
     }, [settings])
 
     useEffect(() => {
-        setPage(0);
+        startTransition(() => {
+            setPage(0);
+        })
     }, [sort]);
 
     const pageChangeHandler = (page: number) => setPage(page);
@@ -179,15 +183,15 @@ const SalesOrderDetailTable = () => {
             <SalesOrderCustomerAlert/>
             <TablePagination page={page} onChangePage={pageChangeHandler} rowsPerPage={rowsPerPage}
                              rowsPerPageProps={{onChange: rowsPerPageChangeHandler}} count={detail.length}/>
-            <SortableTable<any> fields={fields}
-                                data={detail.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                                className="table-hover"
-                                rowClassName={(row) => classNames({
-                                    'text-danger': !row.item,
-                                    'table-warning': !row.selected
-                                })}
-                                currentSort={sort} keyField="LineKey"
-                                onChangeSort={(sort) => dispatch(setLineSort(sort))}
+            <SortableTable fields={fields}
+                           data={(detail as BarcodeSODetailRow[]).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+                           className="table-hover"
+                           rowClassName={(row) => classNames({
+                               'text-danger': !row.item,
+                               'table-secondary': !row.selected
+                           })}
+                           currentSort={sort} keyField="LineKey"
+                           onChangeSort={(sort) => dispatch(setLineSort(sort))}
             />
         </div>
     )

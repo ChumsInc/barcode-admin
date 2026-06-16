@@ -1,29 +1,30 @@
-import type {SortProps} from "../../types";
-import type {BarcodeCustomer, BarcodeCustomerSettings} from "chums-types";
+import type {BarcodeCustomer, BarcodeCustomerSettings, SortProps} from "chums-types";
 import {customerKey} from "@/utils/customer";
 
 export const customerSort = ({field, ascending}: SortProps<BarcodeCustomer>) =>
-    (a: BarcodeCustomer, b: BarcodeCustomer):number => {
+    (a: BarcodeCustomer, b: BarcodeCustomer): number => {
         const sortMod = ascending ? 1 : -1;
         switch (field) {
-        case "CustomerName":
-            return (
-                a[field].toLowerCase() === b[field].toLowerCase()
-                    ? (customerKey(a) > customerKey(b) ? 1 : -1)
-                    : (a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1)
-            ) * sortMod;
-        case 'ARDivisionNo':
-        case 'CustomerNo':
-        default:
-            return (customerKey(a) > customerKey(b) ? 1 : -1) * sortMod;
+            case "CustomerName":
+                return (
+                    a[field].toLowerCase() === b[field].toLowerCase()
+                        ? (customerKey(a) > customerKey(b) ? 1 : -1)
+                        : (a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1)
+                ) * sortMod;
+            case 'ARDivisionNo':
+            case 'CustomerNo':
+            default:
+                return (customerKey(a) > customerKey(b) ? 1 : -1) * sortMod;
         }
     }
 
-export const customerFilter = (filter:string) => (row:BarcodeCustomer) => {
+export const customerFilter = (filter: string) => (row: BarcodeCustomer) => {
     let reFilter;
     try {
         reFilter = new RegExp(filter, 'i');
-    } catch(err:unknown) {}
+    } catch (_err: unknown) {
+        // do noting
+    }
     return !filter
         || (/^\d+$/.test(filter) && row.id === Number(filter))
         || row.CustomerName.toLowerCase().includes(filter.toLowerCase())
@@ -33,7 +34,7 @@ export const customerFilter = (filter:string) => (row:BarcodeCustomer) => {
         || reFilter.test(row.CustomerName);
 }
 
-export const newCustomer:BarcodeCustomerSettings = {
+export const newCustomer: BarcodeCustomerSettings = {
     id: 0,
     ARDivisionNo: '',
     CustomerNo: '',

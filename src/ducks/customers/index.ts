@@ -1,96 +1,97 @@
-import type {BarcodeCustomerList, SortProps} from "../../types";
-import type {BarcodeCustomer} from "chums-types";
-import {createReducer} from "@reduxjs/toolkit";
-import {
-    loadCustomers,
-    setCustomersFilter,
-    setCustomersSort,
-    setPage,
-    setRowsPerPage,
-    toggleShowInactive
-} from "./actions";
+import type {BarcodeCustomer, SortProps} from "chums-types";
+import {createEntityAdapter, createSelector, createSlice, type PayloadAction} from "@reduxjs/toolkit";
+import {loadCustomers} from "./actions";
 import {loadCustomer, saveCustomer} from "../customer/actions";
 import {customerKey} from "@/utils/customer";
-import {getPreference, localStorageKeys, setPreference} from "@/api/preferences";
+import {customerFilter, customerSort} from "@/ducks/customers/utils.ts";
 
 export interface CustomersState {
-    list: BarcodeCustomerList;
-    loading: boolean;
-    loaded: boolean;
+    status: 'idle' | 'loading' | 'rejected',
     sort: SortProps<BarcodeCustomer>;
     filter: string;
     showInactive: boolean;
-    rowsPerPage: number;
-    page: number;
 }
 
-const initialCustomerState:CustomersState = {
-    list: {},
-    loading: false,
-    loaded: false,
+const initialCustomerState: CustomersState = {
+    status: 'idle',
     sort: {field: "CustomerNo", ascending: true},
     filter: '',
     showInactive: false,
-    rowsPerPage: getPreference(localStorageKeys.customerRowsPerPage, 25),
-    page: 0,
 }
 
-const customersReducer = createReducer(
-    initialCustomerState,
-    (builder) => {
+const adapter = createEntityAdapter<BarcodeCustomer, string>({
+    selectId: (arg) => customerKey(arg),
+    sortComparer: (a, b) => customerKey(a).localeCompare(customerKey(b)),
+})
+
+const selectors = adapter.getSelectors();
+
+const customersSlice = createSlice({
+    name: 'customers',
+    initialState: adapter.getInitialState(initialCustomerState),
+    reducers: {
+        setCustomerSort: (state, action: PayloadAction<SortProps<BarcodeCustomer>>) => {
+            state.sort = action.payload;
+        },
+        setCustomersFilter: (state, action: PayloadAction<string>) => {
+            state.filter = action.payload;
+        },
+        showInactiveCustomers: (state, action: PayloadAction<boolean>) => {
+            state.showInactive = action.payload;
+        }
+    },
+    extraReducers: (builder) => {
         builder
-            .addCase(loadCustomers.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(loadCustomers.fulfilled, (state, action) => {
-                state.loading = false;
-                state.list = action.payload;
-                state.loaded = true;
-            })
-            .addCase(loadCustomers.rejected, (state) => {
-                state.loading = false;
-            })
-            .addCase(setCustomersSort, (state, action) => {
-                if (action.payload !== state.sort.field) {
-                    state.sort = {field: action.payload, ascending: true};
-                } else {
-                    state.sort.ascending = !state.sort.ascending;
-                }
-            })
             .addCase(loadCustomer.fulfilled, (state, action) => {
-                const [customer] = Object.values(state.list).filter(customer => customer.id === action.payload?.settings?.id);
-                if (customer) {
-                    delete state.list[customerKey(customer)];
-                }
                 if (action.payload?.settings) {
-                    state.list[customerKey(action.payload.settings)] = action.payload.settings;
+                    adapter.setOne(state, action.payload.settings)
                 }
             })
             .addCase(saveCustomer.fulfilled, (state, action) => {
-                const [customer] = Object.values(state.list).filter(customer => customer.id === action.payload?.id);
-                if (customer) {
-                    delete state.list[customerKey(customer)];
-                }
                 if (action.payload) {
-                    state.list[customerKey(action.payload)] = action.payload;
+                    adapter.setOne(state, action.payload);
                 }
             })
-            .addCase(setRowsPerPage, (state, action) => {
-                setPreference(localStorageKeys.customerRowsPerPage, action.payload ?? 25);
-                state.rowsPerPage = action.payload;
+            .addAsyncThunk(loadCustomers, {
+                pending: (state) => {
+                    state.status = 'loading';
+                },
+                fulfilled: (state, action) => {
+                    state.status = 'idle';
+                    adapter.setAll(state, action.payload)
+                },
+                rejected: (state) => {
+                    state.status = 'rejected';
+                }
             })
-            .addCase(setPage, (state, action) => {
-                state.page = action.payload;
-            })
-            .addCase(setCustomersFilter, (state, action) => {
-                state.filter = action.payload;
-                state.page = 0;
-            })
-            .addCase(toggleShowInactive, (state, action) => {
-                state.showInactive = action.payload ?? !state.showInactive;
-            })
-        ;
+
+    },
+    selectors: {
+        selectCustomers: (state) => selectors.selectAll(state),
+        selectCustomersStatus: (state) => state.status,
+        selectCustomersSort: (state) => state.sort,
+        selectCustomersFilter: (state) => state.filter,
+        selectShowInactiveCustomers: (state) => state.showInactive,
+    }
+});
+
+export default customersSlice;
+
+export const {setCustomerSort, setCustomersFilter, showInactiveCustomers} = customersSlice.actions;
+export const {
+    selectCustomers,
+    selectCustomersFilter,
+    selectCustomersSort,
+    selectCustomersStatus,
+    selectShowInactiveCustomers,
+} = customersSlice.selectors;
+
+export const selectSortedCustomers = createSelector(
+    [selectCustomers, selectShowInactiveCustomers, selectCustomersFilter, selectCustomersSort],
+    (list, showInactive, filter, sort) => {
+        return list
+            .filter(row => showInactive || row.active)
+            .filter(customerFilter(filter))
+            .sort(customerSort(sort));
     }
 )
-
-export default customersReducer;

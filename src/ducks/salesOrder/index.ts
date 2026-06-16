@@ -1,5 +1,5 @@
 import {QueryStatus} from "@reduxjs/toolkit/query";
-import type {BarcodeSalesOrderHeader, BarcodeSODetailLine, SODetailTableField} from "../../types";
+import type {BarcodeSalesOrderHeader, BarcodeSODetailLine, BarcodeSODetailRow} from "../../types";
 import {createReducer} from "@reduxjs/toolkit";
 import {
     dismissQtyGenerated,
@@ -13,11 +13,11 @@ import {
     toggleAllSelected,
     toggleLineSelected
 } from "./actions";
-import type {SortProps} from "@chumsinc/sortable-tables";
+import type {SortProps} from "chums-types";
 import {detailSorter, itemStickerQty} from "./utils";
 import {loadCustomer, removeCustomerItem, saveCustomerItem} from "../customer/actions";
 
-const defaultSODetailSort: SortProps<SODetailTableField> = {field: 'BinLocation', ascending: true};
+const defaultSODetailSort: SortProps<BarcodeSODetailLine> = {field: 'BinLocation', ascending: true};
 
 export interface SalesOrderState {
     extra: number;
@@ -29,7 +29,7 @@ export interface SalesOrderState {
     loaded: boolean;
     shipTo: string;
     qtyGenerated: number | null;
-    sort: SortProps<SODetailTableField>;
+    sort: SortProps<BarcodeSODetailRow>;
     shipToList: string[]
 }
 

@@ -2,7 +2,7 @@ import SalesOrderControlBar from "../salesOrder/SalesOrderControlBar";
 import SalesOrderDetailTable from "../salesOrder/SalesOrderDetailTable";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "./selectors";
-import CustomerInfo from "./CustomerInfo";
+import CustomerInfo from "./components/customer-items/CustomerInfo.tsx";
 
 const CustomerOrder = () => {
     const customer = useSelector(selectCurrentCustomer);

@@ -3,7 +3,7 @@ import {combineReducers} from "redux";
 import {type TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import userReducer from "../ducks/user";
 import itemReducer from "../ducks/item";
-import customersReducer from "../ducks/customers";
+import customersSlice from "../ducks/customers";
 import customerReducer from "../ducks/customer";
 import salesOrderReducer from "../ducks/salesOrder";
 import versionReducer from "../ducks/version";
@@ -13,7 +13,7 @@ import {alertsSlice} from "@chumsinc/alert-list";
 const rootReducer = combineReducers({
     [alertsSlice.reducerPath]: alertsSlice.reducer,
     customer: customerReducer,
-    customers: customersReducer,
+    [customersSlice.reducerPath]: customersSlice.reducer,
     item: itemReducer,
     salesOrder: salesOrderReducer,
     user: userReducer,

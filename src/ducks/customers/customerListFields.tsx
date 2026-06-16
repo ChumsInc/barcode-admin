@@ -26,8 +26,11 @@ export const customerListFields: SortableTableField<BarcodeCustomer>[] = [
         field: 'Notes',
         title: 'Notes/Instructions',
         sortable: true,
-        render: (row) => (<div className="d-flex flex-nowrap gap-3">
-            <NotesBadge note={row.Notes}/><NotesBadge note={row.SpecialInstructions} bg="warning"/>
-        </div>)
+        render: (row) => (
+            <div className="d-flex flex-nowrap gap-3">
+                <NotesBadge note={row.Notes} bg="info"/>
+                <NotesBadge note={row.SpecialInstructions} bg="warning"/>
+            </div>
+        )
     },
 ];

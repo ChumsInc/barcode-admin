@@ -17,7 +17,7 @@ const AppTabs = () => {
         if (!!id && id !== customer?.id.toString()) {
             dispatch(loadCustomer(id));
         }
-    }, [id]);
+    }, [id, customer, dispatch]);
 
     return (
         <Nav variant="tabs" className="justify-content-center mb-3" defaultActiveKey={'home'} activeKey={id}>

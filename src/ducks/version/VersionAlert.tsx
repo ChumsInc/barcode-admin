@@ -10,7 +10,7 @@ const VersionAlert = () => {
     const version = useSelector(selectVersion);
     useEffect(() => {
         dispatch(loadVersion())
-    }, []);
+    }, [dispatch]);
 
     if (!version) {
         return null;

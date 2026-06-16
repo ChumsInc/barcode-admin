@@ -1,9 +1,9 @@
 import {useSelector} from "react-redux";
-import {selectCurrentCustomer} from "./selectors";
-import CustomerName from "./CustomerName";
-import InactiveCustomerAlert from "./InactiveCustomerAlert";
-import CustomerNotes from "./CustomerNotes";
-import CustomerInstructions from "./CustomerInstructions";
+import {selectCurrentCustomer} from "../../selectors.ts";
+import CustomerName from "../../CustomerName.tsx";
+import InactiveCustomerAlert from "../../InactiveCustomerAlert.tsx";
+import CustomerNotes from "../../CustomerNotes.tsx";
+import CustomerInstructions from "./CustomerInstructions.tsx";
 
 const CustomerInfo = () => {
     const customer = useSelector(selectCurrentCustomer);

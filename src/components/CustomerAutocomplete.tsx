@@ -1,15 +1,26 @@
-import React, {type ChangeEvent, useEffect, useState} from 'react';
+import React, {
+    type ChangeEvent,
+    type LabelHTMLAttributes,
+    type ReactNode,
+    useEffect,
+    useRef,
+    useState,
+    useTransition
+} from 'react';
 import type {SearchCustomer} from "../types";
 import {fetchCustomerLookup} from "../api/customer";
 import {customerKey} from "../utils/customer";
-import Autocomplete from "@mui/material/Autocomplete";
-import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
-import TextField from "@mui/material/TextField";
-import {type FilledInputProps} from "@mui/material/FilledInput";
+import {Autocomplete, type AutocompleteInputProps, type AutocompleteRootProps} from "@base-ui/react/autocomplete";
+import {Spinner} from "react-bootstrap";
+import classes from './autocomplete.module.css';
 
 
-export interface CustomerAutocompleteProps extends FilledInputProps {
+export interface CustomerAutocompleteProps extends AutocompleteRootProps<SearchCustomer> {
+    slotProps?: {
+        label?: string;
+        labelProps?: LabelHTMLAttributes<HTMLLabelElement>;
+        inputProps?: AutocompleteInputProps;
+    }
     customer: SearchCustomer | null;
     onChange?: (ev: ChangeEvent<HTMLInputElement>) => void;
     onSelectCustomer: (customer?: SearchCustomer | null) => void;
@@ -17,108 +28,124 @@ export interface CustomerAutocompleteProps extends FilledInputProps {
 }
 
 const CustomerAutocomplete = ({
+                                  slotProps,
                                   customer,
-                                  onChange,
                                   onSelectCustomer,
-                                  children,
-                                  ...inputProps
+                                  ...rootProps
                               }: CustomerAutocompleteProps) => {
-    const [value, setValue] = useState<SearchCustomer | null>(customer);
-    const [hint, setHint] = useState<SearchCustomer | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [inputValue, setInputValue] = useState('');
     const [open, setOpen] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
 
     const [results, setResults] = useState<readonly SearchCustomer[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [tHandle, setTHandle] = useState(0);
-    // const containerRef = useRef<HTMLDivElement>(null);
-    // const id = useId();
+    const abortControllerRef = useRef<AbortController | null>(null);
+
+    const {contains} = Autocomplete.useFilter();
 
     useEffect(() => {
-        setValue(customer);
-        if (customer) {
-            loadCustomerSearch(customerKey(customer))
-                .catch(err => console.debug("loadCustomerSearch()", err.message));
-        }
+        startTransition(() => {
+            setInputValue(customer ? customerKey(customer) : '');
+        })
     }, [customer]);
 
-    useEffect(() => {
-        return () => {
-            window.clearTimeout(tHandle);
+    function getStatus(): ReactNode | null {
+        if (isPending) {
+            return (
+                <>
+                    <Spinner animation="border" size="sm" role="status"/>
+                    Searching...
+                </>
+            )
         }
-    }, [])
+        if (error) {
+            return (
+                <span className="text-danger">{error}</span>
+            )
+        }
+        if (inputValue === '') {
+            return null;
+        }
+        if (results.length === 0) {
+            return (
+                <span className="text-muted">No results found</span>
+            )
+        }
 
-    useEffect(() => {
-        if (inputValue.length < 2) {
-            return;
-        }
-        window.clearTimeout(tHandle);
-        const t = window.setTimeout(() => loadCustomerSearch(inputValue), 350);
-        setTHandle(t);
-    }, [inputValue]);
-
-
-    const loadCustomerSearch = async (value: string) => {
-        if (loading) {
-            return;
-        }
-        setLoading(true);
-        try {
-            const results = await fetchCustomerLookup(value);
-            setResults(results);
-            const [hint] = results.filter(c => c.CustomerName.startsWith(value) || customerKey(c).startsWith(value));
-            setHint(hint ?? null);
-            setLoading(false);
-        } catch (err: unknown) {
-            setLoading(false);
-            if (err instanceof Error) {
-                console.debug("loadCustomerSearch()", err.message);
-            }
-        }
+        return `${results.length} customers found`;
     }
 
-    return (
-        <Autocomplete open={open} onOpen={() => setOpen(true)} size="small"
-                      onClose={() => setOpen(false)}
-                      loading={loading}
-                      isOptionEqualToValue={(option, value) => !!value && customerKey(option) === customerKey(value)}
-                      value={value}
-                      onKeyDown={(ev) => {
-                          if (ev.key === 'Tab' && hint) {
-                              setInputValue(customerKey(hint));
-                              onSelectCustomer(hint);
-                          }
-                      }}
-                      onChange={(_, newValue: SearchCustomer | null) => {
-                          setValue(newValue);
-                          onSelectCustomer(newValue);
-                      }}
-                      onInputChange={(_, newInputValue) => {
-                          setInputValue(newInputValue);
-                      }}
-                      filterOptions={(x) => x}
-                      getOptionLabel={(option) => typeof option === 'string' ? option : customerKey(option)}
-                      renderInput={
-                          (params) => <TextField {...params} variant="filled" sx={{width: '25rem'}}
-                                                 label="Customer No" InputProps={{
-                              ...inputProps,
-                              ...params.InputProps,
-                              endAdornment: (<>
-                                  {loading ? <CircularProgress color="inherit" size="20"/> : null}
-                                  {params.InputProps.endAdornment}
-                              </>)
-                          }}/>
-                      }
-                      renderOption={(props, option) => (
-                          <Box component="li" {...props}
-                               style={{display: 'flex', justifyContent: 'space-between', width: '100%', flexShrink: 0}}>
-                              <Box><strong>{customerKey(option)}</strong></Box>
-                              <Box sx={{ml: 2}}>{option.CustomerName}</Box>
-                          </Box>
-                      )}
-                      options={results}/>
-    )
+    const searchChangeHandler = (nextValue: string) => {
+        setInputValue(nextValue);
+        const controller = new AbortController();
+        abortControllerRef.current?.abort('New search');
+        abortControllerRef.current = controller;
+        if (nextValue === '') {
+            setResults([]);
+            setError(null);
+            return;
+        }
+        startTransition(async () => {
+            setError(null);
+            const _results = await fetchCustomerLookup(nextValue, controller.signal)
+            const results = _results.filter(c => contains(customerKey(c), nextValue) || contains(c.CustomerName, nextValue));
+            if (controller.signal.aborted) {
+                return;
+            }
+            startTransition(() => {
+                setResults(results);
+            })
+        })
+    }
 
+    const status = getStatus();
+    return (
+        <Autocomplete.Root open={open} onOpenChange={(open) => setOpen(open)}
+                           value={inputValue}
+                           onValueChange={searchChangeHandler}
+                           items={results}
+                           itemToStringValue={item => customerKey(item)} filter={null} {...rootProps}>
+            <Autocomplete.InputGroup className="input-group input-group-sm">
+                {slotProps?.label && (<label className="input-group-text"
+                                             htmlFor={slotProps.labelProps?.htmlFor}>{slotProps.label}</label>)}
+                <Autocomplete.Input className="form-control" placeholder="Customer No" {...slotProps?.inputProps}/>
+                <Autocomplete.Trigger className="btn btn-outline-secondary">
+                    <span className={open ? "bi-chevron-up" : 'bi-chevron-down'}/>
+                </Autocomplete.Trigger>
+            </Autocomplete.InputGroup>
+            <Autocomplete.Portal hidden={!status} className={classes.Portal}>
+                <Autocomplete.Positioner sideOffset={4} align="start">
+                    <Autocomplete.Popup aria-busy={isPending || undefined} className={classes.Popup}>
+                        <div className="bg-body p-1 border rounded">
+                            <Autocomplete.Status>
+                                {status && <div className="text-secondary">{status}</div>}
+                            </Autocomplete.Status>
+                            <Autocomplete.List>
+                                {(customer: SearchCustomer) => (
+                                    <Autocomplete.Item key={customerKey(customer)} value={customer}
+                                                       onClick={() => {
+                                                           onSelectCustomer(customer);
+                                                           setOpen(false);
+                                                       }}
+                                                       className={classes.Item}>
+                                        <div className="d-flex align-items-center=" style={{gap: '3rem'}}>
+                                            <div className="flex-grow-1">
+                                                <div className="fw-bold">{customerKey(customer)}</div>
+                                            </div>
+                                            <div className="flex-shrink-0">
+                                                {customer.CustomerName}
+                                            </div>
+                                        </div>
+                                    </Autocomplete.Item>
+
+                                )}
+                            </Autocomplete.List>
+                        </div>
+                    </Autocomplete.Popup>
+                </Autocomplete.Positioner>
+            </Autocomplete.Portal>
+        </Autocomplete.Root>
+    )
 }
 export default CustomerAutocomplete

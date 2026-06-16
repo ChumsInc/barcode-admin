@@ -1,6 +1,6 @@
 import Decimal from "decimal.js";
-import type {SortProps} from "@chumsinc/sortable-tables";
-import type {BarcodeSODetailLine, SODetailTableField} from "../../types";
+import type {SortProps} from "chums-types";
+import type {BarcodeSODetailLine, BarcodeSODetailRow} from "../../types";
 
 export const itemStickerQty = (row: Pick<BarcodeSODetailLine, 'ItemType' | 'Quantity' | 'UnitOfMeasureConvFactor'>, extra: number): number | null => {
     if (row.ItemType !== '1') {
@@ -12,7 +12,7 @@ export const itemStickerQty = (row: Pick<BarcodeSODetailLine, 'ItemType' | 'Quan
 }
 
 
-export const detailSorter = (sort: SortProps<SODetailTableField>) => (a: BarcodeSODetailLine, b: BarcodeSODetailLine) => {
+export const detailSorter = (sort: SortProps<BarcodeSODetailRow>) => (a: BarcodeSODetailLine, b: BarcodeSODetailLine) => {
     const {field, ascending} = sort;
     const sortMod = ascending ? 1 : -1;
     switch (field) {

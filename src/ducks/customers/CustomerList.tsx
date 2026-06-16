@@ -1,21 +1,9 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
-import {
-    selectCustomerList,
-    selectCustomerListFilter,
-    selectCustomerListSort,
-    selectCustomerRowsPerPage,
-    selectCustomersLoaded,
-    selectCustomersLoading,
-    selectCustomersPage,
-    selectShowInactiveCustomers
-} from "./selectors";
-import {loadCustomers, setCustomersSort, setPage, setRowsPerPage} from "./actions";
-import type {BarcodeCustomer} from "chums-types";
-import {customerKey} from "@/utils/customer";
-import {customerFilter, customerSort} from "./utils";
-import type {SortProps} from "../../types";
+import {selectCustomersSort, selectCustomersStatus, selectSortedCustomers, setCustomerSort} from "./index.ts";
+import {loadCustomers} from "./actions";
+import type {BarcodeCustomer, SortProps} from "chums-types";
 import {SortableTable, TablePagination} from "@chumsinc/sortable-tables";
 import CustomerFilter from "./CustomerFilter";
 import {useNavigate} from "react-router";
@@ -23,47 +11,28 @@ import CustomerSearchBySO from "./CustomerSearchBySO";
 import classNames from "classnames";
 import {SpinnerButton} from "@chumsinc/react-bootstrap-addons";
 import {customerListFields} from "@/ducks/customers/customerListFields.tsx";
+import {LocalStore} from "@chumsinc/ui-utils";
+import {localStorageKeys} from "@/api/preferences.ts";
 
 
 const CustomerList = () => {
     const dispatch = useAppDispatch();
     const nav = useNavigate();
-    const list = useSelector(selectCustomerList);
-    const loaded = useSelector(selectCustomersLoaded);
-    const loading = useSelector(selectCustomersLoading);
-    const sort = useSelector(selectCustomerListSort);
-    const filter = useSelector(selectCustomerListFilter);
-    const page = useSelector(selectCustomersPage);
-    const rowsPerPage = useSelector(selectCustomerRowsPerPage);
-    const showInactive = useSelector(selectShowInactiveCustomers);
+    const list = useSelector(selectSortedCustomers);
+    const status = useSelector(selectCustomersStatus);
+    const sort = useSelector(selectCustomersSort);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(LocalStore.getItem(localStorageKeys.customerRowsPerPage, 25));
 
 
-    const [sortedList, setSortedList] = useState<BarcodeCustomer[]>(
-        Object.values(list)
-            .filter(row => showInactive || row.active)
-            .filter(row => !filter || row.CustomerName.includes(filter) || customerKey(row).includes(filter))
-            .sort(customerSort(sort))
-    )
-    const [pagedList, setPagedList] = useState<BarcodeCustomer[]>(sortedList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage))
+    const sortChangedHandler = (sort: SortProps<BarcodeCustomer>) => {
+        dispatch(setCustomerSort(sort));
+    }
 
-    useEffect(() => {
-        if (!loading && !loaded) {
-            dispatch(loadCustomers());
-        }
-    }, []);
-
-
-    useEffect(() => {
-        const sortedList = Object.values(list)
-            .filter(row => showInactive || row.active)
-            .filter(customerFilter(filter))
-            .sort(customerSort(sort));
-        setSortedList(sortedList);
-        setPagedList(sortedList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage))
-    }, [list, sort, filter, page, rowsPerPage, showInactive])
-
-    const sortChangedHandler = (sort: SortProps) => {
-        dispatch(setCustomersSort(sort.field as keyof BarcodeCustomer));
+    const rowsPerPageHandler = (rowsPerPage: number) => {
+        LocalStore.setItem(localStorageKeys.customerRowsPerPage, rowsPerPage);
+        setRowsPerPage(rowsPerPage);
+        setPage(0);
     }
 
     return (
@@ -73,7 +42,7 @@ const CustomerList = () => {
                     <CustomerFilter/>
                 </div>
                 <div className="col-auto">
-                    <SpinnerButton type="button" size="sm" spinning={loading} spinnerProps={{size: 'sm'}}
+                    <SpinnerButton type="button" size="sm" spinning={status === 'loading'} spinnerProps={{size: 'sm'}}
                                    onClick={() => dispatch(loadCustomers())}>
                         Reload
                     </SpinnerButton>
@@ -87,13 +56,14 @@ const CustomerList = () => {
                     <CustomerSearchBySO/>
                 </div>
             </div>
-            <SortableTable fields={customerListFields} data={pagedList}
+            <SortableTable fields={customerListFields}
+                           data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
                            rowClassName={(row) => classNames({'table-warning': !row.active})}
                            currentSort={sort} keyField="id" onChangeSort={sortChangedHandler}/>
-            <TablePagination size="sm" page={page} rowsPerPage={rowsPerPage} count={sortedList.length}
+            <TablePagination size="sm" page={page} rowsPerPage={rowsPerPage} count={list.length}
                              showFirst showLast
-                             onChangePage={(page: number) => dispatch(setPage(page))}
-                             rowsPerPageProps={{onChange: (rowsPerPage: number) => dispatch(setRowsPerPage(rowsPerPage))}}/>
+                             onChangePage={setPage}
+                             rowsPerPageProps={{onChange: rowsPerPageHandler}}/>
         </div>
     )
 }

@@ -1,22 +1,21 @@
-import {type FormEvent, useState} from "react";
+import {useState} from "react";
 import {useAppSelector} from "@/app/configureStore";
 import {useNavigate} from "react-router";
 import {fetchSOSearch} from "@/api/order-stickers";
-import {selectCustomerList} from "./selectors";
 import {customerKey} from "@/utils/customer";
 import {selectCustomerLoading} from "../customer/selectors";
 import {selectSalesOrderLoading} from "../salesOrder/selectors";
+import {selectCustomers} from "@/ducks/customers/index.ts";
 
 const CustomerSearchBySO = () => {
     const navigate = useNavigate();
     const loading = useAppSelector(selectCustomerLoading);
     const soLoading = useAppSelector(selectSalesOrderLoading);
-    const customers = useAppSelector(selectCustomerList);
+    const customers = useAppSelector(selectCustomers);
     const [salesOrderNo, setSalesOrderNo] = useState('');
     const [submitted, setSubmitted] = useState<boolean>(false);
 
-    const submitHandler = (ev: FormEvent) => {
-        ev.preventDefault();
+    const submitHandler = () => {
         const _salesOrderNo = salesOrderNo.padStart(7, '0');
         setSalesOrderNo(_salesOrderNo);
         setSubmitted(true);
@@ -26,7 +25,8 @@ const CustomerSearchBySO = () => {
                 if (!so) {
                     return;
                 }
-                const customer = customers[customerKey(so)] ?? customers['01-MSRP'];
+                const customer = customers.find(c => customerKey(c) === customerKey(so))
+                    ?? customers.find(c => customerKey(c) === '01-MSRP');
                 if (!customer) {
                     return;
                 }
@@ -41,7 +41,7 @@ const CustomerSearchBySO = () => {
     }
 
     return (
-        <form className="input-group input-group-sm" onSubmit={submitHandler}>
+        <form className="input-group input-group-sm" action={submitHandler}>
             <div className="input-group-text">SO#</div>
             <input type="search" className="form-control form-control-sm" value={salesOrderNo}
                    required maxLength={7}

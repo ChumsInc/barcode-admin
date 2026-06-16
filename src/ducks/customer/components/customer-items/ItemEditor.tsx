@@ -1,26 +1,26 @@
-import {type ChangeEvent, type FormEvent, useEffect, useState} from 'react'
-import {useAppDispatch} from "@/app/configureStore";
+import {type ChangeEvent, type FormEvent, startTransition, useEffect, useState} from 'react'
+import {useAppDispatch} from "@/app/configureStore.ts";
 import {useSelector} from "react-redux";
-import {selectCurrentCustomer, selectCustomerItem, selectItemAction} from "./selectors";
+import {selectCurrentCustomer, selectCustomerItem, selectItemAction} from "../../selectors.ts";
 import type {BarcodeItem, Editable, SearchItem} from "chums-types";
-import {newItem} from "./utils";
-import ItemAutocomplete from "../../components/ItemAutocomplete";
-import {selectCanEdit} from "../user";
+import {newItem} from "../../utils.ts";
+import ItemAutocomplete from "@/components/ItemAutocomplete.tsx";
+import {selectCanEdit} from "../../../user";
 import classNames from "classnames";
 import numeral from "numeral";
-import {removeCustomerItem, saveCustomerItem} from "./actions";
-import ExistingItemAlert from "./ExistingItemAlert";
-import ItemInput from "./ItemInput";
-import RemoveItemDialog from "./RemoveItemDialog";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
-import AssignNextUPCButton from "./AssignNextUPCButton";
-import StickerToggleButton from "./StickerToggleButton";
-import Tooltip from "@mui/material/Tooltip";
+import {removeCustomerItem, saveCustomerItem} from "../../actions.ts";
+import ExistingItemAlert from "../../ExistingItemAlert.tsx";
+import ItemInput from "../../ItemInput.tsx";
+import RemoveItemDialog from "../../RemoveItemDialog.tsx";
+import AssignNextUPCButton from "./AssignNextUPCButton.tsx";
+import StickerToggleButton from "../../StickerToggleButton.tsx";
+import Tooltip from "react-bootstrap/Tooltip";
 import {formatGTIN} from "@chumsinc/gtin-tools";
-import {Col, Form, Row} from "react-bootstrap";
+import {Col, Form, OverlayTrigger, Row} from "react-bootstrap";
 import {SpinnerButton} from "@chumsinc/react-bootstrap-addons";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
+import TextArea from '@chumsinc/textarea';
 
 export interface EditableItem extends BarcodeItem {
     changed?: boolean;
@@ -41,12 +41,15 @@ const ItemEditor = () => {
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     useEffect(() => {
-        if (currentItem) {
-            setLocked(true);
-            return setBarcodeItem({...currentItem});
-        }
-        setBarcodeItem({...newItem, CustomerID: settings?.id});
-    }, [currentItem]);
+        startTransition(() => {
+            if (currentItem) {
+                setLocked(true);
+                setBarcodeItem({...currentItem});
+                return;
+            }
+            setBarcodeItem({...newItem, CustomerID: settings?.id});
+        })
+    }, [currentItem, settings?.id]);
 
 
     const selectItemHandler = (item?: SearchItem | null) => {
@@ -170,27 +173,27 @@ const ItemEditor = () => {
                 </ItemInput>
                 <ItemInput field="UPC" label="UPC" value={barcodeItem.UPC} onChange={changeHandler('UPC')}
                            helpText="Automatically calculates check digits for numeric codes length 11-14, 16-18">
-                    <Tooltip title={formatGTIN(sageItem?.UDF_UPC ?? '')}>
-                        <button type="button"
-                                className={classNames("btn btn-sm btn-outline-secondary", {
-                                    'btn-secondary': barcodeItem.UPC === sageItem?.UDF_UPC,
-                                    'btn-outline-secondary': barcodeItem.UPC !== sageItem?.UDF_UPC,
-                                })}
+                    <OverlayTrigger overlay={(
+                        <Tooltip>{formatGTIN(sageItem?.UDF_UPC ?? '')}</Tooltip>
+                    )}>
+                        <Button type="button"
+                                variant={barcodeItem.UPC === sageItem?.UDF_UPC ? 'secondary' : 'outline-secondary'}
                                 disabled={!sageItem || !canEdit} onClick={setSageValue('UPC', 'UDF_UPC')}>
-                                    <span
-                                        className={classNames("bi-chevron-left", {'text-light': barcodeItem.UPC === sageItem?.UDF_UPC})}/>
-                        </button>
-                    </Tooltip>
-                    <Tooltip title={formatGTIN(sageItem?.UDF_UPC_BY_COLOR ?? '')}>
-                        <button type="button"
-                                className={classNames("btn btn-sm", {
-                                    'btn-info': barcodeItem.UPC === sageItem?.UDF_UPC_BY_COLOR,
-                                    'btn-outline-info': barcodeItem.UPC !== sageItem?.UDF_UPC_BY_COLOR,
-                                })}
+                                    <span className={classNames(
+                                        "bi-chevron-left",
+                                        {'text-light': barcodeItem.UPC === sageItem?.UDF_UPC})}
+                                    />
+                        </Button>
+                    </OverlayTrigger>
+                    <OverlayTrigger overlay={(
+                        <Tooltip>{formatGTIN(sageItem?.UDF_UPC_BY_COLOR ?? '')}</Tooltip>
+                    )}>
+                        <Button type="button"
+                                variant={barcodeItem.UPC === sageItem?.UDF_UPC_BY_COLOR ? 'info' : 'outline-info'}
                                 disabled={!sageItem || !canEdit} onClick={setSageValue('UPC', 'UDF_UPC_BY_COLOR')}>
                             <span className="bi-chevron-left"/>
-                        </button>
-                    </Tooltip>
+                        </Button>
+                    </OverlayTrigger>
                     <AssignNextUPCButton sageItem={sageItem}/>
                 </ItemInput>
                 <Form.Group as={Row} label="Stickers">
@@ -220,19 +223,19 @@ const ItemEditor = () => {
                 <Form.Group as={Row} className="mb-1">
                     <Form.Label column sm={4}>Notes</Form.Label>
                     <Col>
-                        <TextareaAutosize minRows={2} value={barcodeItem.Notes ?? ''}
-                                          readOnly={!canEdit}
-                                          className="form-control form-control-sm"
-                                          onChange={changeHandler('Notes')}/>
+                        <TextArea minRows={3} value={barcodeItem.Notes ?? ''}
+                                  readOnly={!canEdit}
+                                  className="form-control form-control-sm"
+                                  onChange={changeHandler('Notes')}/>
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-1">
                     <Form.Label column sm={4}>Special Instructions</Form.Label>
                     <Col>
-                        <TextareaAutosize minRows={2} value={barcodeItem.SpecialInstructions ?? ''}
-                                          readOnly={!canEdit}
-                                          className="form-control form-control-sm"
-                                          onChange={changeHandler('SpecialInstructions')}/>
+                        <TextArea minRows={3} value={barcodeItem.SpecialInstructions ?? ''}
+                                  readOnly={!canEdit}
+                                  className="form-control form-control-sm"
+                                  onChange={changeHandler('SpecialInstructions')}/>
                     </Col>
                 </Form.Group>
                 <Row className="mt-3 g-3 justify-content-end">

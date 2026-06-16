@@ -1,11 +1,7 @@
-import {useId} from 'react';
+import {type ReactNode, useId} from 'react';
 import type {BarcodeItem} from "chums-types";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 
 export interface AssignNextUPCDialogProps {
@@ -13,29 +9,28 @@ export interface AssignNextUPCDialogProps {
     open: boolean;
     onConfirm: () => void;
     onCancel: () => void;
+    children?: ReactNode;
 }
 
-const AssignNextUPCDialog = ({item, open, onConfirm, onCancel}: AssignNextUPCDialogProps) => {
+const AssignNextUPCDialog = ({item, open, onConfirm, onCancel, children}: AssignNextUPCDialogProps) => {
     const id = useId();
     if (!item) {
         return null;
     }
     return (
-        <Dialog open={open} onClose={onCancel}
-                aria-labelledby={id}>
-            <DialogTitle id={id}>
-                Confirm assign next color UPC to {item.ItemCode}?
-            </DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    This will assign the next available color UPC to <strong>{item.ItemCode}</strong>.
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onCancel} variant="secondary">Cancel</Button>
-                <Button onClick={onConfirm} autoFocus variant="primary">Confirm</Button>
-            </DialogActions>
-        </Dialog>
+        <Modal show={open} onHide={onCancel} centered
+               aria-labelledby={id}>
+            <Modal.Header closeButton>
+                <Modal.Title id={id}>Confirm assign next color UPC to {item.ItemCode}?</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {children}
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={onCancel} variant="secondary" size="sm">Cancel</Button>
+                <Button onClick={onConfirm} autoFocus variant="primary" size="sm">Confirm</Button>
+            </Modal.Footer>
+        </Modal>
     )
 }
 export default AssignNextUPCDialog;

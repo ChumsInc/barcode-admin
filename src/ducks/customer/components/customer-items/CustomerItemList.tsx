@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {useAppDispatch} from "@/app/configureStore";
+import {startTransition, useEffect, useState} from 'react';
+import {useAppDispatch} from "@/app/configureStore.ts";
 import {useSelector} from "react-redux";
 import {
     selectCurrentCustomer,
@@ -10,13 +10,15 @@ import {
     selectItemsPage,
     selectItemsRowsPerPage,
     selectItemsSort
-} from "./selectors";
+} from "../../selectors.ts";
 import type {BarcodeItem, SortProps} from "chums-types";
 import {SortableTable, TablePagination} from "@chumsinc/sortable-tables";
-import {loadCustomer, setCurrentItem, setItemSort, setPage, setRowsPerPage} from "./actions";
+import {loadCustomer, setCurrentItem, setItemSort, setPage, setRowsPerPage} from "../../actions.ts";
 import classNames from "classnames";
-import CustomerItemListContainer from "@/ducks/customer/CustomerItemListContainer";
-import {getCustomerColumns} from "@/ducks/customer/CustomerItemListFields";
+import CustomerItemListContainer from "@/ducks/customer/CustomerItemListContainer.tsx";
+import {getCustomerColumns} from "@/ducks/customer/CustomerItemListFields.tsx";
+import {LocalStore} from "@chumsinc/ui-utils";
+import {localStorageKeys} from "@/api/preferences.ts";
 
 
 const CustomerItemList = () => {
@@ -36,16 +38,20 @@ const CustomerItemList = () => {
         if (!loading && !loaded && !!currentCustomer) {
             dispatch(loadCustomer(currentCustomer.id));
         }
-    }, [loading, loaded]);
+    }, [loading, loaded, currentCustomer, dispatch]);
 
     useEffect(() => {
-        setFields(getCustomerColumns(currentCustomer));
+        startTransition(() => {
+            setFields(getCustomerColumns(currentCustomer));
+        })
     }, [currentCustomer]);
 
 
     useEffect(() => {
-        const pagedData = filteredItems.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-        setPagedData(pagedData);
+        startTransition(() => {
+            const pagedData = filteredItems.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+            setPagedData(pagedData);
+        })
     }, [page, rowsPerPage, filteredItems])
 
     const sortChangeHandler = (nextSort: SortProps<BarcodeItem>) => {
@@ -63,6 +69,11 @@ const CustomerItemList = () => {
         })
     }
 
+    const onChangeRowsPerPage = (rowsPerPage: number) => {
+        LocalStore.setItem<number>(localStorageKeys.itemRowsPerPage, rowsPerPage);
+        dispatch(setRowsPerPage(rowsPerPage));
+    }
+
     return (
         <CustomerItemListContainer>
             <div className="table-responsive">
@@ -74,7 +85,7 @@ const CustomerItemList = () => {
             </div>
             <TablePagination page={page} onChangePage={(page) => dispatch(setPage(page))}
                              rowsPerPage={rowsPerPage}
-                             rowsPerPageProps={{onChange: (rpp) => dispatch(setRowsPerPage(rpp))}}
+                             rowsPerPageProps={{onChange: onChangeRowsPerPage}}
                              showFirst showLast
                              count={filteredItems.length}/>
         </CustomerItemListContainer>

@@ -1,4 +1,12 @@
-import React, {type ChangeEvent, type InputHTMLAttributes, useEffect, useRef, useState} from 'react';
+import React, {
+    type ChangeEvent,
+    type InputHTMLAttributes,
+    startTransition,
+    useCallback,
+    useEffect,
+    useRef,
+    useState
+} from 'react';
 import {fetchItemLookup} from "../api/item";
 import AutoComplete from "./AutoComplete";
 import type {SearchItem} from "chums-types";
@@ -18,28 +26,9 @@ const ItemAutocomplete = ({itemCode, onChange, onSelectItem, children, ...props}
     const [debouncedValue, setDebouncedValue] = useDebounceValue(itemCode, 350);
     const [results, setResults] = useState<SearchItem[]>([]);
     const [loading, setLoading] = useState(false);
-    const [tHandle, setTHandle] = useState(0);
+    const timerRef = useRef<number|null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-
-    // const id = useId();
-    useEffect(() => {
-        setValue(debouncedValue);
-        const [item] = results.filter(item => item.ItemCode === debouncedValue);
-        onSelectItem(item || null);
-        loadItemSearch(debouncedValue)
-    }, [debouncedValue])
-
-    useEffect(() => {
-        return () => {
-            window.clearTimeout(tHandle);
-        }
-    }, []);
-
-    useEffect(() => {
-        setDebouncedValue(value);
-    }, [value]);
-
-    const loadItemSearch = (value: string) => {
+    const loadItemSearch = useCallback((value: string) => {
         if (loading) {
             return;
         }
@@ -58,16 +47,42 @@ const ItemAutocomplete = ({itemCode, onChange, onSelectItem, children, ...props}
                 }
             });
 
-    }
+    }, [loading, onSelectItem]);
+
+    // const id = useId();
     useEffect(() => {
-        if (value.length < 2) {
-            setResults([]);
-            return;
+        startTransition(() => {
+            setValue(debouncedValue);
+            const [item] = results.filter(item => item.ItemCode === debouncedValue);
+            onSelectItem(item || null);
+            loadItemSearch(debouncedValue)
+        })
+    }, [debouncedValue, results, onSelectItem, loadItemSearch])
+
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) {
+                window.clearTimeout(timerRef.current);
+            }
         }
-        window.clearTimeout(tHandle);
-        const t = window.setTimeout(() => loadItemSearch(value), 350);
-        setTHandle(t);
-    }, [value]);
+    }, [timerRef]);
+
+    useEffect(() => {
+        setDebouncedValue(value);
+    }, [value, setDebouncedValue]);
+
+    useEffect(() => {
+        startTransition(() => {
+            if (value.length < 2) {
+                setResults([]);
+                return;
+            }
+            if (timerRef.current) {
+                window.clearTimeout(timerRef.current);
+            }
+            timerRef.current = window.setTimeout(() => loadItemSearch(value), 350);
+        })
+    }, [loadItemSearch, value]);
 
     const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => {
         setValue(ev.target.value);
