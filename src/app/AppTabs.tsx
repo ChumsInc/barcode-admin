@@ -1,17 +1,17 @@
 import {useEffect} from 'react';
 import {useParams} from "react-router";
 import {useSelector} from "react-redux";
-import {selectCurrentCustomer} from "../ducks/customer/selectors";
 import {useAppDispatch} from "./configureStore";
 import {loadCustomer} from "../ducks/customer/actions";
 import NavTabItem from "../components/NavTabItem";
 import {Nav} from "react-bootstrap";
+import {selectCustomerSettings} from "@/ducks/customer/customerSettingsSlice.ts";
 
 
 const AppTabs = () => {
     const dispatch = useAppDispatch();
     const {id} = useParams<{ id: string }>();
-    const customer = useSelector(selectCurrentCustomer);
+    const customer = useSelector(selectCustomerSettings);
 
     useEffect(() => {
         if (!!id && id !== customer?.id.toString()) {

@@ -18,10 +18,14 @@ export async function fetchItemInfo(itemCode: string):Promise<SageItem|null> {
     }
 }
 
-export async function fetchItemLookup(search:string):Promise<SearchItem[]> {
+export async function fetchItemLookup(search:string, exact?: boolean):Promise<SearchItem[]> {
     try {
         const params = new URLSearchParams();
-        params.set('search', search);
+        if (exact) {
+            params.set('exact', search);
+        } else {
+            params.set('search', search);
+        }
         const url = `/api/search/item.json?${params.toString()}`;
         const res = await fetchJSON<{result: SearchItem[]}>(url);
         return res?.result ?? [];

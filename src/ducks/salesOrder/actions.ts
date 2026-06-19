@@ -1,16 +1,15 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {fetchSalesOrder, postOrderStickers} from "@/api/order-stickers";
 import type {
-    BarcodeItemList,
     BarcodeSalesOrder,
-    BarcodeSODetailLine, BarcodeSODetailRow,
+    BarcodeSODetailLine,
+    BarcodeSODetailRecord,
     BarcodeSOLineItem,
     GenerateStickerProps,
     SalesOrderDetailBarcodeItem
 } from "../../types";
-import type {SortProps} from "chums-types";
+import type {BarcodeItem, SortProps} from "chums-types";
 import type {RootState} from "@/app/configureStore";
-import {selectCurrentCustomer, selectCustomerItems} from "../customer/selectors";
 import Decimal from "decimal.js";
 import {
     selectExtraQuantity,
@@ -20,8 +19,10 @@ import {
     selectShipTo
 } from "./selectors";
 import {itemStickerQty} from "./utils";
+import {selectCustomerSettings} from "@/ducks/customer/customerSettingsSlice.ts";
+import {selectItems} from "@/ducks/customer/customerItemsSlice.ts";
 
-export function parseSalesOrderLines(items: BarcodeItemList, detail: SalesOrderDetailBarcodeItem[], extra: number): BarcodeSODetailLine[] {
+export function parseSalesOrderLines(items: BarcodeItem[], detail: SalesOrderDetailBarcodeItem[], extra: number): BarcodeSODetailLine[] {
     return detail.map(row => {
         const {
             LineKey,
@@ -38,7 +39,8 @@ export function parseSalesOrderLines(items: BarcodeItemList, detail: SalesOrderD
             UDF_SHIP_CODE,
         } = row;
         const Quantity = new Decimal(QuantityOrdered).sub(QuantityShipped).toString();
-        const stickerQty = items[ItemCode]
+        const item = items.find(i => i.ItemCode === ItemCode);
+        const stickerQty = item
             ? itemStickerQty({ItemType, Quantity, UnitOfMeasureConvFactor}, extra)
             : null;
         return {
@@ -55,7 +57,7 @@ export function parseSalesOrderLines(items: BarcodeItemList, detail: SalesOrderD
             QuantityOrdered,
             QuantityShipped,
             Quantity,
-            item: items[row.ItemCode],
+            item,
             selected: false,
             stickerQty,
             UDF_SHIP_CODE,
@@ -67,7 +69,7 @@ export const loadSalesOrder = createAsyncThunk<BarcodeSalesOrder | null, string>
     'salesOrder/load',
     async (arg, {getState}) => {
         const state = getState() as RootState;
-        const items = selectCustomerItems(state);
+        const items = selectItems(state);
         const extra = selectExtraQuantity(state);
         const so = await fetchSalesOrder(arg);
         if (!so) {
@@ -100,11 +102,12 @@ export const loadSalesOrder = createAsyncThunk<BarcodeSalesOrder | null, string>
 
 export const setExtraStickers = createAction<number>('salesOrder/setExtraStickers');
 
+export const generateStickers2 = createAsyncThunk
 export const generateStickers = createAsyncThunk<number, boolean>(
     'salesOrder/generate',
     async (reversed, {getState}) => {
         const state = getState() as RootState;
-        const currentCustomer = selectCurrentCustomer(state);
+        const currentCustomer = selectCustomerSettings(state);
         const salesOrder = selectSalesOrder(state);
         const shipTo = selectShipTo(state);
         const lines: BarcodeSOLineItem[] = selectSalesOrderDetailItems(state)
@@ -125,7 +128,7 @@ export const generateStickers = createAsyncThunk<number, boolean>(
     }, {
         condition(_, {getState}) {
             const state = getState() as RootState;
-            if (!selectCurrentCustomer(state)) {
+            if (!selectCustomerSettings(state)) {
                 return false;
             }
             if (!selectSalesOrder(state)) {
@@ -143,6 +146,6 @@ export const setShipTo = createAction<string>('salesOrder/setShipTo');
 export const toggleLineSelected = createAction<{ lineKey: string; forced?: boolean }>('salesOrder/toggleLineSelected');
 export const toggleAllSelected = createAction<boolean>('salesOrder/toggleAllSelected');
 
-export const setLineSort = createAction<SortProps<BarcodeSODetailRow>>('salesOrder/setSort');
+export const setLineSort = createAction<SortProps<BarcodeSODetailRecord>>('salesOrder/setSort');
 
 export const dismissQtyGenerated = createAction('salesOrder/dismissQtyGenerated');

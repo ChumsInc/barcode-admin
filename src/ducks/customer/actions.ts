@@ -7,18 +7,12 @@ import {
     postCustomerSettings,
     postGenNextUPC
 } from "@/api/customer";
-import type {BarcodeCustomerResponse, BarcodeItemList, CustomUPCBarcodeItem} from "../../types";
-import {
-    selectCurrentCustomer,
-    selectCustomerLoading,
-    selectCustomerSaving,
-    selectCustomUPCLoading,
-    selectItemAction
-} from "./selectors";
+import type {BarcodeCustomerResponse, CustomUPCBarcodeItem} from "../../types";
 import type {RootState} from "@/app/configureStore";
 import {formatGTIN} from '@chumsinc/gtin-tools';
 import {customerKey} from "@/utils/customer";
-import {selectCustomersStatus} from "@/ducks/customers";
+import {selectCustomerSettings, selectCustomerStatus} from "@/ducks/customer/customerSettingsSlice.ts";
+import {selectItemsStatus} from "@/ducks/customer/customerItemsSlice.ts";
 
 
 export const setCurrentItem = createAction<BarcodeItem | null>('customer/item/select');
@@ -37,7 +31,7 @@ export const loadCustomer = createAsyncThunk<BarcodeCustomerResponse | null, num
     {
         condition(_, {getState}) {
             const state = getState() as RootState;
-            return !(selectCustomerLoading(state) || selectCustomerSaving(state));
+            return selectCustomerStatus(state) === 'idle'
         }
     }
 )
@@ -52,17 +46,14 @@ export const saveCustomer = createAsyncThunk<BarcodeCustomerSettings | null, Bar
         });
     },
     {
-        condition(_, {getState}) {
+        condition(arg, {getState}) {
             const state = getState() as RootState;
-            return !(selectCustomerLoading(state)
-                || selectCustomersStatus(state) === 'idle'
-                || selectCustomerSaving(state)
-            );
+            return !!customerKey(arg) && selectCustomerStatus(state) === 'idle';
         }
     }
 )
 
-export const saveCustomerItem = createAsyncThunk<BarcodeItemList, BarcodeItem>(
+export const saveCustomerItem = createAsyncThunk<BarcodeItem[], BarcodeItem>(
     'customer/item/save',
     async (arg) => {
         return await postCustomerItem({...arg, UPC: formatGTIN(arg.UPC, true)})
@@ -70,29 +61,29 @@ export const saveCustomerItem = createAsyncThunk<BarcodeItemList, BarcodeItem>(
     {
         condition(_, {getState}) {
             const state = getState() as RootState;
-            return selectItemAction(state) === 'idle';
+            return selectItemsStatus(state) === 'idle';
         }
     }
 )
 
-export const assignNextUPC = createAsyncThunk<void, CustomUPCBarcodeItem>(
+export const assignNextUPC = createAsyncThunk<BarcodeItem[], CustomUPCBarcodeItem>(
     'customer/item/generateCustomUPC',
-    async (arg, {getState, dispatch}) => {
+    async (arg, {getState}) => {
         const state = getState() as RootState;
-        const customer = selectCurrentCustomer(state);
+        const customer = selectCustomerSettings(state);
         const notes = `Custom UPC for ${customerKey(customer!)} (BarcodeAdmin)`;
         const colorUPC = await postGenNextUPC(arg, notes);
-        dispatch(saveCustomerItem({...arg, UPC: colorUPC?.upc ?? ''}))
+        return await postCustomerItem({...arg, UPC: formatGTIN(colorUPC?.upc ?? '', true)})
     },
     {
         condition(arg, {getState}) {
             const state = getState() as RootState;
-            return !!arg.ItemCode && !!arg.ID && !!selectCurrentCustomer(state) && !selectCustomUPCLoading(state);
+            return !!arg.ItemCode && !!arg.ID && selectItemsStatus(state) === 'idle';
         }
     }
 )
 
-export const removeCustomerItem = createAsyncThunk<BarcodeItemList, BarcodeItem>(
+export const removeCustomerItem = createAsyncThunk<BarcodeItem[], BarcodeItem>(
     'customer/item/delete',
     async (arg) => {
         return await deleteCustomerItem(arg);
@@ -100,7 +91,7 @@ export const removeCustomerItem = createAsyncThunk<BarcodeItemList, BarcodeItem>
     {
         condition(_, {getState}) {
             const state = getState() as RootState;
-            return selectItemAction(state) === 'idle';
+            return selectItemsStatus(state) === 'idle';
         }
     }
 )

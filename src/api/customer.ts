@@ -1,13 +1,6 @@
-import type {
-    BarcodeCustomerResponse,
-    BarcodeItemList,
-    ColorUPCRecord,
-    CustomUPCBarcodeItem,
-    SearchCustomer
-} from "../types";
+import type {BarcodeCustomerResponse, ColorUPCRecord, CustomUPCBarcodeItem, SearchCustomer} from "../types";
 import {fetchJSON} from "@chumsinc/ui-utils";
 import type {BarcodeCustomer, BarcodeCustomerSettings, BarcodeItem} from "chums-types";
-import {itemKey} from "../utils/customer";
 
 export async function fetchCustomers(): Promise<BarcodeCustomer[]> {
     try {
@@ -93,21 +86,13 @@ export async function postCustomerSettings(customer: BarcodeCustomer): Promise<B
     }
 }
 
-const buildItemList = (items: BarcodeItem[]): BarcodeItemList => {
-    const list: BarcodeItemList = {};
-    items.forEach(row => {
-        list[itemKey(row)] = row;
-    })
-    return list;
 
-}
-
-export async function fetchCustomerItems(customerId: number | string): Promise<BarcodeItemList> {
+export async function fetchCustomerItems(customerId: number | string): Promise<BarcodeItem[]> {
     try {
         const url = '/api/operations/barcodes/customers/:customer_id/items.json'
             .replace(':customer_id', encodeURIComponent(customerId));
         const res = await fetchJSON<{ result?: BarcodeItem[] }>(url);
-        return buildItemList(res?.result ?? []);
+        return res?.result ?? [];
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("loadCustomer()", err.message);
@@ -118,7 +103,7 @@ export async function fetchCustomerItems(customerId: number | string): Promise<B
     }
 }
 
-export async function postCustomerItem(item: BarcodeItem): Promise<BarcodeItemList> {
+export async function postCustomerItem(item: BarcodeItem): Promise<BarcodeItem[]> {
     try {
         if (!item.CustomerID) {
             return Promise.reject(new Error('Item is missing customerId'));
@@ -133,7 +118,7 @@ export async function postCustomerItem(item: BarcodeItem): Promise<BarcodeItemLi
         const method = item.ID ? 'PUT' : 'POST';
         const body = JSON.stringify({...item, ItemDescription: item.ItemDescription.trim()})
         const res = await fetchJSON<{ result?: BarcodeItem[] }>(url, {method, body});
-        return buildItemList(res?.result ?? []);
+        return res?.result ?? [];
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("loadCustomer()", err.message);
@@ -144,7 +129,7 @@ export async function postCustomerItem(item: BarcodeItem): Promise<BarcodeItemLi
     }
 }
 
-export async function deleteCustomerItem(item: BarcodeItem): Promise<BarcodeItemList> {
+export async function deleteCustomerItem(item: BarcodeItem): Promise<BarcodeItem[]> {
     try {
         if (!item.CustomerID || !item.ID) {
             return Promise.reject(new Error('Item is missing customerId or itemId'));
@@ -153,7 +138,7 @@ export async function deleteCustomerItem(item: BarcodeItem): Promise<BarcodeItem
             .replace(':customer_id', encodeURIComponent(item.CustomerID))
             .replace(':item_id', encodeURIComponent(item.ID));
         const res = await fetchJSON<{ result?: BarcodeItem[] }>(url, {method: 'DELETE'});
-        return buildItemList(res?.result ?? []);
+        return res?.result ?? [];
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("deleteCustomerItem()", err.message);

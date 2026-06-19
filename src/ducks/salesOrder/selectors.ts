@@ -2,17 +2,17 @@ import type {RootState} from "@/app/configureStore";
 import {QueryStatus} from "@reduxjs/toolkit/query";
 import {createSelector} from "@reduxjs/toolkit";
 import type {SortProps} from "chums-types";
-import type {BarcodeSODetailRow} from "../../types";
+import type {BarcodeSODetailRecord} from "../../types";
 import {detailSorter} from "./utils";
 
 export const selectSalesOrder = (state: RootState) => state.salesOrder.orderHeader;
 
 export const selectSalesOrderNo = (state: RootState) => state.salesOrder.salesOrderNo;
 
-export const selectShipTo = (state:RootState) => state.salesOrder.shipTo;
-export const selectShipToList = (state:RootState) => state.salesOrder.shipToList;
+export const selectShipTo = (state: RootState) => state.salesOrder.shipTo;
+export const selectShipToList = (state: RootState) => state.salesOrder.shipToList;
 
-export const selectDetailSort = (state:RootState):SortProps<BarcodeSODetailRow> => state.salesOrder.sort;
+export const selectDetailSort = (state: RootState): SortProps<BarcodeSODetailRecord> => state.salesOrder.sort;
 
 export const selectSalesOrderDetail = (state: RootState) => state.salesOrder.detail;
 
@@ -28,8 +28,8 @@ export const selectSalesOrderDetailItems = createSelector(
     (detail, sort, shipTo) => {
         return detail
             .filter(row => !shipTo.trim() || row.UDF_SHIP_CODE === shipTo)
-            .filter(row => row.ItemType !== '4')
-            .sort(detailSorter(sort))
+            .filter(row => row.ItemType === '1')
+            .sort(detailSorter(sort)) as BarcodeSODetailRecord[]
     }
 )
 

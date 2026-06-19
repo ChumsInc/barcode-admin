@@ -2,10 +2,10 @@ import type {SalesOrder} from 'chums-types';
 import {fetchJSON} from "@chumsinc/ui-utils";
 import type {GenerateStickerBody, GenerateStickerProps} from "../types";
 
-export async function fetchSalesOrder(salesOrderNo: string): Promise<SalesOrder | null> {
+export async function fetchSalesOrder(salesOrderNo: string, options?: RequestInit): Promise<SalesOrder | null> {
     try {
         const url = `/node-sage/api/CHI/salesorder/${encodeURIComponent(salesOrderNo)}`
-        const res = await fetchJSON<{ result: SalesOrder[] }>(url);
+        const res = await fetchJSON<{ result: SalesOrder[] }>(url, options);
         return res?.result[0] ?? null;
     } catch (err: unknown) {
         if (err instanceof Error) {

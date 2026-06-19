@@ -1,5 +1,5 @@
 import {QueryStatus} from "@reduxjs/toolkit/query";
-import type {BarcodeSalesOrderHeader, BarcodeSODetailLine, BarcodeSODetailRow} from "../../types";
+import type {BarcodeSalesOrderHeader, BarcodeSODetailLine, BarcodeSODetailRecord} from "../../types";
 import {createReducer} from "@reduxjs/toolkit";
 import {
     dismissQtyGenerated,
@@ -17,7 +17,7 @@ import type {SortProps} from "chums-types";
 import {detailSorter, itemStickerQty} from "./utils";
 import {loadCustomer, removeCustomerItem, saveCustomerItem} from "../customer/actions";
 
-const defaultSODetailSort: SortProps<BarcodeSODetailLine> = {field: 'BinLocation', ascending: true};
+const defaultSODetailSort: SortProps<BarcodeSODetailRecord> = {field: 'BinLocation', ascending: true};
 
 export interface SalesOrderState {
     extra: number;
@@ -29,7 +29,7 @@ export interface SalesOrderState {
     loaded: boolean;
     shipTo: string;
     qtyGenerated: number | null;
-    sort: SortProps<BarcodeSODetailRow>;
+    sort: SortProps<BarcodeSODetailRecord>;
     shipToList: string[]
 }
 
@@ -111,7 +111,7 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
             state.detail = state.detail.sort(detailSorter(action.payload));
         })
         .addCase(loadCustomer.fulfilled, (state, action) => {
-            state.detail = parseSalesOrderLines(action.payload?.items || {}, state.detail, state.extra)
+            state.detail = parseSalesOrderLines(action.payload?.items ?? [], state.detail, state.extra)
                 .sort(detailSorter(state.sort));
             state.shipTo = '';
             state.shipToList = [];

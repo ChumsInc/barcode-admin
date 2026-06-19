@@ -19,7 +19,7 @@ export interface BarcodeItemList {
 
 export interface BarcodeCustomerResponse {
     settings?: BarcodeCustomerSettings | null;
-    items?: BarcodeItemList;
+    items?: BarcodeItem[];
 }
 
 export interface UserValidationResponse {
@@ -71,8 +71,9 @@ export interface GenerateStickerProps {
 }
 
 export type SalesOrderDetailBarcodeItem = Pick<SalesOrderDetailLine,
-    'LineKey' | 'LineSeqNo' | 'ItemCode' | 'ItemCodeDesc' | 'CommentText' | 'ItemType' | 'BinLocation' | 'UnitOfMeasure' | 'UnitOfMeasureConvFactor'
-    | 'SequenceNo' | 'WarehouseCode' | 'QuantityOrdered' | 'QuantityShipped' | 'UDF_SHIP_CODE'>
+    'LineKey' | 'LineSeqNo' | 'ItemCode' | 'ItemCodeDesc' | 'CommentText' | 'ItemType' | 'BinLocation'
+    | 'UnitOfMeasure' | 'UnitOfMeasureConvFactor' | 'SequenceNo' | 'WarehouseCode'
+    | 'QuantityOrdered' | 'QuantityShipped' | 'UDF_SHIP_CODE'>
 
 export interface BarcodeSODetailLine extends SalesOrderDetailBarcodeItem {
     BinLocation: string;
@@ -89,7 +90,8 @@ export interface BarcodeSalesOrder {
     detail: BarcodeSODetailLine[];
 }
 
-export type BarcodeSODetailRow = BarcodeSODetailLine & Omit<BarcodeItem, 'ItemCode'>;
+export type BarcodeSODetailRecord = BarcodeSODetailLine & Omit<BarcodeItem, 'ItemCode'>;
+
 
 
 export type BarcodeType = 'GTIN-12' | 'GTIN-13' | 'GTIN-14' | 'GSIN' | 'SSCC';

@@ -1,116 +1,148 @@
-import React, {
+import {
     type ChangeEvent,
-    type InputHTMLAttributes,
-    startTransition,
+    type LabelHTMLAttributes,
+    type ReactNode,
     useCallback,
     useEffect,
     useRef,
-    useState
+    useState,
+    useTransition
 } from 'react';
-import {fetchItemLookup} from "../api/item";
-import AutoComplete from "./AutoComplete";
 import type {SearchItem} from "chums-types";
-import {useDebounceValue} from "usehooks-ts";
+import {Spinner} from "react-bootstrap";
+import {Autocomplete, type AutocompleteInputProps, type AutocompleteRootProps} from "@base-ui/react/autocomplete";
+import classes from "@/components/autocomplete.module.css";
+import {fetchItemLookup} from "@/api/item.ts";
 
-const SageItemAutocomplete = AutoComplete<SearchItem>;
-
-export interface ItemAutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
-    itemCode: string;
-    onChange: (ev: ChangeEvent<HTMLInputElement>) => void;
-    onSelectItem: (item?: SearchItem) => void;
-    children?: React.ReactNode;
+export interface ItemAutocompleteProps extends AutocompleteRootProps<SearchItem> {
+    slotProps?: {
+        label?: string;
+        labelProps?: LabelHTMLAttributes<HTMLLabelElement>;
+        inputProps?: AutocompleteInputProps;
+    }
+    item: string | null;
+    onChange?: (ev: ChangeEvent<HTMLInputElement>) => void;
+    onSelectItem: (item?: SearchItem | null) => void;
+    children?: ReactNode;
 }
 
-const ItemAutocomplete = ({itemCode, onChange, onSelectItem, children, ...props}: ItemAutocompleteProps) => {
-    const [value, setValue] = useState(itemCode);
-    const [debouncedValue, setDebouncedValue] = useDebounceValue(itemCode, 350);
+const ItemAutocomplete = ({
+                              slotProps,
+                              item,
+                              onSelectItem,
+                              ...rootProps
+                          }: ItemAutocompleteProps) => {
+    const [inputValue, setInputValue] = useState('');
+    const [error, setError] = useState<string | null>(null);
     const [results, setResults] = useState<SearchItem[]>([]);
-    const [loading, setLoading] = useState(false);
-    const timerRef = useRef<number|null>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const loadItemSearch = useCallback((value: string) => {
-        if (loading) {
+    const abortControllerRef = useRef<AbortController | null>(null);
+    const [isPending, startTransition] = useTransition();
+    const {contains} = Autocomplete.useFilter();
+    const [open, setOpen] = useState<boolean>(false);
+
+    const searchChangedHandler = useCallback((nextValue: string) => {
+        setInputValue(nextValue);
+        const controller = new AbortController();
+        abortControllerRef.current?.abort('New search');
+        abortControllerRef.current = controller;
+        if (nextValue === '') {
+            setResults([]);
+            setError(null);
             return;
         }
-        setLoading(true);
-        fetchItemLookup(value)
-            .then(results => {
-                setResults(results);
-                setLoading(false);
-                const [item] = results.filter(item => item.ItemCode === value);
-                onSelectItem(item || null);
-            })
-            .catch((err: unknown) => {
-                setLoading(false);
-                if (err instanceof Error) {
-                    console.log(err.message)
-                }
-            });
-
-    }, [loading, onSelectItem]);
-
-    // const id = useId();
-    useEffect(() => {
-        startTransition(() => {
-            setValue(debouncedValue);
-            const [item] = results.filter(item => item.ItemCode === debouncedValue);
-            onSelectItem(item || null);
-            loadItemSearch(debouncedValue)
-        })
-    }, [debouncedValue, results, onSelectItem, loadItemSearch])
-
-    useEffect(() => {
-        return () => {
-            if (timerRef.current) {
-                window.clearTimeout(timerRef.current);
-            }
-        }
-    }, [timerRef]);
-
-    useEffect(() => {
-        setDebouncedValue(value);
-    }, [value, setDebouncedValue]);
-
-    useEffect(() => {
-        startTransition(() => {
-            if (value.length < 2) {
-                setResults([]);
+        startTransition(async () => {
+            setError(null);
+            const _results = await fetchItemLookup(nextValue);
+            const results = _results.filter(item => contains(item.ItemCode, nextValue) || contains(item.ItemCodeDesc, nextValue));
+            if (controller.signal.aborted) {
                 return;
             }
-            if (timerRef.current) {
-                window.clearTimeout(timerRef.current);
-            }
-            timerRef.current = window.setTimeout(() => loadItemSearch(value), 350);
+            startTransition(() => {
+                setResults(results);
+            })
         })
-    }, [loadItemSearch, value]);
+    }, [contains])
 
-    const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => {
-        setValue(ev.target.value);
-        onChange(ev);
+    useEffect(() => {
+        startTransition(() => {
+            setInputValue(item ?? '');
+        })
+    }, [item, setInputValue]);
+
+    function getStatus(): ReactNode | null {
+        if (isPending) {
+            return (
+                <>
+                    <Spinner animation="border" size="sm" role="status"/>
+                    Searching...
+                </>
+            )
+        }
+        if (error) {
+            return (
+                <span className="text-danger">{error}</span>
+            )
+        }
+        if (inputValue === '') {
+            return null;
+        }
+        if (results.length === 0) {
+            return (
+                <span className="text-muted">No results found</span>
+            )
+        }
+
+        return `${results.length} items found`;
     }
 
-    const recordChangeHandler = (item?: SearchItem) => {
-        setValue(item?.ItemCode ?? '')
-        onSelectItem(item);
-    }
-
-    const itemFilter = (value: string) => (row: SearchItem) => row.ItemCode.startsWith(value) || row.ItemCodeDesc.toLowerCase().includes(value.toLowerCase());
-
-    const renderItem = (row: SearchItem) => <div><strong className="me-3">{row.ItemCode}</strong> {row.ItemCodeDesc}
-    </div>
+    const acStatus = getStatus();
 
     return (
-        <div className="input-group input-group-sm" ref={containerRef}>
-            <span className="input-group-text">
-                <span className="bi-search"/>
-            </span>
-            <SageItemAutocomplete containerRef={containerRef} {...props}
-                                  value={value} data={results} onChange={changeHandler}
-                                  onChangeRecord={recordChangeHandler}
-                                  renderItem={renderItem}
-                                  itemKey={row => row.ItemCode} filter={itemFilter}/>
-            {children}
-        </div>
+        <Autocomplete.Root open={open} onOpenChange={(open) => setOpen(open)}
+                           value={inputValue}
+                           onValueChange={searchChangedHandler}
+                           items={results}
+                           itemToStringValue={item => item.ItemCode} filter={null} {...rootProps}>
+            <Autocomplete.InputGroup className="input-group input-group-sm">
+                {slotProps?.label && (<label className="input-group-text"
+                                             htmlFor={slotProps.labelProps?.htmlFor}>{slotProps.label}</label>)}
+                <Autocomplete.Input className="form-control" placeholder="Item Code" {...slotProps?.inputProps}/>
+                <Autocomplete.Trigger className="btn btn-outline-secondary">
+                    <span className={open ? "bi-chevron-up" : 'bi-chevron-down'}/>
+                </Autocomplete.Trigger>
+            </Autocomplete.InputGroup>
+            <Autocomplete.Portal hidden={!acStatus} className={classes.Portal}>
+                <Autocomplete.Positioner sideOffset={4} align="start" className={classes.Positioner}>
+                    <Autocomplete.Popup aria-busy={isPending || undefined} className={classes.Popup}>
+                        <div className="bg-body p-1 border rounded">
+                            <Autocomplete.Status>
+                                {acStatus && <div className="text-secondary">{acStatus}</div>}
+                            </Autocomplete.Status>
+                            <Autocomplete.List className={classes.List}>
+                                {(item: SearchItem) => (
+                                    <Autocomplete.Item key={item?.ItemCode} value={item}
+                                                       onClick={() => {
+                                                           onSelectItem(item);
+                                                           setOpen(false);
+                                                       }}
+                                                       className={classes.Item}>
+                                        <div className="d-flex align-items-center=" style={{gap: '3rem'}}>
+                                            <div className="flex-grow-1">
+                                                <div className="fw-bold">{item.ItemCode}</div>
+                                            </div>
+                                            <div className="flex-shrink-0">
+                                                {item.ItemCodeDesc}
+                                            </div>
+                                        </div>
+                                    </Autocomplete.Item>
+
+                                )}
+                            </Autocomplete.List>
+                        </div>
+                    </Autocomplete.Popup>
+                </Autocomplete.Positioner>
+            </Autocomplete.Portal>
+        </Autocomplete.Root>
     )
 }
 export default ItemAutocomplete

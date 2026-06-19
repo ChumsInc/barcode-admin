@@ -4,18 +4,22 @@ import {type TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import userReducer from "../ducks/user";
 import itemReducer from "../ducks/item";
 import customersSlice from "../ducks/customers";
-import customerReducer from "../ducks/customer";
 import salesOrderReducer from "../ducks/salesOrder";
 import versionReducer from "../ducks/version";
 import {alertsSlice} from "@chumsinc/alert-list";
+import customerSettingsSlice from "@/ducks/customer/customerSettingsSlice.ts";
+import customerItemsSlice from "@/ducks/customer/customerItemsSlice.ts";
+import salesOrderSlice from "@/ducks/salesOrder/salesOrderSlice.ts";
 
 
 const rootReducer = combineReducers({
     [alertsSlice.reducerPath]: alertsSlice.reducer,
-    customer: customerReducer,
     [customersSlice.reducerPath]: customersSlice.reducer,
+    [customerItemsSlice.reducerPath]: customerItemsSlice.reducer,
+    [customerSettingsSlice.reducerPath]: customerSettingsSlice.reducer,
     item: itemReducer,
     salesOrder: salesOrderReducer,
+    [salesOrderSlice.reducerPath]: salesOrderSlice.reducer,
     user: userReducer,
     version: versionReducer,
 })

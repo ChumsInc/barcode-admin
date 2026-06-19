@@ -1,22 +1,21 @@
-import type {BarcodeCustomer, BarcodeCustomerSettings, SortProps} from "chums-types";
+import type {BarcodeCustomer, BarcodeCustomerSettings, SortFactory} from "chums-types";
 import {customerKey} from "@/utils/customer";
 
-export const customerSort = ({field, ascending}: SortProps<BarcodeCustomer>) =>
-    (a: BarcodeCustomer, b: BarcodeCustomer): number => {
-        const sortMod = ascending ? 1 : -1;
-        switch (field) {
-            case "CustomerName":
-                return (
-                    a[field].toLowerCase() === b[field].toLowerCase()
-                        ? (customerKey(a) > customerKey(b) ? 1 : -1)
-                        : (a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1)
-                ) * sortMod;
-            case 'ARDivisionNo':
-            case 'CustomerNo':
-            default:
-                return (customerKey(a) > customerKey(b) ? 1 : -1) * sortMod;
-        }
+export const customerSort: SortFactory<BarcodeCustomer> = ({field, ascending}) => (a, b): number => {
+    const sortMod = ascending ? 1 : -1;
+    switch (field) {
+        case "CustomerName":
+            return (
+                a[field].toLowerCase() === b[field].toLowerCase()
+                    ? (customerKey(a) > customerKey(b) ? 1 : -1)
+                    : (a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1)
+            ) * sortMod;
+        case 'ARDivisionNo':
+        case 'CustomerNo':
+        default:
+            return (customerKey(a) > customerKey(b) ? 1 : -1) * sortMod;
     }
+}
 
 export const customerFilter = (filter: string) => (row: BarcodeCustomer) => {
     let reFilter;
