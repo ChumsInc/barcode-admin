@@ -3,17 +3,16 @@ import {useAppSelector} from "@/app/configureStore.ts";
 import {useNavigate} from "react-router";
 import {fetchSOSearch} from "@/api/order-stickers.ts";
 import {customerKey} from "@/utils/customer.ts";
-import {selectSalesOrderLoading} from "@/ducks/salesOrder/selectors.ts";
 import {selectCustomers} from "@/ducks/customers";
 import {selectCustomerStatus} from "@/ducks/customer/customerSettingsSlice.ts";
 
 const CustomerSearchBySO = () => {
     const navigate = useNavigate();
     const status = useAppSelector(selectCustomerStatus);
-    const soLoading = useAppSelector(selectSalesOrderLoading);
     const customers = useAppSelector(selectCustomers);
     const [salesOrderNo, setSalesOrderNo] = useState('');
     const [submitted, setSubmitted] = useState<boolean>(false);
+
 
     const submitHandler = () => {
         const _salesOrderNo = salesOrderNo.padStart(7, '0');
@@ -47,7 +46,8 @@ const CustomerSearchBySO = () => {
                    required maxLength={7}
                    onChange={(ev) => setSalesOrderNo(ev.target.value)} placeholder="Search by SO#"/>
             <button type="submit" className="btn btn-sm btn-outline-primary"
-                    disabled={soLoading || status !== 'idle' || submitted}>Load
+                    disabled={status !== 'idle' || submitted}>
+                Load
             </button>
         </form>
     )

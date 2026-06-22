@@ -1,15 +1,16 @@
-import {type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useTransition} from "react";
+import {type ReactNode, useCallback, useEffect, useMemo, useState, useTransition} from "react";
 import SalesOrderContext, {
     type SalesOrderContextProps
 } from "@/components/customer/order-stickers/SalesOrderContext.tsx";
 import type {SalesOrderDetailLine, SalesOrderHeader} from "chums-types";
 import type {SalesOrderProviderStatus} from "@/components/customer/order-stickers/types.ts";
-import {fetchSalesOrder} from "@/api/order-stickers.ts";
+import {fetchSalesOrder, postOrderStickers} from "@/api/order-stickers.ts";
 import {useSearchParams} from "react-router";
-import {getOrderColumns} from "@/ducks/salesOrder/order-detail-fields.tsx";
+import {getOrderColumns} from "@/components/customer/order-stickers/order-detail-fields.tsx";
 import {DataTableProvider} from "@chumsinc/sortable-tables";
 import {useAppSelector} from "@/app/configureStore.ts";
 import {selectCustomerSettings} from "@/ducks/customer/customerSettingsSlice.ts";
+import type {GenerateStickerProps} from "@/src/types.ts";
 
 export interface SalesOrderProviderProps {
     children: ReactNode;
@@ -23,14 +24,10 @@ export default function SalesOrderProvider({children}: SalesOrderProviderProps) 
     const [detail, setDetail] = useState<SalesOrderDetailLine[]>([]);
     const [status, setStatus] = useState<SalesOrderProviderStatus>('idle');
     const [error, setError] = useState<string | null>(null);
-    const abortControllerRef = useRef<AbortController | null>(null);
     const [isPending, startTransition] = useTransition();
 
     const loadSalesOrder = useCallback((salesOrderNo: string) => {
-        const controller = new AbortController();
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort('New sales order requested.');
-        }
+        console.debug('loadSalesOrder', salesOrderNo);
         setSalesOrderNo(salesOrderNo);
         if (salesOrderNo === '') {
             startTransition(() => {
@@ -48,20 +45,16 @@ export default function SalesOrderProvider({children}: SalesOrderProviderProps) 
             return next;
         }, {replace: true})
 
-        abortControllerRef.current = controller;
-
         startTransition(async () => {
+            setSalesOrderNo(salesOrderNo);
             setStatus('loading');
             setError(null);
             setSalesOrderHeader(null);
             setDetail([]);
             try {
-                const so = await fetchSalesOrder(salesOrderNo, {signal: controller.signal})
+                const so = await fetchSalesOrder(salesOrderNo)
                 startTransition(() => {
                     setStatus('idle');
-                    if (controller.signal.aborted) {
-                        return;
-                    }
                     if (!so) {
                         setError('Sales order not found.');
                         return;
@@ -89,18 +82,40 @@ export default function SalesOrderProvider({children}: SalesOrderProviderProps) 
         });
     }, [setSearchParams]);
 
+    const generateStickers = useCallback(async ({lines, reversed}:Pick<GenerateStickerProps, 'lines'|'reversed'>) => {
+        if (lines.length === 0) {
+            return Promise.reject(new Error('No lines for generating stickers.'));
+        }
+        if (!salesOrderHeader || !customerSettings) {
+            return Promise.reject(new Error('No sales order or customer settings.'));
+        }
+        setStatus('generating');
+        setError(null);
+        try {
+            const props: GenerateStickerProps = {
+                customerId: customerSettings.id,
+                SalesOrderNo: salesOrderHeader.SalesOrderNo,
+                CustomerPONo: salesOrderHeader.CustomerPONo ?? '',
+                lines: lines,
+                reversed,
+            }
+            const result = await postOrderStickers(props);
+            setStatus('idle');
+            return result;
+        } catch(err:unknown) {
+            return Promise.reject(err);
+        }
+    }, [customerSettings, salesOrderHeader]);
+
     useEffect(() => {
         const so = searchParams.get('salesOrderNo');
-        if (error || isPending) {
-            return;
-        }
-        console.debug()
         if (so && so !== salesOrderNo) {
             startTransition(() => {
+                console.log('Sales order changed', so, salesOrderNo);
                 loadSalesOrder(so);
             })
         }
-    }, [searchParams, isPending, error, salesOrderNo, loadSalesOrder]);
+    }, [searchParams, salesOrderNo, loadSalesOrder]);
 
     const value: SalesOrderContextProps = useMemo(() => {
         return {
@@ -117,8 +132,9 @@ export default function SalesOrderProvider({children}: SalesOrderProviderProps) 
                 return acc;
             }, [] as string[]).sort(),
             loadSalesOrder,
+            generateStickers,
         }
-    }, [detail, error, isPending, loadSalesOrder, salesOrderHeader, status]);
+    }, [detail, error, isPending, loadSalesOrder, salesOrderHeader, status, generateStickers]);
 
     return (
         <DataTableProvider initialFields={getOrderColumns(customerSettings)}

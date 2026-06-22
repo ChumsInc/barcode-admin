@@ -1,15 +1,12 @@
 import {type ChangeEvent, useCallback, useId} from 'react';
-import {useAppDispatch} from "@/app/configureStore.ts";
-import {generateStickers} from "@/ducks/salesOrder/actions.ts";
-import StickerQuantityGeneratedAlert from "@/components/customer/order-stickers/StickerQuantityGeneratedAlert.tsx";
 import FormCheck from "react-bootstrap/FormCheck";
 import {SpinnerButton} from "@chumsinc/react-bootstrap-addons";
 import {useSalesOrder} from "@/components/customer/order-stickers/useSalesOrder.ts";
 import {usePrintOptions} from "@/components/customer/order-stickers/usePrintOptions.ts";
 import {useOrderStickers} from "@/components/customer/order-stickers/useOrderStickers.ts";
+import GenerateStickersButton from "@/components/customer/order-stickers/GenerateStickersButton.tsx";
 
 const SalesOrderControlBar = () => {
-    const dispatch = useAppDispatch();
     const {salesOrderNo, loadSalesOrder, status, shipToCodes} = useSalesOrder();
     const {
         sort,
@@ -20,7 +17,7 @@ const SalesOrderControlBar = () => {
         shipToCode,
         setShipToCode
     } = usePrintOptions();
-    const {extra, setExtra, count} = useOrderStickers();
+    const {extra, setExtra} = useOrderStickers();
 
     const listId = useId();
     const stickerVersionId = useId();
@@ -48,10 +45,16 @@ const SalesOrderControlBar = () => {
         setExtra(ev.target.valueAsNumber);
     }
 
-    const handleGenerateStickers = () => {
-        dispatch(generateStickers(reversed))
+    const shipToPlaceholder = (codes: string[]) => {
+        switch (codes.length) {
+            case 0:
+                return 'No Store Codes';
+            case 1:
+                return `${codes[0]} only`;
+            default:
+                return 'Select Store';
+        }
     }
-
     return (
         <div className="row g-3 align-items-baseline mt-3">
             <div className="col-auto">
@@ -79,9 +82,10 @@ const SalesOrderControlBar = () => {
                 <div className="input-group input-group-sm">
                     <div className="input-group-text">Store</div>
                     <input type="search" className="form-control form-control-sm"
+                           placeholder={shipToPlaceholder(shipToCodes)} disabled={shipToCodes.length === 0}
                            value={shipToCode} onChange={handleChangeShipTo} list={listId}/>
                     <datalist id={listId}>
-                        {shipToCodes.map(value => (<option key={value}>{value}</option>))}'
+                        {shipToCodes.map(value => (<option key={value}>{value}</option>))}
                     </datalist>
                 </div>
             </div>
@@ -98,14 +102,9 @@ const SalesOrderControlBar = () => {
                            checked={includeQuantity}
                            onChange={handleIncludeQuantityChange}/>
             </div>
+            <div className="col"/>
             <div className="col-auto">
-                <button type="button" className="btn btn-sm btn-success" disabled={count === 0}
-                        onClick={handleGenerateStickers}>
-                    Generate Stickers ({count})
-                </button>
-            </div>
-            <div className="col">
-                <StickerQuantityGeneratedAlert/>
+                <GenerateStickersButton/>
             </div>
         </div>
     )

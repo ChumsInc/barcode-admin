@@ -1,6 +1,5 @@
 import {type ChangeEvent} from 'react';
-import {useAppDispatch} from "@/app/configureStore.ts";
-import {setLineQty} from "@/ducks/salesOrder/actions.ts";
+import {useOrderStickers} from "@/components/customer/order-stickers/useOrderStickers.ts";
 
 export interface StickerQuantityInputProps {
     lineKey: string;
@@ -10,13 +9,13 @@ export interface StickerQuantityInputProps {
 }
 
 const StickerQuantityInput = ({lineKey, stickerQty, disabled}: StickerQuantityInputProps) => {
-    const dispatch = useAppDispatch();
+    const {setLineStickerQty} = useOrderStickers();
 
     const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => {
         if (disabled) {
             return;
         }
-        dispatch(setLineQty({lineKey, qty: ev.target.valueAsNumber}));
+        setLineStickerQty(lineKey, ev.target.valueAsNumber);
     }
 
     return (

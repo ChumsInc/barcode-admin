@@ -1,25 +1,20 @@
 import {type ChangeEvent, useId} from 'react';
-import {useSelector} from "react-redux";
-import {selectSalesOrderDetail} from "@/ducks/salesOrder/selectors.ts";
 import FormCheck from "react-bootstrap/FormCheck";
-import {useAppDispatch} from "@/app/configureStore.ts";
-import {toggleLineSelected} from "@/ducks/salesOrder/actions.ts";
+import {useOrderStickers} from "@/components/customer/order-stickers/useOrderStickers.ts";
 
 export interface StickerSelectToggleProps {
     lineKey: string;
 }
 
 const StickerSelectToggle = ({lineKey}: StickerSelectToggleProps) => {
-    const dispatch = useAppDispatch();
-    const detail = useSelector(selectSalesOrderDetail);
+    const {detail, setLineChecked} = useOrderStickers();
     const id = useId();
 
     const [row] = detail.filter(row => row.ItemType === '1' && row.LineKey === lineKey);
 
-    const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => dispatch(toggleLineSelected({
-        lineKey,
-        forced: ev.target.checked
-    }));
+    const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => {
+        setLineChecked(lineKey, ev.target.checked);
+    }
 
     return (
         <FormCheck type={"checkbox"} id={id}

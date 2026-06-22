@@ -24,7 +24,7 @@ export const getOrderColumns = (customer: BarcodeCustomerSettings | null):Sortab
         },
         {
             field: 'ItemCode', title: 'Item', sortable: true, render: (row) => (
-                <StickerItemComment lineKey={row.LineKey} itemCode={row.ItemCode} commentText={row.CommentText}
+                <StickerItemComment itemCode={row.ItemCode} commentText={row.CommentText}
                                     notes={row.item?.Notes} specialInstructions={row.item?.SpecialInstructions}/>
             )
         },

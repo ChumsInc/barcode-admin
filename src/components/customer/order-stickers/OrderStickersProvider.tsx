@@ -46,7 +46,6 @@ export default function OrderStickersProvider({children}: OrderStickersProviderP
         setDetail(buildDetailRecord(orderDetail, customerItems, value));
     }, [orderDetail, customerItems]);
 
-
     useEffect(() => {
         startTransition(() => {
             setDetail(buildDetailRecord(orderDetail, customerItems, extra));

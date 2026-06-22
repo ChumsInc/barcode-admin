@@ -5,7 +5,7 @@ import SalesOrderCustomerAlert from "./SalesOrderCustomerAlert.tsx";
 import classNames from "classnames";
 import {useOrderStickers} from "@/components/customer/order-stickers/useOrderStickers.ts";
 import {usePrintOptions} from "@/components/customer/order-stickers/usePrintOptions.ts";
-import {detailSorter} from "@/ducks/salesOrder/utils.ts";
+import {detailSorter} from "@/components/customer/order-stickers/utils.ts";
 
 
 const SalesOrderDetailTable = () => {
@@ -14,6 +14,8 @@ const SalesOrderDetailTable = () => {
 
     const lines = detail.filter(row => row.ItemType === '1')
         .filter(row => row.UnitOfMeasure !== 'KIT')
+        .filter(row => !row.ItemCode.startsWith('PEG'))
+        .filter(row => !row.ItemCode.startsWith('98'))
         .sort(detailSorter(sort))
     ;
 
