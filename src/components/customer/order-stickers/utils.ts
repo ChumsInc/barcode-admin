@@ -80,7 +80,7 @@ export const detailSorter: SortFactory<BarcodeSODetailLine> = (sortProps) => (a,
         case 'Custom3':
         case 'Custom4': {
             const compared = a.item[itemField].toLowerCase().localeCompare(b.item[itemField].toLowerCase())
-            if (compared !== 0) {
+            if (compared === 0) {
                 return a.LineSeqNo.localeCompare(b.LineSeqNo) * sortMod;
             }
             return compared * sortMod;
