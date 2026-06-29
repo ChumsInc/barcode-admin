@@ -49,6 +49,14 @@ const CustomerItems = () => {
                 <div className="col-auto">
                     <ReloadCustomerButton/>
                 </div>
+                {customer?.active && (
+                    <div className="col-auto">
+                        <a href={`/api/operations/barcodes/customers/${customer.id}/items.xlsx`}
+                           className="btn btn-sm btn-outline-secondary" target="_blank" rel="noreferrer noopener">
+                            Download Item List
+                        </a>
+                    </div>
+                )}
             </div>
             <CustomerProgressBar/>
             {customer?.active && (
