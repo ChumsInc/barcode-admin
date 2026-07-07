@@ -1,7 +1,9 @@
+/// <reference types="vite/client" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react';
 import path from "node:path";
 import process from "node:process";
+import {visualizer} from "rollup-plugin-visualizer";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -23,16 +25,16 @@ export default defineConfig({
     build: {
         manifest: true,
         sourcemap: true,
-        rollupOptions: {
+        rolldownOptions: {
+            plugins: [visualizer({filename: 'stats.html', gzipSize: true})],
             output: {
-                manualChunks(id) {
-                    if (id.includes('node_modules')) {
-                        return 'vendor'
-                    }
-                    if (id.includes('src/components')) {
-                        return 'components';
-                    }
-                }
+                codeSplitting: {
+                    groups: [
+                        {test: /node_modules\/(react|react-dom)\//, name: 'react'},
+                        {test: /node_modules\/(react-bootstrap|@restart|@popperjs|@base-ui|@emotion)/, name: 'ui'},
+                        {test: /node_modules/, name: 'vendor'}
+                    ]
+                },
             }
         }
     },
