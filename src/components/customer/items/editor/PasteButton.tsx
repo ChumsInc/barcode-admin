@@ -23,9 +23,10 @@ export default function PasteButton({
         <OverlayTrigger {...overlayTriggerProps} placement="bottom"
                         overlay={<Tooltip {...tooltipProps}>Paste '{pasteValue}'</Tooltip>}>
             <Button type="button" onClick={onClick} variant={pasteValue ? "secondary" : 'outline-secondary'}
+                    aria-label="Paste value into field"
                     disabled={!pasteValue || !canEdit || disabled}
                     {...rest}>
-                <span className="bi-clipboard-plus"/>
+                <span className="bi-clipboard-plus" aria-hidden="true"/>
             </Button>
         </OverlayTrigger>
     );

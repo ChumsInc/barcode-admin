@@ -2,8 +2,9 @@ import {Outlet} from "react-router";
 import AppTabs from "./AppTabs";
 import AlertList from "../ducks/alerts/AlertList";
 import ProfileStatus from "../ducks/user/ProfileStatus";
-import VersionAlert from "../ducks/version/VersionAlert";
 import styled from "@emotion/styled";
+import {AppVersion} from "@chumsinc/ui";
+
 
 
 const AppDiv = styled.div`
@@ -14,11 +15,13 @@ const AppDiv = styled.div`
 const AppContent = () => {
     return (
         <AppDiv>
-            <ProfileStatus />
+            <ProfileStatus/>
             <AppTabs/>
             <AlertList/>
             <Outlet/>
-            <VersionAlert />
+            <div className="d-flex justify-content-center mt-5">
+                <AppVersion/>
+            </div>
         </AppDiv>
     )
 }

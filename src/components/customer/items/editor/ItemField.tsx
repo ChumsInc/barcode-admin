@@ -1,11 +1,11 @@
-import {Col, Form, Row} from "react-bootstrap";
+import {Col, Form, Row, Stack} from "react-bootstrap";
 import {useEditorContext} from "@/hooks/editor/useEditorContext.ts";
 import type {BarcodeItem, SearchItem} from "chums-types";
 import {type ChangeEvent, startTransition, useCallback, useEffect, useId, useState} from "react";
 import {useItemEditor} from "@/components/customer/items/editor/useItemEditor.ts";
 import ExistingItemAlert from "@/components/customer/items/editor/ExistingItemAlert.tsx";
 import {useCustomerItems} from "@/components/customer/items/useCustomerItems.ts";
-import ItemAutocomplete from "@/components/ItemAutocomplete.tsx";
+import {ItemAutocomplete} from "@chumsinc/ui";
 
 export default function ItemField() {
     const {value, updateValue} = useEditorContext<BarcodeItem>();
@@ -44,17 +44,20 @@ export default function ItemField() {
         <Form.Group as={Row} label="Item">
             <Form.Label column sm={4} htmlFor={id}>Item</Form.Label>
             <Col sm={8}>
-                <ItemAutocomplete item={value?.ItemCode ?? ''} id={id}
-                                  onChange={changeHandler}
-                                  readOnly={locked || !canEdit}
-                                  required
-                                  onSelectItem={selectItemHandler}>
-                    <button type="button" className="btn btn-outline-secondary"
+                <Stack direction="horizontal" gap={1}>
+                    <ItemAutocomplete item={value?.ItemCode ?? ''} id={id}
+                                      onChange={changeHandler}
+                                      readOnly={locked || !canEdit}
+                                      required
+                                      onSelectItem={selectItemHandler}>
+                    </ItemAutocomplete>
+                    <button type="button" className="btn btn-sm btn-outline-secondary"
+                            aria-label="Toggle Item Lock"
                             disabled={!canEdit}
                             onClick={lockHandler}>
-                        <span className={locked ? 'bi-lock-fill' : 'bi-pencil-fill'}/>
+                        <span className={locked ? 'bi-lock-fill' : 'bi-pencil-fill'} aria-label={locked ? 'Locked' : 'Editable'}/>
                     </button>
-                </ItemAutocomplete>
+                </Stack>
                 {(value?.ID || sageItem) &&
                     <small className="text-muted">{sageItem?.ItemCodeDesc ?? 'Invalid Sage Item'}</small>}
                 <ExistingItemAlert/>

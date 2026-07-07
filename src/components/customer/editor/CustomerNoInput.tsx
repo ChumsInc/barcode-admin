@@ -1,7 +1,7 @@
 import {useEditorContext} from "@/hooks/editor/useEditorContext.ts";
 import type {BarcodeCustomerSettings} from "chums-types";
 import {useId} from "react";
-import CustomerAutocomplete from "@/components/CustomerAutocomplete.tsx";
+import {CustomerAutocomplete} from "@chumsinc/ui";
 import type {SearchCustomer} from "@/src/types.ts";
 import {useSelector} from "react-redux";
 import {selectCanEdit} from "@/ducks/user";

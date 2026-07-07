@@ -41,7 +41,7 @@ const AssignNextUPCButton = ({sageItem}: { sageItem: SearchItem | null }) => {
     if (changed) {
         return (
             <OverlayTrigger placement="top" overlay={<Tooltip>Save changes before assigning a new UPC code</Tooltip>}>
-                <button type="button" className="btn btn-sm btn-outline-secondary" disabled={true}>
+                <button type="button" className="btn btn-sm btn-outline-secondary" disabled aria-label="Save changes before assigning a new UPC code">
                     <span className="bi-house-gear-fill"/>
                 </button>
             </OverlayTrigger>
