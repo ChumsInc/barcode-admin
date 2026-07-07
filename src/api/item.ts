@@ -30,6 +30,9 @@ export async function fetchItemLookup(search:string, exact?: boolean):Promise<Se
         const res = await fetchJSON<{result: SearchItem[]}>(url);
         return res?.result ?? [];
     } catch(err:unknown) {
+        if (err === 'AbortError') {
+            return []
+        }
         if (err instanceof Error) {
             console.debug("fetchItemLookup()", err.message);
             return Promise.reject(err);
