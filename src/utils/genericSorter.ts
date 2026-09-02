@@ -30,8 +30,8 @@ export const sortFactory = <T extends object>(props: SortOptions<T>): SortFuncti
             valB = b[defaultField];
         }
 
-        if (typeof valueModifiers[field] === 'function') {
-            const modifier = valueModifiers[field];
+        if (typeof valueModifiers[field as string] === 'function') {
+            const modifier = valueModifiers[field as string];
             valA = modifier(a);
             valB = modifier(b);
         }
