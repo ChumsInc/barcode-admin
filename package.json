@@ -19,7 +19,7 @@
     "@chumsinc/gtin-tools": "^1.0.3",
     "@chumsinc/react-bootstrap-addons": "^2.0.2",
     "@chumsinc/sortable-tables": "^3.2.5",
-    "@chumsinc/textarea": "github:ChumsInc/textarea",
+    "@chumsinc/textarea": "git+github:ChumsInc/textarea",
     "@chumsinc/ui": "^3.0.4",
     "@chumsinc/ui-utils": "^2.1.8",
     "@emotion/react": "^11.10.5",
