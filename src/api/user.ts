@@ -3,7 +3,7 @@ import {fetchJSON} from "@chumsinc/ui-utils";
 
 export async function fetchUserValidation():Promise<UserValidationResponse|null> {
     try {
-        const url = '/api/user/validate.json';
+        const url = '/api/user/v2/validate.json';
         return await fetchJSON<UserValidationResponse>(url);
     } catch(_err:unknown) {
         return {
