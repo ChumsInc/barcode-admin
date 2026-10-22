@@ -2,7 +2,7 @@ import {useEditorContext} from "@/hooks/editor/useEditorContext.ts";
 import type {BarcodeItem} from "chums-types";
 import {useItemEditor} from "@/components/customer/items/editor/useItemEditor.ts";
 import PasteButton from "@/components/customer/items/editor/PasteButton.tsx";
-import type {ChangeEvent} from "react";
+import {type ChangeEvent, useCallback} from "react";
 import ItemInput from "@/components/customer/items/editor/ItemInput.tsx";
 import numeral from "numeral";
 import {Decimal} from "decimal.js";
@@ -10,6 +10,13 @@ import {Decimal} from "decimal.js";
 export default function MSRPField() {
     const {value, updateValue} = useEditorContext<BarcodeItem>();
     const {sageItem, applySageField} = useItemEditor();
+
+    const isNumeric = useCallback((value:string|number) => {
+        if (typeof value === 'number') {
+            return true;
+        }
+        return !isNaN(parseFloat(value)) && isFinite(+value);
+    }, []);
 
     const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => {
         updateValue({MSRP: ev.target.value});
@@ -19,7 +26,7 @@ export default function MSRPField() {
         applySageField('SuggestedRetailPrice', 'MSRP')
     }
 
-    const priceMatch = value.MSRP && sageItem?.SuggestedRetailPrice
+    const priceMatch = value.MSRP && sageItem?.SuggestedRetailPrice && isNumeric(value.MSRP)
         ? new Decimal(value.MSRP ?? 0).eq(sageItem?.SuggestedRetailPrice ?? 0)
         : false;
     const suggestedPrice = sageItem?.SuggestedRetailPrice ? numeral(sageItem.SuggestedRetailPrice).format('0,0.00') : null;
